@@ -1,0 +1,9 @@
+.work{
+    height: 2000px;
+}
+
+.titleblock{
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}

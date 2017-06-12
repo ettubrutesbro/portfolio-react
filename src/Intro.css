@@ -1,0 +1,15 @@
+.intro{
+    margin-top: 150px;
+}
+
+.introVideo{
+    width: 100%;
+    height: 38.2vw;/* hack based on aspect ratio, but better than findDOMNode */
+    transition: clip-path .2s;
+    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+}
+
+.introVideo-mockClip{
+    /*animation: mockClip 1s forwards;*/
+    clip-path: polygon(47.5% 0%, 100% 0%, 100% 100%, 30% 100%);
+}

@@ -23,7 +23,7 @@ import styles from './QuirkyVid.css'
         }
     }
     aClipEnded = (i) =>{
-        // console.log('clip',i,'ended')
+        console.log('clip',i,'ended')
         if(i===this.props.clips.length-1) this.startClip(0)
         else this.startClip(this.playingclip+1)
     }
@@ -36,7 +36,7 @@ import styles from './QuirkyVid.css'
 
     render(){
         return(
-            <div className = {styles.quirkyVid}>
+            <div className = {[styles.quirkyVid, this.props.className].join(' ')}>
                 {this.props.clips.map((clip,i)=>{
                     return(
                         <video 
@@ -58,4 +58,5 @@ import styles from './QuirkyVid.css'
 }
 
 QuirkyVid.defaultProps = {
+    className: ''
 }
