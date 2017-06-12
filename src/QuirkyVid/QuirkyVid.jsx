@@ -1,49 +1,61 @@
 
 import React from 'react'
-import {observable} from 'mobx'
+import {observable, action} from 'mobx'
 import {observer} from 'mobx-react'
 import styles from './QuirkyVid.css'
 
 
 @observer export default class QuirkyVid extends React.Component{
-	//takes multiple video files (raw assets), wraps them in HTML5 video element,
-	//gives control over randomized / ordered playback and stopping etc.
+    //takes multiple video files (raw assets), wraps them in HTML5 video element,
+    //gives control over randomized / ordered playback and stopping etc.
 
-	@observable readyclips = this.props.clips.map(()=>{return false})
-	@observable playingclip = 0
+    @observable readyclips = this.props.clips.map(()=>{return false})
+    @observable playingclip = null
 
-	aClipLoaded = (i)=>{
-		console.log('clip #',i+1,'loaded')
-		this.readyclips[i] = true
-		if(!this.readyclips.includes(false)){
-			console.log('all clips are ready, playing...')
-		}
-	}
-	aClipEnded = (evt) =>{
-		console.log(evt)
-	}
+    @action
+    aClipLoaded = (i)=>{
+        console.log('clip #',i+1,'loaded')
+        this.readyclips[i] = true
+        if(!this.readyclips.includes(false)){
+            if(this.props.loaded) this.props.loaded()
+            this.startClip(0)
+            console.log('all clips are ready, playing...')
+        }
+    }
+    aClipEnded = (i) =>{
+        // console.log('clip',i,'ended')
+        if(i===this.props.clips.length-1) this.startClip(0)
+        else this.startClip(this.playingclip+1)
+    }
 
-	render(){
-		// console.log('qv render')
-		return(
-			<div>
-				{this.props.clips.map((clip,i)=>{
+    @action
+    startClip(clip){
+        this.playingclip = clip
+        this.refs['clip'+clip].play()
+    }
 
-					return(
-						<video 
-							key={'qvid-'+this.props.id+'-clip-'+i} 
-							className={styles.quirkyVid} 
-							src={clip} 
-							onEnded={this.aClipEnded} 
-							onLoadedData={()=>this.aClipLoaded(i)} 
-						/>
-					)
-				})}
-			</div>
-		)
-	}
+    render(){
+        return(
+            <div className = {styles.quirkyVid}>
+                {this.props.clips.map((clip,i)=>{
+                    return(
+                        <video 
+                            ref={'clip'+i}
+                            key={'qvid-'+this.props.id+'-clip-'+i} 
+                            className={[
+                                styles.clip, 
+                                i===this.playingclip?styles.active: ''
+                            ].join(' ')} 
+                            src={clip} 
+                            onEnded={()=>this.aClipEnded(i)} 
+                            onLoadedData={()=>this.aClipLoaded(i)} 
+                        />
+                    )
+                })}
+            </div>
+        )
+    }
 }
 
 QuirkyVid.defaultProps = {
-	play: false,
 }

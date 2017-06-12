@@ -1,4 +1,13 @@
 .quirkyVid{
-	position: absolute;
-	/*top: 0;*/
+    position: relative;
+    /*top: 0;*/
+}
+
+.clip{
+    display: none;
+    position: absolute;
+}
+
+.active{
+    display: block;
 }
