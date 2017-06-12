@@ -66,6 +66,8 @@ class FixedTitleBlock extends React.Component {
   // and turned into inline style 
       //<Moballax yStart = {0} yEnd = {200} styleAtStart = {opacity: 0} styleAtEnd = {opacity: 1}>
   
+  //needs some logic for CSS transforms and clip-path and rgb(a)
+
 
   @computed get percentage(){
     return store.scrollposition > this.props.yStart && store.scrollposition < this.props.yEnd? 
