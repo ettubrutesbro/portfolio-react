@@ -45,7 +45,7 @@ class FixedTitleBlock extends React.Component {
     return(
       <header className = {styles.fixedTitleBlock}>
         <div className = {styles.left}>
-          <Moballax yStart = {0} yEnd = {100} styleAtStart = {{opacity: 0}} styleAtEnd = {{opacity: 1}}>
+          <Moballax yStart = {0} yEnd = {300} styleAtStart = {{opacity: 0}} styleAtEnd = {{opacity: 1}}>
           <h1 className = {styles.jackleng}> Jack Leng</h1>
           </Moballax>
           <h2 className = {styles.workHeader}>SELECTED WORKS 2011-7</h2>
@@ -68,7 +68,6 @@ class FixedTitleBlock extends React.Component {
   
   //needs some logic for CSS transforms and clip-path and rgb(a)
 
-
   @computed get percentage(){
     return store.scrollposition > this.props.yStart && store.scrollposition < this.props.yEnd? 
       (store.scrollposition - this.props.yStart) / (this.props.yEnd - this.props.yStart)
@@ -76,18 +75,18 @@ class FixedTitleBlock extends React.Component {
       : store.scrollposition >= this.props.yEnd? 1 
       : null
   }
-  render(){
+  @computed get interpolatedStyle(){
     const allKeys = Object.keys(this.props.styleAtEnd)
     const startValues = Object.values(this.props.styleAtStart)
     const endValues = Object.values(this.props.styleAtEnd)
     const interpolatedValues = endValues.map((val,i)=>{
       return (val - startValues[i]) * this.percentage
     })
-    console.log(interpolatedValues)
-    const interpolatedStyle = zipObject(allKeys, interpolatedValues)
-    console.log(interpolatedStyle)
+    return  zipObject(allKeys, interpolatedValues)
+  }
+  render(){
     return(
-      <div className = {this.props.className} style = {interpolatedStyle}>
+      <div className = {this.props.className} style = {this.interpolatedStyle}>
         {this.props.children}
       </div>
     )
