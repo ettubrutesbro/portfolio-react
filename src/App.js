@@ -4,8 +4,8 @@ import {observer} from 'mobx-react'
 import {zipObject} from 'lodash'
 
 import styles from './Portfolio.css'
-
 import {JLPortfolioStore} from './Store'
+import {computeClipDifference, computeColorDifference} from './helpers.js'
 
 import Intro from './Intro'
 import Work from './Work'
@@ -45,8 +45,13 @@ class FixedTitleBlock extends React.Component {
     return(
       <header className = {styles.fixedTitleBlock}>
         <div className = {styles.left}>
-          <Moballax yStart = {0} yEnd = {300} styleAtStart = {{opacity: 0}} styleAtEnd = {{opacity: 1}}>
-          <h1 className = {styles.jackleng}> Jack Leng</h1>
+          <Moballax
+                yStart = {0} 
+                yEnd = {300} 
+                styleAtStart = {{color: [0,255,0]}} 
+                styleAtEnd = {{color: [255,0,0]}}
+          >
+            <h1 className = {styles.jackleng}> Jack Leng</h1>
           </Moballax>
           <h2 className = {styles.workHeader}>SELECTED WORKS 2011-7</h2>
         </div>
@@ -71,8 +76,8 @@ class FixedTitleBlock extends React.Component {
   @computed get percentage(){
     return store.scrollposition > this.props.yStart && store.scrollposition < this.props.yEnd? 
       (store.scrollposition - this.props.yStart) / (this.props.yEnd - this.props.yStart)
-      : store.scrollposition <= this.props.yStart? 0 
-      : store.scrollposition >= this.props.yEnd? 1 
+      : store.scrollposition <= this.props.yStart? 0 //these are wrong 
+      : store.scrollposition >= this.props.yEnd? 1 //these are wrong 
       : null
   }
   @computed get interpolatedStyle(){
@@ -80,9 +85,14 @@ class FixedTitleBlock extends React.Component {
     const startValues = Object.values(this.props.styleAtStart)
     const endValues = Object.values(this.props.styleAtEnd)
     const interpolatedValues = endValues.map((val,i)=>{
-      return (val - startValues[i]) * this.percentage
+      return allKeys[i]==='opacity'? (val - startValues[i]) * this.percentage
+        : allKeys[i]==='clipPath'? computeClipDifference(startValues[i], val, this.percentage)
+        : allKeys[i]===('translateX'||'translateY')? (val - startValues[i]) * this.percentage + 'px'
+        : allKeys[i]==='color'? computeColorDifference(startValues[i], val, this.percentage)
+        : null
     })
-    return  zipObject(allKeys, interpolatedValues)
+    console.log(zipObject(allKeys, interpolatedValues))
+    return zipObject(allKeys, interpolatedValues)
   }
   render(){
     return(
