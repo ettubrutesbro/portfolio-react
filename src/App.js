@@ -32,7 +32,15 @@ import Work from './Work'
         {!assetsReady && <div className = {styles.loader} > Loading </div>}
         
         <FixedTitleBlock />
+        <Moballax
+            className = {styles.fullWidth}
+            yStart = {0}
+            yEnd = {300}
+            styleAtStart = {{clipPath: [[0,0],[100,0],[100,100],[0,100]]}}
+            styleAtEnd = {{clipPath: [[47.5,0],[100,0],[100,100],[30,100]]}}
+        >
         <Intro store = {store}/>
+        </Moballax>
         <Work store = {store}/>
         
       </div>
@@ -91,7 +99,7 @@ class FixedTitleBlock extends React.Component {
         : allKeys[i]==='color'? computeColorDifference(startValues[i], val, this.percentage)
         : null
     })
-    console.log(zipObject(allKeys, interpolatedValues))
+    // console.log(zipObject(allKeys, interpolatedValues))
     return zipObject(allKeys, interpolatedValues)
   }
   render(){

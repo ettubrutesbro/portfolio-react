@@ -16,7 +16,7 @@ export default class Intro extends React.Component{
       <section className = {styles.intro}>
         <QuirkyVid
           id="intro"
-          className = {[styles.introVideo, styles['introVideo-mockClip']].join(' ')}
+          className = {styles.introVideo}
           clips={[
             require('../assets/3d.mp4'),
             require('../assets/weavin.mp4'),
