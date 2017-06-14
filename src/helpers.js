@@ -18,7 +18,6 @@ export function computeXformDifference(startXform, endXform, percentage, easing,
 	const rotation =  endKeys.includes('rotation')? 'rotate(' + computeChange(startXform.rotation, endXform.rotation, percentage, easing) + 'deg)' : ''
 	const scale = endKeys.includes('scale')? 'scale(' + computeChange(startXform.scale, endXform.scale, percentage, easing) +')' : ''
 
-	console.log(translation, rotation, scale, 'scale')
 	return translation + ' ' + rotation + ' ' + scale //prescribed order might be problematic but fine for now
 	
 	// return 'translate3d(100px,25%,0) rotate(90deg) scale(2)'

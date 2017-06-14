@@ -13,8 +13,6 @@ import Work from './Work'
 
 @observer class App extends React.Component {
   logScroll(){
-    // console.log('scroll position')
-    // console.log(window.scrollY)
     store.scrollposition = window.scrollY
   }
 
@@ -112,7 +110,7 @@ class FixedTitleBlock extends React.Component {
 }
 
 Moballax.defaultProps = {
-    easing: easings.outCubic,
+    easing: easings.outCubic, //use false for linear
     translationUnits: 'px'
 }
 
