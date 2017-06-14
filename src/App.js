@@ -5,7 +5,7 @@ import {zipObject} from 'lodash'
 
 import styles from './Portfolio.css'
 import {JLPortfolioStore} from './Store'
-import {computeClipDifference, computeColorDifference} from './helpers.js'
+import {computeClipDifference, computeColorDifference, easings} from './helpers.js'
 
 import Intro from './Intro'
 import Work from './Work'
@@ -35,7 +35,7 @@ import Work from './Work'
         <Moballax
             className = {styles.fullWidth}
             yStart = {0}
-            yEnd = {300}
+            yEnd = {600}
             styleAtStart = {{clipPath: [[0,0],[100,0],[100,100],[0,100]]}}
             styleAtEnd = {{clipPath: [[47.5,0],[100,0],[100,100],[30,100]]}}
         >
@@ -55,7 +55,7 @@ class FixedTitleBlock extends React.Component {
         <div className = {styles.left}>
           <Moballax
                 yStart = {0} 
-                yEnd = {300} 
+                yEnd = {500} 
                 styleAtStart = {{color: [0,255,0]}} 
                 styleAtEnd = {{color: [255,0,0]}}
           >
@@ -79,8 +79,6 @@ class FixedTitleBlock extends React.Component {
   // and turned into inline style 
       //<Moballax yStart = {0} yEnd = {200} styleAtStart = {opacity: 0} styleAtEnd = {opacity: 1}>
   
-  //needs some logic for CSS transforms and clip-path and rgb(a)
-
   @computed get percentage(){
     return store.scrollposition > this.props.yStart && store.scrollposition < this.props.yEnd? 
       (store.scrollposition - this.props.yStart) / (this.props.yEnd - this.props.yStart)
@@ -99,7 +97,6 @@ class FixedTitleBlock extends React.Component {
         : allKeys[i]==='color'? computeColorDifference(startValues[i], val, this.percentage)
         : null
     })
-    // console.log(zipObject(allKeys, interpolatedValues))
     return zipObject(allKeys, interpolatedValues)
   }
   render(){
@@ -109,8 +106,10 @@ class FixedTitleBlock extends React.Component {
       </div>
     )
   }
+}
 
-  
+Moballax.defaultProps = {
+    easing: easings.outCubic
 }
 
 
