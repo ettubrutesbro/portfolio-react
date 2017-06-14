@@ -5,7 +5,7 @@ import {zipObject} from 'lodash'
 
 import styles from './Portfolio.css'
 import {JLPortfolioStore} from './Store'
-import {computeClipDifference, computeColorDifference, easings} from './helpers.js'
+import {computeClipDifference, computeColorDifference, computeXformDifference, easings} from './helpers.js'
 
 import Intro from './Intro'
 import Work from './Work'
@@ -36,8 +36,10 @@ import Work from './Work'
             className = {styles.fullWidth}
             yStart = {0}
             yEnd = {600}
-            styleAtStart = {{clipPath: [[0,0],[100,0],[100,100],[0,100]]}}
-            styleAtEnd = {{clipPath: [[47.5,0],[100,0],[100,100],[30,100]]}}
+            // styleAtStart = {{clipPath: [[0,0],[100,0],[100,100],[0,100]]}}
+            // styleAtEnd = {{clipPath: [[47.5,0],[100,0],[100,100],[30,100]]}
+            styleAtStart = {{transform: {x: 0, y: 0, scale: 1}, opacity: 0}}
+            styleAtEnd = {{transform: {x: 100, y: 100, scale: 2}, opacity: 1}}
         >
         <Intro store = {store}/>
         </Moballax>
@@ -78,6 +80,7 @@ class FixedTitleBlock extends React.Component {
   // % "through" the provided range gets multiplied by offset differences
   // and turned into inline style 
       //<Moballax yStart = {0} yEnd = {200} styleAtStart = {opacity: 0} styleAtEnd = {opacity: 1}>
+      //styleAtStart = {transform: {x:100, y:25, rotate:90, scale:2}}
   
   @computed get percentage(){
     return store.scrollposition > this.props.yStart && store.scrollposition < this.props.yEnd? 
@@ -92,9 +95,9 @@ class FixedTitleBlock extends React.Component {
     const endValues = Object.values(this.props.styleAtEnd)
     const interpolatedValues = endValues.map((val,i)=>{
       return allKeys[i]==='opacity'? (val - startValues[i]) * this.percentage
-        : allKeys[i]==='clipPath'? computeClipDifference(startValues[i], val, this.percentage)
-        : allKeys[i]===('translateX'||'translateY')? (val - startValues[i]) * this.percentage + 'px'
-        : allKeys[i]==='color'? computeColorDifference(startValues[i], val, this.percentage)
+        : allKeys[i]==='clipPath'? computeClipDifference(startValues[i], val, this.percentage, this.props.easing)
+        : allKeys[i]==='transform'? computeXformDifference(startValues[i], val, this.percentage, this.props.easing, this.props.translationUnits)
+        : allKeys[i]==='color'? computeColorDifference(startValues[i], val, this.percentage, this.props.easing)
         : null
     })
     return zipObject(allKeys, interpolatedValues)
@@ -109,7 +112,8 @@ class FixedTitleBlock extends React.Component {
 }
 
 Moballax.defaultProps = {
-    easing: easings.outCubic
+    easing: easings.outCubic,
+    translationUnits: 'px'
 }
 
 
