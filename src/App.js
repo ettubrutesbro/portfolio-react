@@ -34,12 +34,11 @@ import Work from './Work'
             className = {styles.fullWidth}
             yStart = {0}
             yEnd = {600}
-            // styleAtStart = {{clipPath: [[0,0],[100,0],[100,100],[0,100]]}}
-            // styleAtEnd = {{clipPath: [[47.5,0],[100,0],[100,100],[30,100]]}
-            styleAtStart = {{transform: {x: 0, y: 0, scale: 1}, opacity: 0}}
-            styleAtEnd = {{transform: {x: 100, y: 100, scale: 2}, opacity: 1}}
+            styleAtStart = {{transform: {x: 0} }}
+            styleAtEnd = {{transform: {x: 100} }}
+            // easing = {false}
         >
-        <Intro store = {store}/>
+        <Intro store = {store}/ >
         </Moballax>
         <Work store = {store}/>
         
