@@ -83,8 +83,8 @@ class FixedTitleBlock extends React.Component {
   @computed get percentage(){
     return store.scrollposition > this.props.yStart && store.scrollposition < this.props.yEnd? 
       (store.scrollposition - this.props.yStart) / (this.props.yEnd - this.props.yStart)
-      : store.scrollposition <= this.props.yStart? 0 //these are wrong 
-      : store.scrollposition >= this.props.yEnd? 1 //these are wrong 
+      : store.scrollposition <= this.props.yStart? 0 
+      : store.scrollposition >= this.props.yEnd? 1 
       : null
   }
   @computed get interpolatedStyle(){
