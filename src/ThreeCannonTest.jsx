@@ -45,11 +45,25 @@ export default class ThreeCannonTest extends React.Component{
                     //define COLLISION SHAPES
                         //loading manager down the road?
                         //recur through project JSON, which should carry unique params for colision boxes
-                            // new CANNON.Box(new CANNON.Vec3(0.5,0.5,0.5))
+                            //const boxShape = new CANNON.Box(new CANNON.Vec3(0.5,0.5,0.5))
+                    
+                    for(let i = 0; i< N; ++i){
+                        const boxBody = new CANNON.Body({ mass: x })
+                        boxBody.addShape(boxShape)
+                        boxBody.position.set(x, y, z)
+                        world.addBody(boxBody)
+                        bodies.push(boxBody)
+
+                        meshRefs.push((mesh)=> {
+                            if(mesh){
+                                mesh.userData._bodyIndex = i
+                                this.meshes.push(mesh)
+                            }
+                        })
+                    } //end recursion over project objects
+
 
                 }
-
-                
 
                 initCannon()
                 
@@ -57,9 +71,60 @@ export default class ThreeCannonTest extends React.Component{
                     // 1/60th second is the update interval
                 
                 const updatePhysics = () => {
-                    world.step(timeStep) // every timestep, advance one frame...? 
+                    world.step(timeStep) // every timestep, advance the world one frame...? 
                 }
-        */
 
+                const getMeshStates = () => bodies.map(({ position, quaternion }, bodyIndex) => ({
+                    position: new THREE.Vector3().copy(position),
+                    quaternion: new THREE.Quaternion().copy(quaternion),
+                    ref: meshRefs[bodyIndex],
+                }))
+                    //maps over CANNON bodies, and copies their positions / rotation data into
+                    //an array of new THREE objects (uses index for ref for react3)
+                        //being a const i guess this just runs once in the constructor?
+
+                this.onAnimate = () => {
+                    updatePhysics()
+                     this.setState({
+                        meshStates: _getMeshStates(), //use MOBX?
+                    })
+                }
+                 //why isn't this defined apart from the constructor?
+
+                 this.state = { 
+                    meshStates: _getMeshStates()
+                 }
+                // finally: this is the actual state instantiation within constructor
+
+                this.meshes = [] //why is meshes instantiated at end as empty...
+            
+        */
     }
+
+    componentDidMount(){
+        //mouse event stuff
+    }
+
+    componentDidUpdate(newProps) {
+        const { width, height } = this.props
+        if(width!== newProps.width || height !== newProps.height){
+            //if there are mouse interactions (yes there are) with THREE
+            //a function needs to be here for remapping input if window size
+            // changes
+            //  in the example, it was:
+                // mouseInput.containerResized()
+        }
+    }
+
+    componentWillUnmount(){
+        delete this.world
+    }
+
+    render(){
+        const {width, height } = this.props
+        //const { meshStates } = this.state
+            // do with mobx
+    }
+
+
 }
