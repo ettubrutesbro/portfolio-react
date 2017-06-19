@@ -13,7 +13,7 @@ import {computeClipDifference, computeColorDifference, computeXformDifference, e
 
 import Intro from './Intro'
 import Work from './Work'
-
+import ThreeOimoTest from './ThreeOimo'
 
 @observer class App extends React.Component {
   logScroll(){
@@ -45,6 +45,7 @@ import Work from './Work'
         <Intro store = {store}/ >
         </Moballax>
         <Work store = {store}/>
+        <ThreeOimoTest store = {store} />
         
       </div>
     )
@@ -120,6 +121,6 @@ Moballax.defaultProps = {
 
 
 const store = new JLPortfolioStore()
-window.jlstore = store
+window.app = store
 
 export default App;
