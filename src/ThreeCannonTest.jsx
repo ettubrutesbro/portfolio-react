@@ -10,11 +10,28 @@ export default class ThreeCannonTest extends React.Component{
         super(props, context)
 
         /*
-            React3: define constants:
-                fog, light positions, rotation quaternions
-                for ground & camera (unless latter is dynamic)
+            //React3: define constants:
+              //  fog, light positions, rotation quaternions
+               // for ground & camera (unless latter is dynamic)
 
-            Cannon: instantiate and initalize:
+                
+                    //these should be observables, huh? 
+                    //store will need to import THREE, though
+
+                const N = 20
+                this.fog = new THREE.Fog(0xffffff, 15, 30)
+                const d = 50 //light positioning constant
+
+                this.lightPosition = new THREE.Vector3(d, d, d)
+                this.lightTarget = new THREE.Vector3(0, 0, 0)
+                this.groundQuaternion = new THREE.Quaternion()
+                    .setFromAxisAngle(new THREE.Vector3(1, 0, 0), -Math.PI / 2)
+                this.cameraPosition = new THREE.Vector3(10, 2, 0)
+                this.cameraQuaternion = new THREE.Quaternion()
+                    .setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI / 2)
+
+
+            // Cannon: instantiate and initalize:
                 const world = new CANNON.World()
                     // world is the physics hub that manages objects and simulation.
                     
@@ -124,6 +141,63 @@ export default class ThreeCannonTest extends React.Component{
         const {width, height } = this.props
         //const { meshStates } = this.state
             // do with mobx
+
+        // iterate through meshStates (array with three objects that reflect cannon bodies)
+        // , map function returning mesh (example used PickableMesh)
+            const cubeMeshes = meshStates.map(({ position, quaternion }, i) => (
+                <mesh
+                    key = {i}
+                    position = {position}
+                    quaternion = {quaternion}
+                    bodyIndex = {i}
+                    meshes = {this.meshes} //???
+                />
+            ))
+        // 
+        return (
+            <div ref = "container">
+                <React3 
+                    antialias
+                    mainCamera = "camera"
+                    width = {width}
+                    height = {height}
+                    onAnimate = {this.onAnimate}
+                    // clearColor = {this.fog.color}
+                    gammaInput
+                    gammaOutput
+                >
+                    <resources>
+                        <boxGeometry
+                            resourceId = "cubeGeo"
+                            width = {1}
+                            height = {1}
+                            depth = {1}
+                            widthSegments = {1}
+                            heightSegments = {1}
+                        />
+                        <meshNormalMaterial
+                            resourceId = "cubeMaterial"
+                            color = {0x888888}
+                        />
+                    </resources>
+
+                    <scene
+                        ref = "scene"
+                        // fog = {this.fog}
+                    />
+                        <perspectiveCamera
+                            name = "camera"
+                            fov = {30}
+                            aspect = {width / height}
+                            near = {0.5}
+                            far = {100}
+                            position={this.cameraPosition}
+                            quaternion={this.cameraQuaternion}
+                            ref = "camera"
+                        />
+
+            </div> 
+        )
     }
 
 

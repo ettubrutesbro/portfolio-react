@@ -55,10 +55,7 @@ class Test extends React.Component{
   }
   render(){
     return(
-      <ProjectHeap
-        width = {1600}
-        height = {700}
-      />
+      <div />
     )
   }
 

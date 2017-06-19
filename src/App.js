@@ -3,9 +3,13 @@ import {observable, action, observe, computed} from 'mobx'
 import {observer} from 'mobx-react'
 import {zipObject} from 'lodash'
 
+
 import styles from './Portfolio.css'
+import projects from './data/projects'
 import {JLPortfolioStore} from './Store'
 import {computeClipDifference, computeColorDifference, computeXformDifference, easings} from './helpers.js'
+
+
 
 import Intro from './Intro'
 import Work from './Work'

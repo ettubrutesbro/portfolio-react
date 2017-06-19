@@ -2,8 +2,13 @@
 import {observable, computed} from 'mobx'
 import {observer} from 'mobx-react'
 import {flatMap} from 'lodash'
+import {projects} from './data/projects'
 
 class JLPortfolioStore{
+
+    @observable projects 
+
+    @observable activesection = null
     @observable scrollposition = 0
     @observable worktop = null
     @computed get userViewingWork(){ return this.scrollposition >= this.worktop }
