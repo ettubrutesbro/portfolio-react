@@ -2,47 +2,123 @@
 import React from 'react'
 import React3 from 'react-three-renderer'
 import * as THREE from 'three'
-
+import * as TWEEN from '@tweenjs/tween.js'
 import * as OIMO from 'oimo'
+
+// const TWEEN = require('@tweenjs/tween.js')
+
+import {observable} from 'mobx'
 
 console.log(OIMO)
 
 // const OIMO = require('oimo')
 
 export default class ThreeOimoTest extends React.Component{
+
+    @observable meshPosition = null
+
     constructor(props, context){
         super(props, context)
 
         const d = 50
         this.lightPosition = new THREE.Vector3(d, d, d)
         this.lightTarget = new THREE.Vector3(0, 0, 0)
-        this.groundQuaternion = new THREE.Quaternion()
-            .setFromAxisAngle(new THREE.Vector3(1, 0, 0), -Math.PI / 2)
+        
         this.cameraPosition = new THREE.Vector3(10, 2, 0)
         this.cameraQuaternion = new THREE.Quaternion()
             .setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI / 2)
 
-        const bodies = []
-
-        const ground = this.props.store.world.add({
-            size: [50, 10, 50], pos: [0, -5, 0], density: 1
+        const world = new OIMO.World({
+            // gravity: [0,0,0]
         })
 
-        this.props.store.physicsBodies[0] = this.props.store.world.add({
-            type: 'sphere', 
-            size: [0.5], 
-            pos: [0, 10, 0],
+        const ground = world.add({
+            size: [5, 10, 5], 
+            // rot: [-90, 0, 0],
+            pos: [0, -5, 0], 
+            density: 1,
+            friction: 1
+        })
+
+        const wallA = world.add({
+            size: [5,10,1],
+            // rot: [90, 0, 0],
+            pos: [0, 0, 2.5],
+            density: 1
+        })
+        const wallB = world.add({
+            size: [5,10,1],
+            // rot: [90, 0, 0],
+            pos: [0, 0, -2.5],
+            density: 1
+        })
+        const wallC = world.add({
+            size: [1,10,5],
+            pos: [2.5,0,0],
+            density: 1
+        })
+
+        this.wall1Quaternion = new THREE.Quaternion().copy(wallA.getQuaternion())
+        this.wall2Quaternion = new THREE.Quaternion().copy(wallB.getQuaternion())
+        this.wall1Position = new THREE.Vector3().copy(wallA.getPosition())
+        this.wall2Position = new THREE.Vector3().copy(wallB.getPosition())
+
+        this.groundQuaternion = new THREE.Quaternion()
+            .setFromAxisAngle(new THREE.Vector3(1, 0, 0), -Math.PI / 2)
+
+        const body = world.add({
+            type: 'box', 
+            size: [0.5,0.5,0.5], 
+            pos: [0, 5, 0],
             move: true,
-            world: this.props.store.world
+            world: world,
+            restitution: 1.05
         })
 
-        this.props.store.threeMeshes[0] = 
-            new THREE.Mesh(new THREE.BufferGeometry().fromGeometry(
-                new THREE.SphereGeometry(1,16,10)
-            ))
-        
+        const other = world.add({
+            type: 'box',
+            size: [1,1,1],
+            pos: [0.25, 10, -.25],
+            move: true,
+            world: world,
+
+            restitution: 0.01
+        })
 
 
+        this.onAnimate = () => {
+            world.step()
+            // this.meshPostion = new THREE.Vector3().copy(body.getPosition())
+            this.setState({
+                meshPosition: new THREE.Vector3().copy(body.getPosition()),
+                meshRotation: new THREE.Quaternion().copy(body.getQuaternion()),
+                otherPosition: new THREE.Vector3().copy(other.getPosition()),
+                otherRotation: new THREE.Quaternion().copy(other.getQuaternion())
+            })
+            // console.log(body.getPosition())
+            // console.log(this.meshPosition)
+        }
+
+
+        this.impulse = () => {
+            console.log(world.gravity)
+            world.setGravity([0,0,0])
+            body.applyImpulse(body.position, new THREE.Vector3(0,1,0))
+            body.linearVelocity.scaleEqual(0.5)
+            body.angularVelocity.scaleEqual(0.1)
+        }
+
+        this.state = {
+            meshPosition: new THREE.Vector3().copy(body.getPosition()),
+            otherPosition: new THREE.Vector3().copy(other.getPosition()),
+                meshRotation: new THREE.Quaternion().copy(body.getQuaternion()),
+
+                otherRotation: new THREE.Quaternion().copy(other.getQuaternion())
+        }
+
+    }
+
+    forceShit(){
 
     }
 
@@ -50,21 +126,26 @@ export default class ThreeOimoTest extends React.Component{
 
     }
 
-    onAnimate = () => {
-        const store = this.props.store
-            const world = this.props.store.world
-            if(world===null) return
-            world.step()
-        // console.log(store.physicsBodies)
+    // onAnimate = () => {
+    //     const store = this.props.store
+    //         const world = this.props.store.world
+    //         if(world===null) return
+    //         world.step()
+    //     // console.log(store.physicsBodies)
          
-            if(store.physicsBodies[0].sleeping) console.log('slep')
-            else{
-               console.log(store.physicsBodies[0].getPosition().y)
-                store.threeMeshes[0].position.copy(store.physicsBodies[0].getPosition())
-                store.threeMeshes[0].quaternion.copy(store.physicsBodies[0].getQuaternion())
-                console.log(store.threeMeshes[0].position)
-            }
-    }
+    //         if(store.physicsBodies[0].sleeping) console.log('slep')
+    //         else{
+    //            // console.log(store.physicsBodies[0].getPosition().y)
+    //             // store.threeMeshes[0].position.copy(store.physicsBodies[0].getPosition())
+    //             // store.threeMeshes[0].quaternion.copy(store.physicsBodies[0].getQuaternion())
+
+    //             // store.threeMeshes[0].position.set(store.physicsBodies[0].getPosition().x, store.physicsBodies[0].getPosition().y, store.physicsBodies[0].getPosition().z)
+    //             const what = store.physicsBodies[0].getPosition()
+    //             this.meshPosition = new THREE.Vector3().copy(what)
+    //             console.log(this.meshPosition)
+
+    //         }
+    // }
 
 
     render(){
@@ -89,21 +170,60 @@ export default class ThreeOimoTest extends React.Component{
 
                 <mesh quaternion = {this.groundQuaternion}>
                     <planeBufferGeometry
-                        width = {100}
-                        height = {100}
+                        width = {5}
+                        height = {5}
                     />
                     <meshBasicMaterial color = {0xff0000} />
                 </mesh>
+
                 <mesh 
-                    quaternion = {this.props.store.threeMeshes[0].quaternion}
-                    position = {this.props.store.threeMeshes[0].position} >
-
-                    <sphereGeometry
-                        radius = {0.5}
-
+                    position = {this.wall1Position}
+                    quaternion = {this.wall1Quaternion}
+                    >
+                    <boxGeometry
+                        width = {5}
+                        height = {10}
+                        depth = {1}
                     />
-                    <meshBasicMaterial color = {0x0000ff} />
+                    <meshBasicMaterial color = {0x5e5e5e} />
                 </mesh>
+
+                <mesh position = {this.wall2Position}
+                    quaternion = {this.wall2Quaternion}
+                    >
+                    <boxGeometry
+                        width = {5}
+                        height = {10}
+                        depth = {1}
+                        />
+                        <meshBasicMaterial color = {0x5e5e5e} />
+                </mesh>
+
+                <mesh 
+                    quaternion = {this.state.meshRotation}
+                    position = {this.state.meshPosition} 
+                    >
+
+                    <boxGeometry
+                        width = {0.5}
+                        height = {0.5}
+                        depth = {0.5}
+                    />
+                    <meshNormalMaterial color = {0x0000ff} />
+                </mesh>
+                <mesh
+                    quaternion = {this.state.otherRotation}
+                        position = {this.state.otherPosition}>
+                    
+                    <boxGeometry
+                        width = {1}
+                        height = {1}
+                        depth = {1}
+                    />
+                    <meshNormalMaterial />
+                </mesh>
+
+                
 
 
                 </scene>

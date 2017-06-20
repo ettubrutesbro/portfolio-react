@@ -25,12 +25,12 @@ class JLPortfolioStore{
     @computed get assetsReady(){ return !flatMap(this.loadcontent).includes(false) }
 
     @observable world = new OIMO.World({
-            timestep: 1/500,
-            iterations: 8,
-            broadphase: 2,
-            worldscale: 1,
-            random: true,
-            gravity: [0, -9.8, 0]
+            // timestep: 1/60,
+            // iterations: 8,
+            // broadphase: 2,
+            // worldscale: 1,
+            // random: true,
+            // gravity: [0, -3, 0]
         })
 
 
