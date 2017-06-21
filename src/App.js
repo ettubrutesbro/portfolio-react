@@ -5,7 +5,7 @@ import {zipObject} from 'lodash'
 
 
 import styles from './Portfolio.css'
-import projects from './data/projects'
+import {Projects }from './data/projects.js'
 import {JLPortfolioStore} from './Store'
 import {computeClipDifference, computeColorDifference, computeXformDifference, easings} from './helpers.js'
 
@@ -25,6 +25,7 @@ import ThreeOimoTest from './ThreeOimo'
   }
   render() {
     const assetsReady = store.assetsReady
+    console.log(Projects)
     //render either initialloader or portfolio depending on assetsReady
     return (
       <div 
@@ -45,7 +46,7 @@ import ThreeOimoTest from './ThreeOimo'
         <Intro store = {store}/ >
         </Moballax>
         <Work store = {store}/>
-        <ThreeOimoTest store = {store} />
+        <ThreeOimoTest store = {store} projects = {Projects} />
         
       </div>
     )

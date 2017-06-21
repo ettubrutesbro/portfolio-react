@@ -2,7 +2,7 @@
 import {observable, computed} from 'mobx'
 import {observer} from 'mobx-react'
 import {flatMap} from 'lodash'
-import {projects} from './data/projects'
+// import {projects} from './data/projects'
 import * as OIMO from 'oimo'
 
 class JLPortfolioStore{
@@ -23,13 +23,6 @@ class JLPortfolioStore{
         introvideo: false
     }
     @computed get assetsReady(){ return !flatMap(this.loadcontent).includes(false) }
-
-    @observable world = new OIMO.World()
-    @observable viewableSizingConstant = 8
-
-    @observable physicsBodies = []
-
-    @observable threeMeshes = []
 
 }
 
