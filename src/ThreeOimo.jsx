@@ -28,38 +28,41 @@ export default class ThreeOimoTest extends React.Component{
         this.cameraQuaternion = new THREE.Quaternion()
             .setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI / 2)
 
-        const world = new OIMO.World({
-            // gravity: [0,0,0]
-        })
+        const world = this.props.store.world
+        const sizeConstant = this.props.store.viewableSizingConstant 
 
         const ground = world.add({
-            size: [5, 10, 5], 
-            // rot: [-90, 0, 0],
+            size: [sizeConstant, 10, sizeConstant], 
             pos: [0, -5, 0], 
             density: 1,
-            friction: 1
+            friction: 0.3
         })
 
         const wallA = world.add({
-            size: [5,10,1],
+            size: [sizeConstant,10,1],
             // rot: [90, 0, 0],
-            pos: [0, 0, 2.5],
+            pos: [0, 0, sizeConstant/2],
             density: 1
         })
         const wallB = world.add({
-            size: [5,10,1],
+            size: [sizeConstant,10,1],
             // rot: [90, 0, 0],
-            pos: [0, 0, -2.5],
+            pos: [0, 0, -(sizeConstant/2)],
             density: 1
         })
         const wallC = world.add({
-            size: [1,10,5],
-            pos: [2.5,0,0],
+            size: [1,10,sizeConstant],
+            pos: [-(sizeConstant/2),0,0],
+            density: 1
+        })
+        const wallD = world.add({
+            size: [1,10,sizeConstant],
+            pos: [-3,0,0],
             density: 1
         })
 
-        this.wall1Quaternion = new THREE.Quaternion().copy(wallA.getQuaternion())
-        this.wall2Quaternion = new THREE.Quaternion().copy(wallB.getQuaternion())
+        // this.wall1Quaternion = new THREE.Quaternion().copy(wallA.getQuaternion())
+        // this.wall2Quaternion = new THREE.Quaternion().copy(wallB.getQuaternion())
         this.wall1Position = new THREE.Vector3().copy(wallA.getPosition())
         this.wall2Position = new THREE.Vector3().copy(wallB.getPosition())
 
@@ -72,7 +75,7 @@ export default class ThreeOimoTest extends React.Component{
             pos: [0, 5, 0],
             move: true,
             world: world,
-            restitution: 1.05
+            restitution: 0.1
         })
 
         const other = world.add({
@@ -82,7 +85,7 @@ export default class ThreeOimoTest extends React.Component{
             move: true,
             world: world,
 
-            restitution: 0.01
+            restitution: 0.1
         })
 
 
@@ -118,10 +121,6 @@ export default class ThreeOimoTest extends React.Component{
 
     }
 
-    forceShit(){
-
-    }
-
     componentDidMount(){
 
     }
@@ -149,6 +148,9 @@ export default class ThreeOimoTest extends React.Component{
 
 
     render(){
+
+        const sizeConstant = this.props.store.viewableSizingConstant
+
         return(
             <React3 
                 mainCamera = "camera"
@@ -170,8 +172,8 @@ export default class ThreeOimoTest extends React.Component{
 
                 <mesh quaternion = {this.groundQuaternion}>
                     <planeBufferGeometry
-                        width = {5}
-                        height = {5}
+                        width = {sizeConstant}
+                        height = {sizeConstant}
                     />
                     <meshBasicMaterial color = {0xff0000} />
                 </mesh>
@@ -181,7 +183,7 @@ export default class ThreeOimoTest extends React.Component{
                     quaternion = {this.wall1Quaternion}
                     >
                     <boxGeometry
-                        width = {5}
+                        width = {sizeConstant}
                         height = {10}
                         depth = {1}
                     />
@@ -192,7 +194,7 @@ export default class ThreeOimoTest extends React.Component{
                     quaternion = {this.wall2Quaternion}
                     >
                     <boxGeometry
-                        width = {5}
+                        width = {sizeConstant}
                         height = {10}
                         depth = {1}
                         />

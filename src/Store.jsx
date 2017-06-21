@@ -24,15 +24,8 @@ class JLPortfolioStore{
     }
     @computed get assetsReady(){ return !flatMap(this.loadcontent).includes(false) }
 
-    @observable world = new OIMO.World({
-            // timestep: 1/60,
-            // iterations: 8,
-            // broadphase: 2,
-            // worldscale: 1,
-            // random: true,
-            // gravity: [0, -3, 0]
-        })
-
+    @observable world = new OIMO.World()
+    @observable viewableSizingConstant = 8
 
     @observable physicsBodies = []
 
