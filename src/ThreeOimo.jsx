@@ -8,6 +8,7 @@ import * as OIMO from 'oimo'
 // const TWEEN = require('@tweenjs/tween.js')
 
 import {observable} from 'mobx'
+import {observer} from 'mobx-react'
 
 console.log(OIMO)
 
