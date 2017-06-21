@@ -2,28 +2,36 @@ const Projects = [
     {
         name: 'sendbloom',
         debugCubeColor: 0xff0000,
-        debugModel: true
+        debugModel: true,
     },
     {
         name: 'origami logic',
         debugCubeColor: 0x00ff00,
-        debugModel: true
+        debugModel: true,
+        physicsModel: {
+            types: ['box'],
+            sizes: [2,2,2],
+            positions: [0,0,0]
+        }
     },
     {
         name: 'seseme',
+        physicsModel: {
+            // types: ['sphere'],
+            // sizes: [1],
+            // positions: [0,0,0]
+            types:        ['box',           'box'],
+            sizes:        [1.25,1.25,1.25,     1,1,1],
+            positions:    [0,0,0,           0,2,0]
+        },
         debugCubeColor: 0x0000ff,
-        debugModel: true
+        debugModel: true,
     },
     {},
     {},
     {},
     {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
+
 
 ]
 

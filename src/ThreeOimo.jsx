@@ -17,6 +17,7 @@ import {observer} from 'mobx-react'
     })
     @observable bodies = []
     @observable meshes = []
+    @observable physicsMeshes = []
     @observable viewableSizingConstant = 8
 
 
@@ -71,23 +72,30 @@ import {observer} from 'mobx-react'
         //     return this.world
         // })
 
-        for(var i = 0; i<props.projects.length; i++){
+        props.projects.forEach((project, i)=>{
+            console.log(project)
+
+            const model = project.physicsModel || {types: ['box'], sizes: [1,1,1], positions: [0,0,0]}
+
             this.bodies[i] = this.world.add({
-                type: 'box', 
-                size: [1.25,1.25,1.25], 
+                //per-project hardcoded (projects.js) physicsModel
+                type: model.types,
+                size: model.sizes,
+                posShape: model.positions,
+                density: model.density || 1,
+                restitution: model.restitution || 0.001,
+                //random / programmatic for scene purposes
                 pos: [Math.random()-0.5, 6+(i*1.5), (Math.random()*2)],
                 rot: [Math.random()*90, (Math.random()*90)-45, Math.random()*90],
                 move: true,
-                world: world,
-                restitution: 0.001,
-                density: 0.5
+                world: world
             })
-            // this.bodies[i] = body
+
             this.meshes[i] = {
                 position: new THREE.Vector3().copy(this.bodies[i].getPosition()), 
                 rotation: new THREE.Quaternion().copy(this.bodies[i].getQuaternion())
             }
-        }
+        })
     }
 
     animate = () =>{
@@ -106,17 +114,20 @@ import {observer} from 'mobx-react'
 
 
         const sizeConstant = this.viewableSizingConstant
-        const projectMeshes = this.meshes.map((mesh)=>{
+
+        const projectMeshes = this.meshes.map((mesh, i)=>{
             return(
                 <mesh
+                        key = {'projectmesh'+i}
                         position = {mesh.position}
                         quaternion = {mesh.rotation}>
                      <boxGeometry
+                        key = {'projectgeo'+i}
                         width = {1}
                         height = {1}
                         depth = {1}
                     />
-                    <meshNormalMaterial  />
+                    <meshNormalMaterial key = {'projectmtl'+i}/>
                 </mesh>
             )
         })
@@ -127,12 +138,12 @@ import {observer} from 'mobx-react'
                 width = {1400}
                 height = {700}
                 onAnimate = {this.animate}
-                antialias
+                // antialias
             >
                 <scene>
                 <perspectiveCamera 
                     name = "camera"
-                    fov = {22}
+                    fov = {30}
                     aspect = {1400/700}
                     near = {0.5}
                     far = {100}
@@ -182,4 +193,8 @@ import {observer} from 'mobx-react'
             </React3>
         )
     }
+}
+
+ThreeOimoTest.defaultProps = {
+    debugModels: true
 }
