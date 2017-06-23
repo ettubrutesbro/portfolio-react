@@ -39,7 +39,7 @@ class ThreePhysicsStore{
     @observable world = new World({
         // broadphase: 3
     })
-    @observable bodies = []
+    @observable bodies = {}
     @observable meshes = []
     @observable physicsMeshes = []
     @observable viewableSizingConstant = 8

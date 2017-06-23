@@ -14,7 +14,6 @@ import {Debug, ThreePhysicsStore} from './Store'
 
 @observer export default class ThreeOimoTest extends React.Component{
 
-
     constructor(props, context){
         super(props, context)
 
@@ -33,7 +32,9 @@ import {Debug, ThreePhysicsStore} from './Store'
             size: [sizeConstant, 10, sizeConstant], 
             pos: [0, -5, 0], 
             density: 1,
-            friction: 0.3
+            friction: 0.3,
+            belongsTo: canvas.belongsToBackWall,
+            collidesWith: canvas.collidesWithAll & ~canvas.noCollisionsWithBackWall
         })
 
         canvas.wallLeft = world.add({
@@ -80,15 +81,20 @@ import {Debug, ThreePhysicsStore} from './Store'
                 type: model.types,
                 size: model.sizes,
                 posShape: model.positions,
-                density: model.density || 1,
-                restitution: model.restitution || 0.001,
+                // density: model.density || 1,
+                // restitution: model.restitution || 0.001,
                 //random / programmatic for scene purposes
                 pos: [0, 6+(i*1.5), (Math.random()*2)],
                 rot: [0, 0, 0],
                 move: true,
                 world: world,
-                belongsTo: canvas.normalCollisions,
-                collidesWith: canvas.collidesWithAll
+                collidesWith: canvas.belongsToBackWall
+            })
+            Object.defineProperty(canvas.bodies[project.name].shapes, 'belongsTo', {
+                // value: [canvas.noCollisionsWithBackWall, canvas.noCollisionsWithBackWall],
+                // value: canvas.normalCollisions,
+                // value: [canvas.noCollisionsWithBackWall, canvas.noCollisionsWithBackWall],
+                writable: true
             })
 
             canvas.meshes[i] = {
@@ -126,6 +132,16 @@ import {Debug, ThreePhysicsStore} from './Store'
             }
             
         }
+    }
+
+    planeCollisionOff = (body) => {
+
+    }
+
+    testImpulse = (body) => {
+        body.applyImpulse(body.position, new THREE.Vector3(0,13,0))
+        body.linearVelocity.scaleEqual(0.8)
+        body.angularVelocity.scaleEqual(0.2)
     }
 
     render(){
