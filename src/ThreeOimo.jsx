@@ -95,6 +95,12 @@ import {observer} from 'mobx-react'
                 position: new THREE.Vector3().copy(this.bodies[i].getPosition()), 
                 rotation: new THREE.Quaternion().copy(this.bodies[i].getQuaternion())
             }
+
+            //debugModels?
+            //map through model types. 
+            //let array
+            this.physicsMeshes[i] = {type: }
+
         })
     }
 
@@ -117,10 +123,16 @@ import {observer} from 'mobx-react'
 
         const projectMeshes = this.meshes.map((mesh, i)=>{
             return(
-                <mesh
-                        key = {'projectmesh'+i}
+                <group
+                        key = {'projectgroup'+i}
                         position = {mesh.position}
                         quaternion = {mesh.rotation}>
+
+                    <mesh key = {'physicsmesh'+i}>
+                    
+                    </mesh>
+
+                    <mesh key = {'projectmesh'+i}>
                      <boxGeometry
                         key = {'projectgeo'+i}
                         width = {1}
@@ -128,7 +140,8 @@ import {observer} from 'mobx-react'
                         depth = {1}
                     />
                     <meshNormalMaterial key = {'projectmtl'+i}/>
-                </mesh>
+                    </mesh>
+                </group>
             )
         })
 
