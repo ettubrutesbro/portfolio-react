@@ -3,7 +3,7 @@ import {observable, computed} from 'mobx'
 import {observer} from 'mobx-react'
 import {flatMap} from 'lodash'
 // import {projects} from './data/projects'
-import * as OIMO from 'oimo'
+import {World} from 'oimo'
 
 class JLPortfolioStore{
 
@@ -27,15 +27,31 @@ class JLPortfolioStore{
 }
 
 class Debug{
-    @observable walls = true
-    @observable lights = true
+    @observable walls = false
+    @observable amblight = true
+    @observable spotlight = true
     @observable runWorld = true
+    @observable physicsMeshes = true
     @observable fps = true
 }
 
 class ThreePhysicsStore{
+    @observable world = new World({
+        broadphase: 3
+    })
+    @observable bodies = []
+    @observable meshes = []
+    @observable physicsMeshes = []
+    @observable viewableSizingConstant = 8
 
+    //SCARY COLLISION HEX SHIT???
+    //belongsTo collision hexes
+    @observable belongsToBackWall = 1 << 0
+    @observable noCollisionsWithBackWall = 1 << 1
+    @observable normalCollisions = 1 << 2
+    //collidesWith hexes
+    @observable collidesWithAll = 0xffffffff
 }
 
-export {JLPortfolioStore, Debug}
+export {JLPortfolioStore, Debug, ThreePhysicsStore}
 

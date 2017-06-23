@@ -1,71 +1,67 @@
-
+//core
 import React from 'react'
 import React3 from 'react-three-renderer'
+import {observable} from 'mobx'
+import {observer} from 'mobx-react'
+//component-specific
 import * as THREE from 'three'
 // import * as TWEEN from '@tweenjs/tween.js'
 import * as OIMO from 'oimo'
+import {FPSStats} from 'react-stats'
 
-import {Debug} from './Store'
-
-import {observable} from 'mobx'
-import {observer} from 'mobx-react'
+//my stuff
+import {Debug, ThreePhysicsStore} from './Store'
 
 @observer export default class ThreeOimoTest extends React.Component{
-
-    @observable world = new OIMO.World({
-        // broadphase: 3 //3 seems to get rid of jiggling but perf unknown
-    })
-    @observable bodies = []
-    @observable meshes = []
-    @observable physicsMeshes = []
-    @observable viewableSizingConstant = 8
 
 
     constructor(props, context){
         super(props, context)
 
         const d = 50
-        this.lightPosition = new THREE.Vector3(d, d, d)
-        this.lightTarget = new THREE.Vector3(0, 0, 0)
+        this.lightPosition = new THREE.Vector3(0, 10, 0)
+        this.lightTarget = new THREE.Vector3(0, 2, 0)
         
         this.cameraPosition = new THREE.Vector3(10, 2, 0)
         this.cameraQuaternion = new THREE.Quaternion()
             .setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI / 2)
 
-        const world = this.world
-        const sizeConstant = this.viewableSizingConstant 
+        const world = canvas.world
+        const sizeConstant = canvas.viewableSizingConstant 
 
-        const ground = world.add({
+        canvas.ground = world.add({
             size: [sizeConstant, 10, sizeConstant], 
             pos: [0, -5, 0], 
             density: 1,
             friction: 0.3
         })
 
-        const wallA = world.add({
+        canvas.wallLeft = world.add({
             size: [sizeConstant,100,1],
             pos: [0, 0, sizeConstant/2],
             density: 1
         })
-        const wallB = world.add({
+        canvas.wallRight = world.add({
             size: [sizeConstant,100,1],
             pos: [0, 0, -(sizeConstant/2)],
             density: 1
         })
-        const wallC = world.add({
+        canvas.wallBack = world.add({
             size: [1,100,sizeConstant],
             pos: [-3,0,0],
-            density: 1
+            density: 1,
+            belongsTo: 1,
+            // collidesWith: allCollisions & ~noCollideWithBackWall
         })
-        const wallD = world.add({
+        canvas.wallFront = world.add({
             size: [1,100,sizeConstant],
             pos: [.5,0,0],
             density: 1
         })
-        this.wallPositionLeft = new THREE.Vector3().copy(wallA.getPosition())
-        this.wallPositionRight = new THREE.Vector3().copy(wallB.getPosition())
-        this.wallPositionBack = new THREE.Vector3().copy(wallC.getPosition())
-        this.wallPositionFront = new THREE.Vector3().copy(wallD.getPosition())
+        this.wallPositionLeft = new THREE.Vector3().copy(canvas.wallLeft.getPosition())
+        this.wallPositionRight = new THREE.Vector3().copy(canvas.wallRight.getPosition())
+        this.wallPositionBack = new THREE.Vector3().copy(canvas.wallBack.getPosition())
+        this.wallPositionFront = new THREE.Vector3().copy(canvas.wallFront.getPosition())
 
         this.groundQuaternion = new THREE.Quaternion()
             .setFromAxisAngle(new THREE.Vector3(1, 0, 0), -Math.PI / 2)
@@ -79,7 +75,7 @@ import {observer} from 'mobx-react'
 
             const model = project.physicsModel || {types: ['box'], sizes: [1,1,1], positions: [0,0,0]}
 
-            this.bodies[i] = this.world.add({
+            canvas.bodies[i] = canvas.world.add({
                 //per-project hardcoded (projects.js) physicsModel
                 type: model.types,
                 size: model.sizes,
@@ -93,15 +89,15 @@ import {observer} from 'mobx-react'
                 world: world
             })
 
-            this.meshes[i] = {
-                position: new THREE.Vector3().copy(this.bodies[i].getPosition()), 
-                rotation: new THREE.Quaternion().copy(this.bodies[i].getQuaternion())
+            canvas.meshes[i] = {
+                position: new THREE.Vector3().copy(canvas.bodies[i].getPosition()), 
+                rotation: new THREE.Quaternion().copy(canvas.bodies[i].getQuaternion())
             }
 
             //debugModels?
             //map through model types. 
             //let array
-            this.physicsMeshes[i] = model.types.map((type, it)=>{
+            canvas.physicsMeshes[i] = model.types.map((type, it)=>{
                 const n = it*3
                 return {
                     geo: type, 
@@ -110,21 +106,20 @@ import {observer} from 'mobx-react'
                     color: model.debugColor || 0x888888
                 }
             })
-            console.log(this.physicsMeshes[i])
+            // console.log(this.physicsMeshes[i])
 
         })
     }
 
     animate = () =>{
         if(debug.runWorld){
-            this.world.step()
+            canvas.world.step()
         }
         
-
         for(var i = 0; i<this.props.projects.length; i++){
-            if(!this.bodies[i].sleeping){
-                this.meshes[i].position = new THREE.Vector3().copy(this.bodies[i].getPosition())
-                this.meshes[i].rotation = new THREE.Quaternion().copy(this.bodies[i].getQuaternion())
+            if(!canvas.bodies[i].sleeping){
+                canvas.meshes[i].position = new THREE.Vector3().copy(canvas.bodies[i].getPosition())
+                canvas.meshes[i].rotation = new THREE.Quaternion().copy(canvas.bodies[i].getQuaternion())
             }
             
         }
@@ -132,17 +127,16 @@ import {observer} from 'mobx-react'
 
     render(){
 
+        const sizeConstant = canvas.viewableSizingConstant
 
-        const sizeConstant = this.viewableSizingConstant
-
-        const projectMeshes = this.meshes.map((mesh, i)=>{
+        const projectMeshes = canvas.meshes.map((mesh, i)=>{
             return(
                 <group
                         key = {'project'+i+'group'}
                         position = {mesh.position}
                         quaternion = {mesh.rotation}>
-                    {
-                    this.physicsMeshes[i].map((mesh, it)=>{
+                    {debug.physicsMeshes && 
+                    canvas.physicsMeshes[i].map((mesh, it)=>{
                         const geo = mesh.geo === 'box'? ( <boxGeometry width = {mesh.size.w} height = {mesh.size.h} depth = {mesh.size.d} /> )
                         : mesh.geo === 'sphere'? ( <sphereGeometry radius = {mesh.size.r} widthSegments = {8} heightSegments = {8}/>  )
                         : <boxGeometry width = {0.1} height = {0.1} depth = {0.1} />
@@ -151,7 +145,7 @@ import {observer} from 'mobx-react'
                             <mesh key = {'project'+i+'-physicsmesh'+it}
                                     position = {new THREE.Vector3(mesh.pos.x, mesh.pos.y, mesh.pos.z)} >
                                 {geo}
-                                <meshBasicMaterial key = {'project'+i+'physicsmtl'+it} color = {mesh.color} transparent opacity = {0.6}/>
+                                <meshBasicMaterial color = {mesh.color} key = {'project'+i+'physicsmtl'+it} transparent opacity = {0.4} />
                             </mesh>
                         )
                     })
@@ -163,6 +157,8 @@ import {observer} from 'mobx-react'
         })
 
         return(
+            <div> 
+            { debug.fps && <FPSStats />}
             <React3 
                 mainCamera = "camera"
                 width = {1400}
@@ -181,7 +177,18 @@ import {observer} from 'mobx-react'
                     quaternion = {this.cameraQuaternion}
                     ref = "camera"
                 />
-
+                {debug.amblight &&
+                    <ambientLight color = {0xffffff} />
+                }
+                {debug.spotlight &&
+                    <directionalLight 
+                        color = {0xffffff}
+                        intensity = {1.75}
+                        // castShadow
+                        position = {this.lightPosition}
+                        lookAt = {this.lightTarget}
+                    />
+                }
                 {debug.walls && 
                 <group>
                     <mesh quaternion = {this.groundQuaternion}>
@@ -246,12 +253,15 @@ import {observer} from 'mobx-react'
                 </scene>
 
             </React3>
+            </div>
         )
     }
 }
 
 const debug = new Debug()
 window.debug = debug
+const canvas = new ThreePhysicsStore()
+window.world = canvas
 
 ThreeOimoTest.defaultProps = {
     debugModels: true

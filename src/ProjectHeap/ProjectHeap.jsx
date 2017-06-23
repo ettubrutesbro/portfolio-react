@@ -401,7 +401,7 @@ class ProjectHeap extends React.Component {
             ref="camera"
           />
           <ambientLight
-            color={0xfff}
+            color={0xffffff}
           />
           
           <mesh
