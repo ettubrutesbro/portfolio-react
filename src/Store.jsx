@@ -30,6 +30,7 @@ class Debug{
     @observable walls = true
     @observable lights = true
     @observable runWorld = true
+    @observable fps = true
 }
 
 class ThreePhysicsStore{
