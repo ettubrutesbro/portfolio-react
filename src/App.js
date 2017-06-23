@@ -3,13 +3,17 @@ import {observable, action, observe, computed} from 'mobx'
 import {observer} from 'mobx-react'
 import {zipObject} from 'lodash'
 
+
 import styles from './Portfolio.css'
+import {Projects }from './data/projects.js'
 import {JLPortfolioStore} from './Store'
 import {computeClipDifference, computeColorDifference, computeXformDifference, easings} from './helpers.js'
 
+
+
 import Intro from './Intro'
 import Work from './Work'
-
+import ThreeOimoTest from './ThreeOimo'
 
 @observer class App extends React.Component {
   logScroll(){
@@ -21,6 +25,7 @@ import Work from './Work'
   }
   render() {
     const assetsReady = store.assetsReady
+    console.log(Projects)
     //render either initialloader or portfolio depending on assetsReady
     return (
       <div 
@@ -34,14 +39,14 @@ import Work from './Work'
             className = {styles.fullWidth}
             yStart = {0}
             yEnd = {600}
-            // styleAtStart = {{clipPath: [[0,0],[100,0],[100,100],[0,100]]}}
-            // styleAtEnd = {{clipPath: [[47.5,0],[100,0],[100,100],[30,100]]}
-            styleAtStart = {{transform: {x: 0, y: 0, scale: 1}, opacity: 0}}
-            styleAtEnd = {{transform: {x: 100, y: 100, scale: 2}, opacity: 1}}
+            styleAtStart = {{transform: {x: 0} }}
+            styleAtEnd = {{transform: {x: 100} }}
+            // easing = {false}
         >
-        <Intro store = {store}/>
+        <Intro store = {store}/ >
         </Moballax>
         <Work store = {store}/>
+        <ThreeOimoTest store = {store} projects = {Projects} />
         
       </div>
     )
@@ -117,6 +122,6 @@ Moballax.defaultProps = {
 
 
 const store = new JLPortfolioStore()
-window.jlstore = store
+window.app = store
 
 export default App;

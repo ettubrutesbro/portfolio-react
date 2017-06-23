@@ -3,7 +3,8 @@ import {findDOMNode} from 'react-dom'
 import {action, observable} from 'mobx'
 // import {observer} from 'mobx-react'
 
-import p2 from 'p2'
+// import p2 from 'p2'
+import ProjectHeap from './ProjectHeap/ProjectHeap'
 
 import styles from './Work.css'
 
@@ -18,13 +19,13 @@ export default class Work extends React.Component {
       return(
           <section ref = "section" className = {styles.work}>
             <h2 className = {styles.titleblock} >My Work 2011-2017</h2>
-            <ProjectHeap />
+            <Test />
           </section>
         )
       }
 }
 
-class ProjectHeap extends React.Component{
+class Test extends React.Component{
   //p2.js or matter.js for physics
   //react-konva, react-pixi or react-canvas for rendering
 
@@ -54,11 +55,7 @@ class ProjectHeap extends React.Component{
   }
   render(){
     return(
-    <div>
-    fuckyou
-    <canvas id = "myCanvas" width = "500" height = "500">
-    </canvas>
-    </div>
+      <div />
     )
   }
 
