@@ -50,8 +50,8 @@ import {Debug, ThreePhysicsStore} from './Store'
             size: [1,100,sizeConstant],
             pos: [-3,0,0],
             density: 1,
-            belongsTo: 1,
-            // collidesWith: allCollisions & ~noCollideWithBackWall
+            belongsTo: canvas.belongsToBackWall,
+            collidesWith: canvas.collidesWithAll & ~canvas.noCollisionsWithBackWall
         })
         canvas.wallFront = world.add({
             size: [1,100,sizeConstant],
@@ -83,29 +83,30 @@ import {Debug, ThreePhysicsStore} from './Store'
                 density: model.density || 1,
                 restitution: model.restitution || 0.001,
                 //random / programmatic for scene purposes
-                pos: [Math.random()-0.5, 6+(i*1.5), (Math.random()*2)],
-                rot: [Math.random()*90, 0, Math.random()*90],
+                pos: [0, 6+(i*1.5), (Math.random()*2)],
+                rot: [0, 0, 0],
                 move: true,
-                world: world
+                world: world,
+                belongsTo: canvas.normalCollisions,
+                collidesWith: canvas.collidesWithAll
             })
 
             canvas.meshes[i] = {
                 position: new THREE.Vector3().copy(canvas.bodies[i].getPosition()), 
                 rotation: new THREE.Quaternion().copy(canvas.bodies[i].getQuaternion())
             }
-
-            //debugModels?
-            //map through model types. 
-            //let array
-            canvas.physicsMeshes[i] = model.types.map((type, it)=>{
-                const n = it*3
-                return {
-                    geo: type, 
-                    pos: {x: model.positions[n+0], y: model.positions[n+1], z: model.positions[n+2]},
-                    size: {w: model.sizes[n+0], h: model.sizes[n+1], d: model.sizes[n+2], r: model.sizes[n+0]},
-                    color: model.debugColor || 0x888888
-                }
-            })
+            if(debug.physicsMeshes){
+                canvas.physicsMeshes[i] = model.types.map((type, it)=>{
+                    const n = it*3
+                    return {
+                        geo: type, 
+                        pos: {x: model.positions[n+0], y: model.positions[n+1], z: model.positions[n+2]},
+                        size: {w: model.sizes[n+0], h: model.sizes[n+1], d: model.sizes[n+2], r: model.sizes[n+0]},
+                        color: model.debugColor || 0x888888
+                    }
+                })
+            }
+            
             // console.log(this.physicsMeshes[i])
 
         })
@@ -246,9 +247,6 @@ import {Debug, ThreePhysicsStore} from './Store'
                 }
 
                 {projectMeshes}
-
-                
-
 
                 </scene>
 
