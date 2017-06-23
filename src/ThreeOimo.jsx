@@ -75,7 +75,7 @@ import {Debug, ThreePhysicsStore} from './Store'
 
             const model = project.physicsModel || {types: ['box'], sizes: [1,1,1], positions: [0,0,0]}
 
-            canvas.bodies[i] = canvas.world.add({
+            canvas.bodies[project.name] = canvas.world.add({
                 //per-project hardcoded (projects.js) physicsModel
                 type: model.types,
                 size: model.sizes,
@@ -92,8 +92,8 @@ import {Debug, ThreePhysicsStore} from './Store'
             })
 
             canvas.meshes[i] = {
-                position: new THREE.Vector3().copy(canvas.bodies[i].getPosition()), 
-                rotation: new THREE.Quaternion().copy(canvas.bodies[i].getQuaternion())
+                position: new THREE.Vector3().copy(canvas.bodies[project.name].getPosition()), 
+                rotation: new THREE.Quaternion().copy(canvas.bodies[project.name].getQuaternion())
             }
             if(debug.physicsMeshes){
                 canvas.physicsMeshes[i] = model.types.map((type, it)=>{
@@ -116,11 +116,13 @@ import {Debug, ThreePhysicsStore} from './Store'
         if(debug.runWorld){
             canvas.world.step()
         }
-        
+        const projects = this.props.projects
+
         for(var i = 0; i<this.props.projects.length; i++){
-            if(!canvas.bodies[i].sleeping){
-                canvas.meshes[i].position = new THREE.Vector3().copy(canvas.bodies[i].getPosition())
-                canvas.meshes[i].rotation = new THREE.Quaternion().copy(canvas.bodies[i].getQuaternion())
+            const name = projects[i].name
+            if(!canvas.bodies[name].sleeping){
+                canvas.meshes[i].position = new THREE.Vector3().copy(canvas.bodies[name].getPosition())
+                canvas.meshes[i].rotation = new THREE.Quaternion().copy(canvas.bodies[name].getQuaternion())
             }
             
         }

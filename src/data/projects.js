@@ -20,7 +20,7 @@ const Projects = [
         name: 'seseme',
         physicsModel: {
             types:        ['box', 'box',           'box'],
-            sizes:        [1.25,.25,1.25,      1,1,1,     .75,1,.75],
+            sizes:        [1.15,.25,1.15,      .9,1,.9,     .8,1,.8],
             positions:    [0,-.75,0,      0,-.25,0,           0,.75,0],
             debugColor: 0xff0000
         },
