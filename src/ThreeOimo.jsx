@@ -137,16 +137,16 @@ import {Debug, ThreePhysicsStore} from './Store'
                         position = {mesh.position}
                         quaternion = {mesh.rotation}>
                     {debug.physicsMeshes && 
-                    canvas.physicsMeshes[i].map((mesh, it)=>{
-                        const geo = mesh.geo === 'box'? ( <boxGeometry width = {mesh.size.w} height = {mesh.size.h} depth = {mesh.size.d} /> )
-                        : mesh.geo === 'sphere'? ( <sphereGeometry radius = {mesh.size.r} widthSegments = {8} heightSegments = {8}/>  )
+                    canvas.physicsMeshes[i].map((pmesh, it)=>{
+                        const geo = pmesh.geo === 'box'? ( <boxGeometry width = {pmesh.size.w} height = {pmesh.size.h} depth = {pmesh.size.d} /> )
+                        : pmesh.geo === 'sphere'? ( <sphereGeometry radius = {pmesh.size.r} widthSegments = {8} heightSegments = {8}/>  )
                         : <boxGeometry width = {0.1} height = {0.1} depth = {0.1} />
 
                         return (
                             <mesh key = {'project'+i+'-physicsmesh'+it}
-                                    position = {new THREE.Vector3(mesh.pos.x, mesh.pos.y, mesh.pos.z)} >
+                                    position = {new THREE.Vector3(pmesh.pos.x, pmesh.pos.y, pmesh.pos.z)} >
                                 {geo}
-                                <meshBasicMaterial color = {mesh.color} key = {'project'+i+'physicsmtl'+it} transparent opacity = {0.4} />
+                                <meshBasicMaterial color = {pmesh.color} key = {'project'+i+'physicsmtl'+it} transparent opacity = {0.4} />
                             </mesh>
                         )
                     })

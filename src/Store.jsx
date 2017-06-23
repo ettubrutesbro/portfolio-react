@@ -37,7 +37,7 @@ class Debug{
 
 class ThreePhysicsStore{
     @observable world = new World({
-        broadphase: 3
+        // broadphase: 3
     })
     @observable bodies = []
     @observable meshes = []
