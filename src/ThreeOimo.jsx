@@ -5,13 +5,13 @@ import * as THREE from 'three'
 // import * as TWEEN from '@tweenjs/tween.js'
 import * as OIMO from 'oimo'
 
+import {Debug} from './Store'
 
 import {observable} from 'mobx'
 import {observer} from 'mobx-react'
 
 @observer export default class ThreeOimoTest extends React.Component{
 
-    @observable meshPosition = null
     @observable world = new OIMO.World({
         // broadphase: 3 //3 seems to get rid of jiggling but perf unknown
     })
@@ -54,7 +54,7 @@ import {observer} from 'mobx-react'
         })
         const wallC = world.add({
             size: [1,100,sizeConstant],
-            pos: [-2.5,0,0],
+            pos: [-3,0,0],
             density: 1
         })
         const wallD = world.add({
@@ -62,8 +62,10 @@ import {observer} from 'mobx-react'
             pos: [.5,0,0],
             density: 1
         })
-        this.wall1Position = new THREE.Vector3().copy(wallA.getPosition())
-        this.wall2Position = new THREE.Vector3().copy(wallB.getPosition())
+        this.wallPositionLeft = new THREE.Vector3().copy(wallA.getPosition())
+        this.wallPositionRight = new THREE.Vector3().copy(wallB.getPosition())
+        this.wallPositionBack = new THREE.Vector3().copy(wallC.getPosition())
+        this.wallPositionFront = new THREE.Vector3().copy(wallD.getPosition())
 
         this.groundQuaternion = new THREE.Quaternion()
             .setFromAxisAngle(new THREE.Vector3(1, 0, 0), -Math.PI / 2)
@@ -86,7 +88,7 @@ import {observer} from 'mobx-react'
                 restitution: model.restitution || 0.001,
                 //random / programmatic for scene purposes
                 pos: [Math.random()-0.5, 6+(i*1.5), (Math.random()*2)],
-                rot: [Math.random()*90, (Math.random()*90)-45, Math.random()*90],
+                rot: [Math.random()*90, 0, Math.random()*90],
                 move: true,
                 world: world
             })
@@ -114,7 +116,10 @@ import {observer} from 'mobx-react'
     }
 
     animate = () =>{
-        this.world.step()
+        if(debug.runWorld){
+            this.world.step()
+        }
+        
 
         for(var i = 0; i<this.props.projects.length; i++){
             if(!this.bodies[i].sleeping){
@@ -139,7 +144,7 @@ import {observer} from 'mobx-react'
                     {
                     this.physicsMeshes[i].map((mesh, it)=>{
                         const geo = mesh.geo === 'box'? ( <boxGeometry width = {mesh.size.w} height = {mesh.size.h} depth = {mesh.size.d} /> )
-                        : mesh.geo === 'sphere'? ( <sphereGeometry radius = {mesh.size.r} />  )
+                        : mesh.geo === 'sphere'? ( <sphereGeometry radius = {mesh.size.r} widthSegments = {8} heightSegments = {8}/>  )
                         : <boxGeometry width = {0.1} height = {0.1} depth = {0.1} />
 
                         return (
@@ -170,43 +175,68 @@ import {observer} from 'mobx-react'
                     name = "camera"
                     fov = {30}
                     aspect = {1400/700}
-                    near = {0.5}
+                    near = {0.001}
                     far = {100}
                     position = {this.cameraPosition}
                     quaternion = {this.cameraQuaternion}
                     ref = "camera"
                 />
 
-                <mesh quaternion = {this.groundQuaternion}>
-                    <planeBufferGeometry
-                        width = {sizeConstant}
-                        height = {sizeConstant}
-                    />
-                    <meshBasicMaterial color = {0xffffff} />
-                </mesh>
-
-                <mesh 
-                    position = {this.wall1Position}
-                    quaternion = {this.wall1Quaternion}
-                    >
-                    <boxGeometry
-                        width = {sizeConstant}
-                        height = {10}
-                        depth = {1}
-                    />
-                    <meshBasicMaterial color = {0xffffff} />
-                </mesh>
-
-                <mesh position = {this.wall2Position}
-                    quaternion = {this.wall2Quaternion}
-                    >
-                    <boxGeometry
-                        width = {sizeConstant}
-                        height = {10}
-                        depth = {1}
+                {debug.walls && 
+                <group>
+                    <mesh quaternion = {this.groundQuaternion}>
+                        <planeBufferGeometry
+                            width = {sizeConstant}
+                            height = {sizeConstant}
                         />
                         <meshBasicMaterial color = {0xffffff} />
-                </mesh>
+                    </mesh>
+                
+                
+                    <mesh 
+                        position = {this.wallPositionLeft}
+                        quaternion = {this.wall1Quaternion}
+                        >
+                        <boxGeometry
+                            width = {sizeConstant}
+                            height = {10}
+                            depth = {1}
+                        />
+                        <meshNormalMaterial />
+                    </mesh>
+
+                    <mesh position = {this.wallPositionRight}
+                        quaternion = {this.wall2Quaternion}
+                        >
+                        <boxGeometry
+                            width = {sizeConstant}
+                            height = {10}
+                            depth = {1}
+                            />
+                            <meshNormalMaterial />
+                    </mesh>
+                    <mesh position = {this.wallPositionFront}
+                        quaternion = {this.wall2Quaternion}
+                        >
+                        <boxGeometry
+                            width = {1}
+                            height = {10}
+                            depth = {sizeConstant}
+                            />
+                            <meshNormalMaterial  transparent opacity = {0.3} />
+                    </mesh>
+                    <mesh position = {this.wallPositionBack}
+                        quaternion = {this.wall2Quaternion}
+                        >
+                        <boxGeometry
+                            width = {1}
+                            height = {10}
+                            depth = {sizeConstant}
+                            />
+                            <meshBasicMaterial color = {0x00ffff} transparent  />
+                    </mesh>
+                </group>
+                }
 
                 {projectMeshes}
 
@@ -219,6 +249,9 @@ import {observer} from 'mobx-react'
         )
     }
 }
+
+const debug = new Debug()
+window.debug = debug
 
 ThreeOimoTest.defaultProps = {
     debugModels: true

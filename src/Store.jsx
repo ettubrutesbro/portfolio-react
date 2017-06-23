@@ -26,5 +26,15 @@ class JLPortfolioStore{
 
 }
 
-export {JLPortfolioStore}
+class Debug{
+    @observable walls = true
+    @observable lights = true
+    @observable runWorld = true
+}
+
+class ThreePhysicsStore{
+
+}
+
+export {JLPortfolioStore, Debug}
 
