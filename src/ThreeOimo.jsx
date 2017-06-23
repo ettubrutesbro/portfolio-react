@@ -99,7 +99,16 @@ import {observer} from 'mobx-react'
             //debugModels?
             //map through model types. 
             //let array
-            this.physicsMeshes[i] = {type: }
+            this.physicsMeshes[i] = model.types.map((type, it)=>{
+                const n = it*3
+                return {
+                    geo: type, 
+                    pos: {x: model.positions[n+0], y: model.positions[n+1], z: model.positions[n+2]},
+                    size: {w: model.sizes[n+0], h: model.sizes[n+1], d: model.sizes[n+2], r: model.sizes[n+0]},
+                    color: model.debugColor || 0x888888
+                }
+            })
+            console.log(this.physicsMeshes[i])
 
         })
     }
@@ -124,23 +133,26 @@ import {observer} from 'mobx-react'
         const projectMeshes = this.meshes.map((mesh, i)=>{
             return(
                 <group
-                        key = {'projectgroup'+i}
+                        key = {'project'+i+'group'}
                         position = {mesh.position}
                         quaternion = {mesh.rotation}>
+                    {
+                    this.physicsMeshes[i].map((mesh, it)=>{
+                        const geo = mesh.geo === 'box'? ( <boxGeometry width = {mesh.size.w} height = {mesh.size.h} depth = {mesh.size.d} /> )
+                        : mesh.geo === 'sphere'? ( <sphereGeometry radius = {mesh.size.r} />  )
+                        : <boxGeometry width = {0.1} height = {0.1} depth = {0.1} />
 
-                    <mesh key = {'physicsmesh'+i}>
+                        return (
+                            <mesh key = {'project'+i+'-physicsmesh'+it}
+                                    position = {new THREE.Vector3(mesh.pos.x, mesh.pos.y, mesh.pos.z)} >
+                                {geo}
+                                <meshBasicMaterial key = {'project'+i+'physicsmtl'+it} color = {mesh.color} transparent opacity = {0.6}/>
+                            </mesh>
+                        )
+                    })
+                    }
+
                     
-                    </mesh>
-
-                    <mesh key = {'projectmesh'+i}>
-                     <boxGeometry
-                        key = {'projectgeo'+i}
-                        width = {1}
-                        height = {1}
-                        depth = {1}
-                    />
-                    <meshNormalMaterial key = {'projectmtl'+i}/>
-                    </mesh>
                 </group>
             )
         })
