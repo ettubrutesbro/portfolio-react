@@ -34,7 +34,7 @@ import {Debug, ThreePhysicsStore} from './Store'
             density: 100,
             friction: 0.3,
             belongsTo: canvas.belongsToBackWall,
-            collidesWith: null,
+            collidesWith: canvas.collidesWithAll,
             // move: true
         })
 
