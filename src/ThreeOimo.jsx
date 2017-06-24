@@ -5,7 +5,7 @@ import {observable} from 'mobx'
 import {observer} from 'mobx-react'
 //component-specific
 import * as THREE from 'three'
-// import * as TWEEN from '@tweenjs/tween.js'
+import * as TWEEN from '@tweenjs/tween.js'
 import * as OIMO from 'oimo'
 import {FPSStats} from 'react-stats'
 
@@ -31,10 +31,11 @@ import {Debug, ThreePhysicsStore} from './Store'
         canvas.ground = world.add({
             size: [sizeConstant, 10, sizeConstant], 
             pos: [0, -5, 0], 
-            density: 1,
+            density: 100,
             friction: 0.3,
             belongsTo: canvas.belongsToBackWall,
-            collidesWith: canvas.collidesWithAll & ~canvas.noCollisionsWithBackWall
+            collidesWith: null,
+            // move: true
         })
 
         canvas.wallLeft = world.add({
@@ -51,8 +52,8 @@ import {Debug, ThreePhysicsStore} from './Store'
             size: [1,100,sizeConstant],
             pos: [-3,0,0],
             density: 1,
-            belongsTo: canvas.belongsToBackWall,
-            collidesWith: canvas.collidesWithAll & ~canvas.noCollisionsWithBackWall
+            // belongsTo: canvas.belongsToBackWall,
+            // collidesWith: canvas.collidesWithAll & ~canvas.noCollisionsWithBackWall
         })
         canvas.wallFront = world.add({
             size: [1,100,sizeConstant],
@@ -76,8 +77,7 @@ import {Debug, ThreePhysicsStore} from './Store'
 
             const model = project.physicsModel || {types: ['box'], sizes: [1,1,1], positions: [0,0,0]}
 
-            canvas.bodies[project.name] = canvas.world.add({
-                //per-project hardcoded (projects.js) physicsModel
+            const body = {
                 type: model.types,
                 size: model.sizes,
                 posShape: model.positions,
@@ -88,14 +88,30 @@ import {Debug, ThreePhysicsStore} from './Store'
                 rot: [0, 0, 0],
                 move: true,
                 world: world,
-                collidesWith: canvas.belongsToBackWall
+                belongsTo: canvas.normalCollisions,
+                collidesWith: canvas.collidesWithAll
+            }
+            //  Object.defineProperty(body.prototype, 'belongsTo', {
+            //     // value: [canvas.noCollisionsWithBackWall, canvas.noCollisionsWithBackWall],
+            //     // value: canvas.normalCollisions,
+            //     get: function(){ return body.belongsTo },
+            //     set: function(newBits){ 
+            //         console.log('changing bodys belongsTo')
+            //         body.belongsTo = newBits 
+            //     }
+            // })
+
+            canvas.bodies[project.name] = canvas.world.add(body)
+
+            Object.defineProperty(canvas.bodies[project.name], 'belongsTo', {
+                get: function(){ return this.shapes.belongsTo },
+                set: function(newBits){ 
+                    this.shapes.belongsTo = newBits 
+                    // this.setupMass(0x1, this.move)
+                }
             })
-            Object.defineProperty(canvas.bodies[project.name].shapes, 'belongsTo', {
-                // value: [canvas.noCollisionsWithBackWall, canvas.noCollisionsWithBackWall],
-                // value: canvas.normalCollisions,
-                // value: [canvas.noCollisionsWithBackWall, canvas.noCollisionsWithBackWall],
-                writable: true
-            })
+           
+            // canvas.bodies[project.name].shapes
 
             canvas.meshes[i] = {
                 position: new THREE.Vector3().copy(canvas.bodies[project.name].getPosition()), 
@@ -132,17 +148,31 @@ import {Debug, ThreePhysicsStore} from './Store'
             }
             
         }
+
+        TWEEN.update()
     }
 
-    planeCollisionOff = (body) => {
-
-    }
+    // planeCollisionOff = (body) => {
+    //     Object.defineProperty(body, 'belongsTo')
+    // }
 
     testImpulse = (body) => {
         body.applyImpulse(body.position, new THREE.Vector3(0,13,0))
         body.linearVelocity.scaleEqual(0.8)
         body.angularVelocity.scaleEqual(0.2)
     }
+
+    forceMove = (body, coords, duration) => {
+        const bodypos = body.getPosition()
+        const start = {x: bodypos.x, y: bodypos.y, z: bodypos.z}
+
+        body.moveTween = new TWEEN.Tween(start).to({x: coords.x, y: coords.y, z: coords.z}, duration).onUpdate(function(){
+                body.sleeping = false
+                body.setPosition({x: this.x, y: this.y, z: this.z})
+            }).start()
+    }
+
+    // deleteGround = ()
 
     render(){
 
