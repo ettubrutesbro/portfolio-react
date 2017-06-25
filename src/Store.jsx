@@ -27,7 +27,7 @@ class JLPortfolioStore{
 }
 
 class Debug{
-    @observable walls = true
+    // @observable walls = true
     @observable amblight = true
     @observable spotlight = true
     @observable runWorld = true
@@ -46,8 +46,7 @@ class ThreePhysicsStore{
 
     //SCARY COLLISION HEX SHIT???
     //belongsTo collision hexes
-    @observable belongsToBackWall = 1 << 0
-    @observable noCollisionsWithBackWall = 1 << 1
+    @observable nonCollisionGroup = 1 << 1
     @observable normalCollisions = 1 << 2
     //collidesWith hexes
     @observable collidesWithAll = 0xffffffff

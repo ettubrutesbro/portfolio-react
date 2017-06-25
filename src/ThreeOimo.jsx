@@ -31,12 +31,22 @@ import {Debug, ThreePhysicsStore} from './Store'
         canvas.ground = world.add({
             size: [sizeConstant, 10, sizeConstant], 
             pos: [0, -5, 0], 
-            density: 100,
-            friction: 0.3,
-            belongsTo: canvas.belongsToBackWall,
+            // density: 100,
+            friction: 0.4,
+            belongsTo: canvas.normalCollisions,
             collidesWith: canvas.collidesWithAll,
-            // move: true
+            // move: true,
         })
+
+         this.groundQuaternion = new THREE.Quaternion()
+            .setFromAxisAngle(new THREE.Vector3(1, 0, 0), -Math.PI / 2)
+
+        Object.defineProperty(canvas.ground, 'collidesWith', {
+                get: function(){ return this.shapes.collidesWith },
+                set: function(newBits){ 
+                    this.shapes.collidesWith = newBits 
+                }
+            })
 
         canvas.wallLeft = world.add({
             size: [sizeConstant,100,1],
@@ -65,9 +75,7 @@ import {Debug, ThreePhysicsStore} from './Store'
         this.wallPositionBack = new THREE.Vector3().copy(canvas.wallBack.getPosition())
         this.wallPositionFront = new THREE.Vector3().copy(canvas.wallFront.getPosition())
 
-        this.groundQuaternion = new THREE.Quaternion()
-            .setFromAxisAngle(new THREE.Vector3(1, 0, 0), -Math.PI / 2)
-
+       
         // bodies = props.projects.map((project)=>{
         //     return this.world
         // })
@@ -81,37 +89,18 @@ import {Debug, ThreePhysicsStore} from './Store'
                 type: model.types,
                 size: model.sizes,
                 posShape: model.positions,
-                // density: model.density || 1,
-                // restitution: model.restitution || 0.001,
+                density: model.density || 1,
+                restitution: model.restitution || 0.001,
                 //random / programmatic for scene purposes
                 pos: [0, 6+(i*1.5), (Math.random()*2)],
                 rot: [0, 0, 0],
                 move: true,
                 world: world,
                 belongsTo: canvas.normalCollisions,
-                collidesWith: canvas.collidesWithAll
+                collidesWith: canvas.collidesWithAll & ~canvas.nonCollisionGroup
             }
-            //  Object.defineProperty(body.prototype, 'belongsTo', {
-            //     // value: [canvas.noCollisionsWithBackWall, canvas.noCollisionsWithBackWall],
-            //     // value: canvas.normalCollisions,
-            //     get: function(){ return body.belongsTo },
-            //     set: function(newBits){ 
-            //         console.log('changing bodys belongsTo')
-            //         body.belongsTo = newBits 
-            //     }
-            // })
 
             canvas.bodies[project.name] = canvas.world.add(body)
-
-            Object.defineProperty(canvas.bodies[project.name], 'belongsTo', {
-                get: function(){ return this.shapes.belongsTo },
-                set: function(newBits){ 
-                    this.shapes.belongsTo = newBits 
-                    // this.setupMass(0x1, this.move)
-                }
-            })
-           
-            // canvas.bodies[project.name].shapes
 
             canvas.meshes[i] = {
                 position: new THREE.Vector3().copy(canvas.bodies[project.name].getPosition()), 
@@ -128,9 +117,6 @@ import {Debug, ThreePhysicsStore} from './Store'
                     }
                 })
             }
-            
-            // console.log(this.physicsMeshes[i])
-
         })
     }
 
@@ -152,27 +138,52 @@ import {Debug, ThreePhysicsStore} from './Store'
         TWEEN.update()
     }
 
-    // planeCollisionOff = (body) => {
-    //     Object.defineProperty(body, 'belongsTo')
-    // }
-
     testImpulse = (body) => {
         body.applyImpulse(body.position, new THREE.Vector3(0,13,0))
         body.linearVelocity.scaleEqual(0.8)
         body.angularVelocity.scaleEqual(0.2)
     }
 
+    impulse = (body, vector, wonky) => {
+        const force = vector? vector : [0, 1, 0]
+        if(!wonky){
+            body.applyImpulse(body.getPosition(), new THREE.Vector3(force[0],force[1],force[2]))    
+        }
+        else body.applyImpulse(new THREE.Vector3(force[0],force[1],force[2]), body.getPosition())
+        body.linearVelocity.scaleEqual(0.3)
+        body.angularVelocity.scaleEqual(0.15)
+    }
+
     forceMove = (body, coords, duration) => {
         const bodypos = body.getPosition()
         const start = {x: bodypos.x, y: bodypos.y, z: bodypos.z}
 
-        body.moveTween = new TWEEN.Tween(start).to({x: coords.x, y: coords.y, z: coords.z}, duration).onUpdate(function(){
+        body.moveTween = new TWEEN.Tween(start)
+            .to({x: coords.x, y: coords.y, z: coords.z}, duration)
+            .onUpdate(function(){
                 body.sleeping = false
                 body.setPosition({x: this.x, y: this.y, z: this.z})
-            }).start()
+            })
+            .onComplete(()=> { body.sleeping = true })
+            .start()
     }
+    reenablePhysics = (body) => {
+        body.isKinematic = false
+        body.sleeping = false 
+    }
+    deleteGround = () => {
+        // canvas.ground.remove() 
+        canvas.ground.collidesWith = canvas.nonCollisionGroup
+        canvas.ground.setupMass(0x1, true)
 
-    // deleteGround = ()
+        // const allBodies = Object.keys(canvas.bodies)
+
+        // allBodies.forEach((key)=>{
+        //     canvas.bodies[key].sleeping = false
+        //     // console.log(canvas.bodies[key])
+        //     // this.impulse(canvas.bodies[key], [0,canvas.bodies[key].mass * 2.5 ,0], false) 
+        // })
+    }
 
     render(){
 
