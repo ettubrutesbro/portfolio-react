@@ -28,6 +28,7 @@ import {Debug, ThreePhysicsStore} from './Store'
         const sizeConstant = canvas.viewableSizingConstant 
 
         canvas.ground = world.add({
+            type: 'box',
             size: [sizeConstant, 10, sizeConstant], 
             pos: [0, -5, 0], 
             // density: 100,
@@ -39,7 +40,7 @@ import {Debug, ThreePhysicsStore} from './Store'
 
         canvas.hell = world.add({
             size: [30, 10, 30],
-            pos: [0, -13, 0],
+            pos: [0, -25, 0],
             friction: 1,
             belongsTo: canvas.normalCollisions,
             collidesWith: canvas.collidesWithAll
@@ -48,10 +49,10 @@ import {Debug, ThreePhysicsStore} from './Store'
          this.groundQuaternion = new THREE.Quaternion()
             .setFromAxisAngle(new THREE.Vector3(1, 0, 0), -Math.PI / 2)
 
-        Object.defineProperty(canvas.ground, 'collidesWith', {
-                get: function(){ return this.shapes.collidesWith },
+        Object.defineProperty(canvas.ground, 'belongsTo', {
+                get: function(){ return this.shapes.belongsTo },
                 set: function(newBits){ 
-                    this.shapes.collidesWith = newBits 
+                    this.shapes.belongsTo = newBits 
                 }
             })
 
@@ -83,13 +84,14 @@ import {Debug, ThreePhysicsStore} from './Store'
         props.projects.forEach((project, i)=>{
             const model = project.physicsModel || {types: ['box'], sizes: [1,1,1], positions: [0,0,0]}
             const body = {
+                name: project.name,
                 type: model.types,
                 size: model.sizes,
                 posShape: model.positions,
                 density: model.density || 1,
                 restitution: model.restitution || 0.001,
                 //random / programmatic for scene purposes
-                pos: [((Math.random()*sizeConstant)-(sizeConstant/2))*.25, 6+(i*2), -0.75],
+                pos: [((Math.random()*sizeConstant)-(sizeConstant/2))*.25, sizeConstant+(i*2), -0.75],
                 rot: [(Math.random()*30)-15, (Math.random()*30)-15, (Math.random()*30)-15],
                 move: true,
                 world: world,
@@ -165,27 +167,65 @@ import {Debug, ThreePhysicsStore} from './Store'
             .start()
     }
     reenablePhysics = (body) => {
+        // body.linearVelocity.scaleEqual(0)
         body.isKinematic = false
         body.sleeping = false 
     }
     removeGround = () => {
-        canvas.ground.collidesWith = canvas.nonCollisionGroup
+        // canvas.ground.remove()
+        canvas.ground.belongsTo = canvas.nonCollisionGroup
         canvas.ground.setupMass(0x1, true)
     }
     reconstituteGround = () => {
-        canvas.ground.collidesWith = canvas.normalCollisions
-        canvas.ground.setupMass(0x1, true)
+        const sizeConstant = canvas.viewableSizingConstant
+        canvas.ground.remove()
+        canvas.ground = canvas.world.add({
+            type: 'box',
+            size: [sizeConstant, 10, sizeConstant], 
+            pos: [0, -5, 0], 
+            // density: 100,
+            friction: 0.4,
+            belongsTo: canvas.normalCollisions,
+            collidesWith: canvas.collidesWithAll,
+            // move: true,
+        })
+        canvas.ground.setupMass(0x2, false)
         this.restoreLostBodies()
     }
     restoreLostBodies = () => {
         //map through all bodies that are below a certain Y coord (-10)
+        const sizeConstant = canvas.viewableSizingConstant
         const allBodies = Object.keys(canvas.bodies)
+        // this.reconstituteGround()
+
         allBodies.forEach((key, i) => {
             const body = canvas.bodies[key] 
-            if(body.position.y < -0){
-                body.setPosition({x: 0, y: 6+(i*2), z: 0})
+            // console.log(body.getPosition())
+            if(body.position.y < -11){
+                console.log(key + ' restored')
+                const oldPos = body.getPosition()
+                if(body.sleeping) body.sleeping = false
+                body.setPosition({
+                    x: ((Math.random()*sizeConstant)-(sizeConstant/2))*.25, 
+                    y: sizeConstant + (i*2), 
+                    z: -0.75
+                })
+                body.setRotation({
+                    x: (Math.random()*30)-15,
+                    y: (Math.random()*30)-15,
+                    z: (Math.random()*30)-15
+                })
+                // console.log(body.linearVelocity)
+                setTimeout(()=>this.reenablePhysics(body), 100 + (i*50))
+                // this.reenablePhysics(body)
             }
-        }) 
+        }
+                
+        ) 
+    }
+
+    select = (body) => {
+
     }
 
     render(){
