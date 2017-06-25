@@ -272,10 +272,12 @@ import {Debug, ThreePhysicsStore} from './Store'
         console.log('selected ', body.name)
         this.phaseConstraints()
         body.setPosition(body.getPosition())
-        setTimeout(() => this.forceMove(body, {x: 0, y: 1, z: 0}, 400), 400)
+        body.timeOutMovement = setTimeout(() => this.forceMove(body, {x: 0, y: 1, z: 0}, 400), 400)
     }
 
     unselect = (body) => {
+        window.clearTimeout(body.timeOutMovement)
+        body.timeOutMovement = undefined
         this.establishConstraints(true)
         this.reenablePhysics(body)
     }
