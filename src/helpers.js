@@ -64,3 +64,7 @@ export const easings = {
 		return c*(t*t*t + 1) + b;
 	}
 }
+
+
+
+
