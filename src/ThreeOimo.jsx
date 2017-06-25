@@ -196,25 +196,28 @@ import {Debug, ThreePhysicsStore} from './Store'
     }
     removeGround = () => {
         // canvas.ground.remove()
-        canvas.ground.belongsTo = canvas.nonCollisionGroup
-        canvas.wallLeft.belongsTo = canvas.nonCollisionGroup
-        canvas.wallRight.belongsTo = canvas.nonCollisionGroup
-        canvas.wallFront.belongsTo = canvas.nonCollisionGroup
-        canvas.wallBack.belongsTo = canvas.nonCollisionGroup
-        canvas.ground.setupMass(0x1, true)
-        canvas.wallLeft.setupMass(0x1, true)
-        canvas.wallRight.setupMass(0x1, true)
-        canvas.wallFront.setupMass(0x1, true)
-        canvas.wallBack.setupMass(0x1, true)
+        this.batchConstraintAction('belongsTo', null, true, canvas.nonCollisionGroup)
+        this.batchConstraintAction('setupMass', [0x1, true])
+        // canvas.ground.belongsTo = canvas.nonCollisionGroup
+        // canvas.wallLeft.belongsTo = canvas.nonCollisionGroup
+        // canvas.wallRight.belongsTo = canvas.nonCollisionGroup
+        // canvas.wallFront.belongsTo = canvas.nonCollisionGroup
+        // canvas.wallBack.belongsTo = canvas.nonCollisionGroup
+        // canvas.ground.setupMass(0x1, true)
+        // canvas.wallLeft.setupMass(0x1, true)
+        // canvas.wallRight.setupMass(0x1, true)
+        // canvas.wallFront.setupMass(0x1, true)
+        // canvas.wallBack.setupMass(0x1, true)
     }
     reconstituteGround = () => {
         const sizeConstant = canvas.viewableSizingConstant
         const world = canvas.world
-        canvas.ground.remove()
-        canvas.wallLeft.remove()
-        canvas.wallRight.remove()
-        canvas.wallFront.remove()
-        canvas.wallBack.remove()
+        this.batchConstraintAction('remove',[])
+        // canvas.ground.remove()
+        // canvas.wallLeft.remove()
+        // canvas.wallRight.remove()
+        // canvas.wallFront.remove()
+        // canvas.wallBack.remove()
         canvas.ground = world.add({
             type: 'box',
             size: [sizeConstant, 10, sizeConstant], 
@@ -245,11 +248,12 @@ import {Debug, ThreePhysicsStore} from './Store'
             pos: [0,0,.5],
             density: 1
         })
-        canvas.ground.setupMass(0x2, false)
-        canvas.wallLeft.setupMass(0x2, false)
-        canvas.wallRight.setupMass(0x2, false)
-        canvas.wallFront.setupMass(0x2, false)
-        canvas.wallBack.setupMass(0x2, false)
+        this.batchConstraintAction('setupMass',[0x2,false])
+        // canvas.ground.setupMass(0x2, false)
+        // canvas.wallLeft.setupMass(0x2, false)
+        // canvas.wallRight.setupMass(0x2, false)
+        // canvas.wallFront.setupMass(0x2, false)
+        // canvas.wallBack.setupMass(0x2, false)
         this.restoreLostBodies()
     }
     restoreLostBodies = () => {
