@@ -40,7 +40,7 @@ import {Debug, ThreePhysicsStore} from './Store'
 
         canvas.hell = world.add({
             size: [30, 10, 30],
-            pos: [0, -20, 0],
+            pos: [0, -13, 0],
             friction: 1,
             belongsTo: canvas.normalCollisions,
             collidesWith: canvas.collidesWithAll
@@ -70,8 +70,6 @@ import {Debug, ThreePhysicsStore} from './Store'
             size: [1,100,sizeConstant],
             pos: [-3,0,0],
             density: 1,
-            // belongsTo: canvas.belongsToBackWall,
-            // collidesWith: canvas.collidesWithAll & ~canvas.noCollisionsWithBackWall
         })
         canvas.wallFront = world.add({
             size: [1,100,sizeConstant],
@@ -83,16 +81,8 @@ import {Debug, ThreePhysicsStore} from './Store'
         this.wallPositionBack = new THREE.Vector3().copy(canvas.wallBack.getPosition())
         this.wallPositionFront = new THREE.Vector3().copy(canvas.wallFront.getPosition())
 
-       
-        // bodies = props.projects.map((project)=>{
-        //     return this.world
-        // })
-
         props.projects.forEach((project, i)=>{
-            console.log(project)
-
             const model = project.physicsModel || {types: ['box'], sizes: [1,1,1], positions: [0,0,0]}
-
             const body = {
                 type: model.types,
                 size: model.sizes,
@@ -184,10 +174,19 @@ import {Debug, ThreePhysicsStore} from './Store'
         canvas.ground.setupMass(0x1, true)
     }
     reconstituteGround = () => {
-        canvas.ground
+        canvas.ground.collidesWith = canvas.normalCollisions
+        canvas.ground.setupMass(0x1, true)
+        this.restoreLostBodies()
     }
     restoreLostBodies = () => {
-        //map through all bodies that are below a certain Y coord
+        //map through all bodies that are below a certain Y coord (-10)
+        const allBodies = Object.keys(canvas.bodies)
+        allBodies.forEach((key, i) => {
+            const body = canvas.bodies[key] 
+            if(body.position.y < -0){
+                body.setPosition({x: 0, y: 6+(i*2), z: 0})
+            }
+        }) 
     }
 
     render(){
@@ -234,6 +233,7 @@ import {Debug, ThreePhysicsStore} from './Store'
                 <scene>
                 <perspectiveCamera 
                     name = "camera"
+                    ref = "camera"
                     fov = {30}
                     aspect = {1400/700}
                     near = {0.001}

@@ -27,7 +27,7 @@ class JLPortfolioStore{
 }
 
 class Debug{
-    // @observable walls = true
+    @observable walls = true
     @observable amblight = true
     @observable spotlight = true
     @observable runWorld = true
