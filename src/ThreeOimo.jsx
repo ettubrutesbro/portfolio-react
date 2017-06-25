@@ -27,6 +27,13 @@ import {Debug, ThreePhysicsStore} from './Store'
         const world = canvas.world
         const sizeConstant = canvas.viewableSizingConstant 
 
+        canvas.roof = world.add({
+            size: [sizeConstant, 10, sizeConstant],
+            pos: [0, 40, 0],
+            belongsTo: canvas.normalCollisions,
+            collidesWith: canvas.collidesWithAll
+        })
+
         canvas.ground = world.add({
             type: 'box',
             size: [sizeConstant, 10, sizeConstant], 
@@ -88,7 +95,7 @@ import {Debug, ThreePhysicsStore} from './Store'
                 type: model.types,
                 size: model.sizes,
                 posShape: model.positions,
-                density: model.density || 1,
+                density: model.density || 10,
                 restitution: model.restitution || 0.001,
                 //random / programmatic for scene purposes
                 pos: [((Math.random()*sizeConstant)-(sizeConstant/2))*.25, sizeConstant+(i*2), -0.75],
@@ -171,15 +178,44 @@ import {Debug, ThreePhysicsStore} from './Store'
         body.isKinematic = false
         body.sleeping = false 
     }
+    batchConstraintAction = (funcCall, parameters, equals, newVal) => {
+        if(!equals){
+            canvas.ground[funcCall](...parameters)
+            canvas.wallLeft[funcCall](...parameters)
+            canvas.wallRight[funcCall](...parameters)
+            canvas.wallFront[funcCall](...parameters)
+            canvas.wallBack[funcCall](...parameters)
+        }
+        else{
+            canvas.ground[funcCall] = newVal
+            canvas.wallLeft[funcCall] = newVal
+            canvas.wallRight[funcCall] = newVal
+            canvas.wallFront[funcCall] = newVal
+            canvas.wallBack[funcCall] = newVal
+        }
+    }
     removeGround = () => {
         // canvas.ground.remove()
         canvas.ground.belongsTo = canvas.nonCollisionGroup
+        canvas.wallLeft.belongsTo = canvas.nonCollisionGroup
+        canvas.wallRight.belongsTo = canvas.nonCollisionGroup
+        canvas.wallFront.belongsTo = canvas.nonCollisionGroup
+        canvas.wallBack.belongsTo = canvas.nonCollisionGroup
         canvas.ground.setupMass(0x1, true)
+        canvas.wallLeft.setupMass(0x1, true)
+        canvas.wallRight.setupMass(0x1, true)
+        canvas.wallFront.setupMass(0x1, true)
+        canvas.wallBack.setupMass(0x1, true)
     }
     reconstituteGround = () => {
         const sizeConstant = canvas.viewableSizingConstant
+        const world = canvas.world
         canvas.ground.remove()
-        canvas.ground = canvas.world.add({
+        canvas.wallLeft.remove()
+        canvas.wallRight.remove()
+        canvas.wallFront.remove()
+        canvas.wallBack.remove()
+        canvas.ground = world.add({
             type: 'box',
             size: [sizeConstant, 10, sizeConstant], 
             pos: [0, -5, 0], 
@@ -189,7 +225,31 @@ import {Debug, ThreePhysicsStore} from './Store'
             collidesWith: canvas.collidesWithAll,
             // move: true,
         })
+        canvas.wallLeft = world.add({
+            size: [1,100,sizeConstant],
+            pos: [-(sizeConstant/2), 0, 0],
+            density: 1
+        })
+        canvas.wallRight = world.add({
+            size: [1,100,sizeConstant],
+            pos: [sizeConstant/2, 0, 0],
+            density: 1
+        })
+        canvas.wallBack = world.add({
+            size: [sizeConstant,100,1],
+            pos: [0,0,-3],
+            density: 1,
+        })
+        canvas.wallFront = world.add({
+            size: [sizeConstant,100,1],
+            pos: [0,0,.5],
+            density: 1
+        })
         canvas.ground.setupMass(0x2, false)
+        canvas.wallLeft.setupMass(0x2, false)
+        canvas.wallRight.setupMass(0x2, false)
+        canvas.wallFront.setupMass(0x2, false)
+        canvas.wallBack.setupMass(0x2, false)
         this.restoreLostBodies()
     }
     restoreLostBodies = () => {
@@ -201,7 +261,7 @@ import {Debug, ThreePhysicsStore} from './Store'
         allBodies.forEach((key, i) => {
             const body = canvas.bodies[key] 
             // console.log(body.getPosition())
-            if(body.position.y < -11){
+            if(body.position.y < -5){
                 console.log(key + ' restored')
                 const oldPos = body.getPosition()
                 if(body.sleeping) body.sleeping = false
@@ -225,7 +285,16 @@ import {Debug, ThreePhysicsStore} from './Store'
     }
 
     select = (body) => {
+        console.log('selected ', body.name)
+        
+        this.removeGround()
+        body.setPosition(body.getPosition())
+        setTimeout(() => this.forceMove(body, {x: 0, y: 1, z: 0}, 400), 400)
+    }
 
+    unselect = (body) => {
+        this.reconstituteGround()
+        this.reenablePhysics(body)
     }
 
     render(){
