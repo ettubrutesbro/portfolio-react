@@ -38,6 +38,14 @@ import {Debug, ThreePhysicsStore} from './Store'
             // move: true,
         })
 
+        canvas.hell = world.add({
+            size: [30, 10, 30],
+            pos: [0, -20, 0],
+            friction: 1,
+            belongsTo: canvas.normalCollisions,
+            collidesWith: canvas.collidesWithAll
+        })
+
          this.groundQuaternion = new THREE.Quaternion()
             .setFromAxisAngle(new THREE.Vector3(1, 0, 0), -Math.PI / 2)
 
@@ -171,18 +179,15 @@ import {Debug, ThreePhysicsStore} from './Store'
         body.isKinematic = false
         body.sleeping = false 
     }
-    deleteGround = () => {
-        // canvas.ground.remove() 
+    removeGround = () => {
         canvas.ground.collidesWith = canvas.nonCollisionGroup
         canvas.ground.setupMass(0x1, true)
-
-        // const allBodies = Object.keys(canvas.bodies)
-
-        // allBodies.forEach((key)=>{
-        //     canvas.bodies[key].sleeping = false
-        //     // console.log(canvas.bodies[key])
-        //     // this.impulse(canvas.bodies[key], [0,canvas.bodies[key].mass * 2.5 ,0], false) 
-        // })
+    }
+    reconstituteGround = () => {
+        canvas.ground
+    }
+    restoreLostBodies = () => {
+        //map through all bodies that are below a certain Y coord
     }
 
     render(){
