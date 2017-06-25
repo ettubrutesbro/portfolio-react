@@ -21,9 +21,8 @@ import {Debug, ThreePhysicsStore} from './Store'
         this.lightPosition = new THREE.Vector3(0, 10, 0)
         this.lightTarget = new THREE.Vector3(0, 2, 0)
         
-        this.cameraPosition = new THREE.Vector3(10, 2, 0)
+        this.cameraPosition = new THREE.Vector3(0, 2, 10)
         this.cameraQuaternion = new THREE.Quaternion()
-            .setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI / 2)
 
         const world = canvas.world
         const sizeConstant = canvas.viewableSizingConstant 
@@ -57,23 +56,23 @@ import {Debug, ThreePhysicsStore} from './Store'
             })
 
         canvas.wallLeft = world.add({
-            size: [sizeConstant,100,1],
-            pos: [0, 0, sizeConstant/2],
+            size: [1,100,sizeConstant],
+            pos: [-(sizeConstant/2), 0, 0],
             density: 1
         })
         canvas.wallRight = world.add({
-            size: [sizeConstant,100,1],
-            pos: [0, 0, -(sizeConstant/2)],
+            size: [1,100,sizeConstant],
+            pos: [sizeConstant/2, 0, 0],
             density: 1
         })
         canvas.wallBack = world.add({
-            size: [1,100,sizeConstant],
-            pos: [-3,0,0],
+            size: [sizeConstant,100,1],
+            pos: [0,0,-3],
             density: 1,
         })
         canvas.wallFront = world.add({
-            size: [1,100,sizeConstant],
-            pos: [.5,0,0],
+            size: [sizeConstant,100,1],
+            pos: [0,0,.5],
             density: 1
         })
         this.wallPositionLeft = new THREE.Vector3().copy(canvas.wallLeft.getPosition())
@@ -90,8 +89,8 @@ import {Debug, ThreePhysicsStore} from './Store'
                 density: model.density || 1,
                 restitution: model.restitution || 0.001,
                 //random / programmatic for scene purposes
-                pos: [0, 6+(i*1.5), (Math.random()*2)],
-                rot: [0, 0, 0],
+                pos: [((Math.random()*sizeConstant)-(sizeConstant/2))*.25, 6+(i*2), -0.75],
+                rot: [(Math.random()*30)-15, (Math.random()*30)-15, (Math.random()*30)-15],
                 move: true,
                 world: world,
                 belongsTo: canvas.normalCollisions,
@@ -234,7 +233,7 @@ import {Debug, ThreePhysicsStore} from './Store'
                 <perspectiveCamera 
                     name = "camera"
                     ref = "camera"
-                    fov = {30}
+                    fov = {canvas.fov}
                     aspect = {1400/700}
                     near = {0.001}
                     far = {100}
@@ -267,45 +266,41 @@ import {Debug, ThreePhysicsStore} from './Store'
                 
                     <mesh 
                         position = {this.wallPositionLeft}
-                        quaternion = {this.wall1Quaternion}
                         >
                         <boxGeometry
-                            width = {sizeConstant}
+                            width = {1}
                             height = {10}
-                            depth = {1}
+                            depth = {sizeConstant}
                         />
-                        <meshNormalMaterial />
+                        <meshBasicMaterial color = {0xff0000} />
                     </mesh>
 
                     <mesh position = {this.wallPositionRight}
-                        quaternion = {this.wall2Quaternion}
+                        >
+                        <boxGeometry
+                            width = {1}
+                            height = {10}
+                            depth = {sizeConstant}
+                            />
+                            <meshBasicMaterial color = {0x0000ff} />
+                    </mesh>
+                    <mesh position = {this.wallPositionFront}
                         >
                         <boxGeometry
                             width = {sizeConstant}
                             height = {10}
                             depth = {1}
                             />
-                            <meshNormalMaterial />
-                    </mesh>
-                    <mesh position = {this.wallPositionFront}
-                        quaternion = {this.wall2Quaternion}
-                        >
-                        <boxGeometry
-                            width = {1}
-                            height = {10}
-                            depth = {sizeConstant}
-                            />
-                            <meshNormalMaterial  transparent opacity = {0.3} />
+                            <meshBasicMaterial color = {0xffffff}  transparent opacity = {0.3} />
                     </mesh>
                     <mesh position = {this.wallPositionBack}
-                        quaternion = {this.wall2Quaternion}
                         >
                         <boxGeometry
-                            width = {1}
+                            width = {sizeConstant}
                             height = {10}
-                            depth = {sizeConstant}
+                            depth = {1}
                             />
-                            <meshBasicMaterial color = {0x00ffff} transparent  />
+                            <meshBasicMaterial color = {0x550055} transparent  />
                     </mesh>
                 </group>
                 }

@@ -44,6 +44,8 @@ class ThreePhysicsStore{
     @observable physicsMeshes = []
     @observable viewableSizingConstant = 8
 
+    @observable fov = 30
+
     //SCARY COLLISION HEX SHIT???
     //belongsTo collision hexes
     @observable nonCollisionGroup = 1 << 1
