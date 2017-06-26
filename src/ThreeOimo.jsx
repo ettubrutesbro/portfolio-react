@@ -218,33 +218,42 @@ import {toEuler, degs, rads} from './helpers.js'
         // const qc = (new THREE.Euler().setFromQuaternion(q))
         // console.log(degs(qc.y))
         // console.log(targetRotation.y)
-        // body.sleeping = false
+        
 
         // body.setRotation(targetRotation)
 
         // const bodyrot = toEuler(body.getQuaternion())
 
         //xyz, xzy, yzx, yxz, zxy, zyx dont work for using THREE's euler.setfromquaternion
-        // const q = new THREE.Quaternion().copy(body.getQuaternion()).normalize()
-        // const bodyrot = new THREE.Euler().setFromQuaternion(q)
+        const q = body.getQuaternion().clone()
+        // const bodyrot = toEuler(q)
+        const tgt = body.getQuaternion().clone().setFromEuler(rads(targetRotation.x), rads(targetRotation.y), rads(targetRotation.z))
+        // body.sleeping = false
+        // body.setRotation(targetRotation)
 
-        // const start = {x: degs(bodyrot.x), y: degs(bodyrot.y), z: degs(bodyrot.z)}
-        // console.log(start)
-        // console.log(' to ')
-        // console.log(targetRotation)
+        // console.log(bodyrot)
 
-        // body.rotationTween = new TWEEN.Tween(start)
-        //     .to({x: targetRotation.x, y: targetRotation.y, z: targetRotation.z}, duration)
-        //     .onUpdate(function(){
-        //         body.sleeping = false
-        //         console.log(this.x, this.y, this.z)
-        //         body.setRotation(({x: this.x, y: this.y, z: this.z}))
-        //     })
-        //     .onComplete(()=> { 
-        //         // body.sleeping = true
-        //         // body.controlRot = true
-        //      }) //unset body.controlRot?
-        //     .start()
+        console.log(q)
+        console.log(' to ')
+        console.log(tgt)
+
+        body.rotationTween = new TWEEN.Tween(q)
+            .to(tgt, duration)
+            .onUpdate(function(){
+                body.sleeping = false
+                // console.log(this.x.toFixed(2), this.y.toFixed(2), this.z.toFixed(2), this.w.toFixed(2))
+                body.setQuaternion(({
+                    x: this.x, 
+                    y: this.y, 
+                    z: this.z,
+                    w: this.w
+                }))
+            })
+            .onComplete(()=> { 
+                // body.sleeping = true
+                // body.controlRot = true
+             }) //unset body.controlRot?
+            .start()
     }
 
     reenablePhysics = (body) => {

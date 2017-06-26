@@ -66,7 +66,7 @@ export const easings = {
 }
 
 export function toEuler(quaternion){
-    /*
+    
     // logic taken from cannon's Quaternion.toEuler function...
     //only supports a YZX order (???)
     let target = {}
@@ -102,7 +102,7 @@ export function toEuler(quaternion){
     console.log('euler (degrees) is...')
     console.log('x',degs(target.x), ' y',degs(target.y), ' z',degs(target.z))
     return target
-    */
+    
 
         // function ( x, y, z ){
 
