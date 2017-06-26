@@ -248,7 +248,6 @@ import {toEuler, degs, rads} from './helpers.js'
     }
 
     reenablePhysics = (body) => {
-        // body.linearVelocity.scaleEqual(0)
         body.controlRot = false
         body.isKinematic = false
         body.sleeping = false 
