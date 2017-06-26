@@ -11,9 +11,9 @@ import * as OIMO from 'oimo'
 import {FPSStats} from 'react-stats'
 
 
-
 //my stuff
 import {Debug, ThreePhysicsStore} from './Store'
+import {toEuler, degs, rads} from './helpers.js'
 
 @observer export default class ThreeOimoTest extends React.Component{
 
@@ -46,24 +46,32 @@ import {Debug, ThreePhysicsStore} from './Store'
                 collidesWith: canvas.collidesWithAll,
             })
             canvas.wallLeft = world.add({
+                type: 'box',
                 size: [1,100,sizeConstant],
                 pos: [-(sizeConstant/2), 0, 0],
-                density: 1
+                belongsTo: canvas.normalCollisions,
+                collidesWith: canvas.collidesWithAll
             })
             canvas.wallRight = world.add({
+                type: 'box',
                 size: [1,100,sizeConstant],
                 pos: [sizeConstant/2, 0, 0],
-                density: 1
+                belongsTo: canvas.normalCollisions,
+                collidesWith: canvas.collidesWithAll
             })
             canvas.wallBack = world.add({
+                type: 'box',
                 size: [sizeConstant,100,1],
                 pos: [0,0,-3],
-                density: 1,
+                belongsTo: canvas.normalCollisions,
+                collidesWith: canvas.collidesWithAll
             })
             canvas.wallFront = world.add({
+                type: 'box',
                 size: [sizeConstant,100,1],
                 pos: [0,0,.5],
-                density: 1
+                belongsTo: canvas.normalCollisions,
+                collidesWith: canvas.collidesWithAll
             })
             if(reestablish){
                 this.batchConstraintAction('setupMass',[0x2,false])
@@ -205,29 +213,43 @@ import {Debug, ThreePhysicsStore} from './Store'
 
     forceRotate = (body, targetRotation, duration) => {
         //condensable with the above but hold off for now
-        // const degtorad0.0174532925199432957
-        const radtodeg = 57.295779513082320876
-        const bodyrot = body.getQuaternion()
-        const start = {x: bodyrot.x*radtodeg, y: bodyrot.y*radtodeg, z: bodyrot.z*radtodeg}
-        console.log(bodyrot)
-        console.log(' to ')
-        console.log(targetRotation)
+        // toEuler(body.getQuaternion())
+        // const q = new THREE.Quaternion().copy(body.getQuaternion()).normalize()
+        // const qc = (new THREE.Euler().setFromQuaternion(q))
+        // console.log(degs(qc.y))
+        // console.log(targetRotation.y)
+        // body.sleeping = false
 
-        body.rotationTween = new TWEEN.Tween(start)
-            .to({x: targetRotation.x, y: targetRotation.y, z: targetRotation.z}, duration)
-            .onUpdate(function(){
-                body.sleeping = false
-                console.log(this.x, this.y, this.z)
-                body.setRotation(({x: this.x, y: this.y, z: this.z}))
-                //new Quat().setFromEuler( rot.x * _Math.degtorad, rot.y * _Math.degtorad, rot.z * _Math.degtorad )
-                // body.setQuaternion(new Quat({x: this.x, y: this.y, z: this.z}))
-            })
-            .onComplete(()=> { body.sleeping = true }) //unset body.controlRot?
-            .start()
+        // body.setRotation(targetRotation)
+
+        // const bodyrot = toEuler(body.getQuaternion())
+
+        //xyz, xzy, yzx, yxz, zxy, zyx dont work for using THREE's euler.setfromquaternion
+        // const q = new THREE.Quaternion().copy(body.getQuaternion()).normalize()
+        // const bodyrot = new THREE.Euler().setFromQuaternion(q)
+
+        // const start = {x: degs(bodyrot.x), y: degs(bodyrot.y), z: degs(bodyrot.z)}
+        // console.log(start)
+        // console.log(' to ')
+        // console.log(targetRotation)
+
+        // body.rotationTween = new TWEEN.Tween(start)
+        //     .to({x: targetRotation.x, y: targetRotation.y, z: targetRotation.z}, duration)
+        //     .onUpdate(function(){
+        //         body.sleeping = false
+        //         console.log(this.x, this.y, this.z)
+        //         body.setRotation(({x: this.x, y: this.y, z: this.z}))
+        //     })
+        //     .onComplete(()=> { 
+        //         // body.sleeping = true
+        //         // body.controlRot = true
+        //      }) //unset body.controlRot?
+        //     .start()
     }
 
     reenablePhysics = (body) => {
         // body.linearVelocity.scaleEqual(0)
+        body.controlRot = false
         body.isKinematic = false
         body.sleeping = false 
     }
@@ -272,12 +294,14 @@ import {Debug, ThreePhysicsStore} from './Store'
         console.log('selected ', body.name)
         this.phaseConstraints()
         body.setPosition(body.getPosition())
-        body.timeOutMovement = setTimeout(() => this.forceMove(body, {x: 0, y: 1, z: 0}, 400), 400)
+        this.forceRotate(body, {x: 0, y: 0, z: 0}, 500)
+        this.forceMove(body, {x: 0, y: body.getPosition().y, z: body.getPosition().z}, 400)
+        // body.timeOutMovement = setTimeout(() => this.forceMove(body, {x: 0, y: 1, z: body.getPosition().z}, 400), 400)
     }
 
     unselect = (body) => {
-        window.clearTimeout(body.timeOutMovement)
-        body.timeOutMovement = undefined
+        // window.clearTimeout(body.timeOutMovement)
+        // body.timeOutMovement = undefined
         this.establishConstraints(true)
         this.reenablePhysics(body)
     }
