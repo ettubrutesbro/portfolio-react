@@ -45,7 +45,6 @@ import ThreeOimoTest from './ThreeOimo'
         >
         <Intro store = {store}/ >
         </Moballax>
-        <Work store = {store}/>
         <ThreeOimoTest store = {store} projects = {Projects} />
         
       </div>
