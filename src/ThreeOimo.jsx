@@ -1,7 +1,7 @@
 //core
 import React from 'react'
 import React3 from 'react-three-renderer'
-import {observable} from 'mobx'
+import {observable, action} from 'mobx'
 import {observer} from 'mobx-react'
 //component-specific
 import * as THREE from 'three'
@@ -13,7 +13,7 @@ import {FPSStats} from 'react-stats'
 
 //my stuff
 import {Debug, ThreePhysicsStore} from './Store'
-import {toEuler, degs, rads} from './helpers.js'
+import { degs, rads} from './helpers.js'
 
 @observer export default class ThreeOimoTest extends React.Component{
 
@@ -212,36 +212,13 @@ import {toEuler, degs, rads} from './helpers.js'
     }
 
     forceRotate = (body, targetRotation, duration) => {
-        //condensable with the above but hold off for now
-        // toEuler(body.getQuaternion())
-        // const q = new THREE.Quaternion().copy(body.getQuaternion()).normalize()
-        // const qc = (new THREE.Euler().setFromQuaternion(q))
-        // console.log(degs(qc.y))
-        // console.log(targetRotation.y)
-        
-
-        // body.setRotation(targetRotation)
-
-        // const bodyrot = toEuler(body.getQuaternion())
-
-        //xyz, xzy, yzx, yxz, zxy, zyx dont work for using THREE's euler.setfromquaternion
-        const q = body.getQuaternion().clone()
-        // const bodyrot = toEuler(q)
+        const start = body.getQuaternion().clone()
         const tgt = body.getQuaternion().clone().setFromEuler(rads(targetRotation.x), rads(targetRotation.y), rads(targetRotation.z))
-        // body.sleeping = false
-        // body.setRotation(targetRotation)
 
-        // console.log(bodyrot)
-
-        console.log(q)
-        console.log(' to ')
-        console.log(tgt)
-
-        body.rotationTween = new TWEEN.Tween(q)
+        body.rotationTween = new TWEEN.Tween(start)
             .to(tgt, duration)
             .onUpdate(function(){
                 body.sleeping = false
-                // console.log(this.x.toFixed(2), this.y.toFixed(2), this.z.toFixed(2), this.w.toFixed(2))
                 body.setQuaternion(({
                     x: this.x, 
                     y: this.y, 
@@ -250,9 +227,9 @@ import {toEuler, degs, rads} from './helpers.js'
                 }))
             })
             .onComplete(()=> { 
-                // body.sleeping = true
+                body.sleeping = true
                 // body.controlRot = true
-             }) //unset body.controlRot?
+             })
             .start()
     }
 
@@ -298,20 +275,22 @@ import {toEuler, degs, rads} from './helpers.js'
         ) 
     }
 
+    @action
     select = (body) => {
-        console.log('selected ', body.name)
+        this.props.store.selectedProject = body.name
         this.phaseConstraints()
         body.setPosition(body.getPosition())
         this.forceRotate(body, {x: 0, y: 0, z: 0}, 500)
         this.forceMove(body, {x: 0, y: body.getPosition().y, z: body.getPosition().z}, 400)
         // body.timeOutMovement = setTimeout(() => this.forceMove(body, {x: 0, y: 1, z: body.getPosition().z}, 400), 400)
     }
-
-    unselect = (body) => {
+    @action
+    unselect = () => {
         // window.clearTimeout(body.timeOutMovement)
         // body.timeOutMovement = undefined
         this.establishConstraints(true)
-        this.reenablePhysics(body)
+        this.reenablePhysics(canvas.bodies[this.props.store.selectedProject])
+        this.props.store.selectedProject = null
     }
 
     render(){

@@ -65,72 +65,8 @@ export const easings = {
     }
 }
 
-export function toEuler(quaternion){
-    
-    // logic taken from cannon's Quaternion.toEuler function...
-    //only supports a YZX order (???)
-    let target = {}
-    let heading, attitude, bank
-    const x = quaternion.x
-    const y = quaternion.y 
-    const z = quaternion.z
-    const w = quaternion.w
-
-    const test = x*y + z*w
-    if(test > 0.499) { //singularity at north pole
-        heading = 2 * Math.atan2(x,w)
-        attitude = Math.PI/2
-        bank = 0
-    }
-    if(test < -0.499) { //singularity at south pole
-        heading = -2 * Math.atan2(x,w)
-        attitude = -Math.PI/2
-        bank = 0
-    }
-    if(isNaN(heading)){
-        const sqx = x*x;
-        const sqy = y*y;
-        const sqz = z*z;
-        heading = Math.atan2(2*y*w - 2*x*z , 1 - 2*sqy - 2*sqz); // Heading
-        attitude = Math.asin(2*test); // attitude
-        bank = Math.atan2(2*x*w - 2*y*z , 1 - 2*sqx - 2*sqz); // bank
-    }
-
-    target.y = heading;
-    target.z = attitude;
-    target.x = bank;
-    console.log('euler (degrees) is...')
-    console.log('x',degs(target.x), ' y',degs(target.y), ' z',degs(target.z))
-    return target
-    
-
-        // function ( x, y, z ){
-
-        // var c1 = Math.cos( x * 0.5 );
-        // var c2 = Math.cos( y * 0.5 );
-        // var c3 = Math.cos( z * 0.5 );
-        // var s1 = Math.sin( x * 0.5 );
-        // var s2 = Math.sin( y * 0.5 );
-        // var s3 = Math.sin( z * 0.5 );
-
-        // // XYZ
-        // this.x = s1 * c2 * c3 + c1 * s2 * s3;
-        // this.y = c1 * s2 * c3 - s1 * c2 * s3;
-        // this.z = c1 * c2 * s3 + s1 * s2 * c3;
-        // this.w = c1 * c2 * c3 - s1 * s2 * s3;
-
-        // return this;
-
-    
-}
-
-export function rads(degs){
-    return degs*(Math.PI/180)
-}
-
-export function degs(rads){
-    return rads*(180/Math.PI)
-}
+export const rads = (degs) => {return degs*(Math.PI/180) }
+export const degs = (rads) => { return rads*(180/Math.PI) }
 
 
 
