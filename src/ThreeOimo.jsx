@@ -1,21 +1,27 @@
 //core
 import React from 'react'
 import React3 from 'react-three-renderer'
-import {observable} from 'mobx'
+import {observable, action} from 'mobx'
 import {observer} from 'mobx-react'
 //component-specific
 import * as THREE from 'three'
 import * as TWEEN from '@tweenjs/tween.js'
 import * as OIMO from 'oimo'
+
 import {FPSStats} from 'react-stats'
+
 
 //my stuff
 import {Debug, ThreePhysicsStore} from './Store'
+import { degs, rads} from './helpers.js'
 
 @observer export default class ThreeOimoTest extends React.Component{
 
     constructor(props, context){
         super(props, context)
+
+        console.log(OIMO.TO_RAD)
+        console.log(OIMO.EulerToAxis)
 
         const d = 50
         this.lightPosition = new THREE.Vector3(0, 10, 0)
@@ -27,19 +33,78 @@ import {Debug, ThreePhysicsStore} from './Store'
         const world = canvas.world
         const sizeConstant = canvas.viewableSizingConstant 
 
-        canvas.ground = world.add({
-            size: [sizeConstant, 10, sizeConstant], 
-            pos: [0, -5, 0], 
-            // density: 100,
-            friction: 0.4,
-            belongsTo: canvas.normalCollisions,
-            collidesWith: canvas.collidesWithAll,
-            // move: true,
-        })
+        this.establishConstraints = (reestablish) => {
+            const sizeConstant = canvas.viewableSizingConstant
+            const world = canvas.world
+            if(reestablish) this.batchConstraintAction('remove',[])
+            canvas.ground = world.add({
+                type: 'box',
+                size: [sizeConstant, 10, sizeConstant], 
+                pos: [0, -5, 0], 
+                friction: 0.4,
+                belongsTo: canvas.normalCollisions,
+                collidesWith: canvas.collidesWithAll,
+            })
+            canvas.wallLeft = world.add({
+                type: 'box',
+                size: [1,100,sizeConstant],
+                pos: [-(sizeConstant/2), 0, 0],
+                belongsTo: canvas.normalCollisions,
+                collidesWith: canvas.collidesWithAll
+            })
+            canvas.wallRight = world.add({
+                type: 'box',
+                size: [1,100,sizeConstant],
+                pos: [sizeConstant/2, 0, 0],
+                belongsTo: canvas.normalCollisions,
+                collidesWith: canvas.collidesWithAll
+            })
+            canvas.wallBack = world.add({
+                type: 'box',
+                size: [sizeConstant,100,1],
+                pos: [0,0,-3],
+                belongsTo: canvas.normalCollisions,
+                collidesWith: canvas.collidesWithAll
+            })
+            canvas.wallFront = world.add({
+                type: 'box',
+                size: [sizeConstant,100,1],
+                pos: [0,0,.5],
+                belongsTo: canvas.normalCollisions,
+                collidesWith: canvas.collidesWithAll
+            })
+            if(reestablish){
+                this.batchConstraintAction('setupMass',[0x2,false])
+                this.restoreLostBodies()   
+            }
+        }
+        this.batchConstraintAction = (funcCall, parameters, equals, newVal) => {
+            if(!equals){
+                canvas.ground[funcCall](...parameters)
+                canvas.wallLeft[funcCall](...parameters)
+                canvas.wallRight[funcCall](...parameters)
+                canvas.wallFront[funcCall](...parameters)
+                canvas.wallBack[funcCall](...parameters)
+            }
+            else{
+                canvas.ground[funcCall] = newVal
+                canvas.wallLeft[funcCall] = newVal
+                canvas.wallRight[funcCall] = newVal
+                canvas.wallFront[funcCall] = newVal
+                canvas.wallBack[funcCall] = newVal
+            }
+        }
+        this.establishConstraints()
 
+        canvas.roof = world.add({
+            size: [sizeConstant, 10, sizeConstant],
+            pos: [0, 40, 0],
+            belongsTo: canvas.normalCollisions,
+            collidesWith: canvas.collidesWithAll
+        })
         canvas.hell = world.add({
             size: [30, 10, 30],
-            pos: [0, -13, 0],
+            pos: [0, -25, 0],
             friction: 1,
             belongsTo: canvas.normalCollisions,
             collidesWith: canvas.collidesWithAll
@@ -48,33 +113,13 @@ import {Debug, ThreePhysicsStore} from './Store'
          this.groundQuaternion = new THREE.Quaternion()
             .setFromAxisAngle(new THREE.Vector3(1, 0, 0), -Math.PI / 2)
 
-        Object.defineProperty(canvas.ground, 'collidesWith', {
-                get: function(){ return this.shapes.collidesWith },
+        Object.defineProperty(canvas.ground, 'belongsTo', {
+                get: function(){ return this.shapes.belongsTo },
                 set: function(newBits){ 
-                    this.shapes.collidesWith = newBits 
+                    this.shapes.belongsTo = newBits 
                 }
             })
 
-        canvas.wallLeft = world.add({
-            size: [1,100,sizeConstant],
-            pos: [-(sizeConstant/2), 0, 0],
-            density: 1
-        })
-        canvas.wallRight = world.add({
-            size: [1,100,sizeConstant],
-            pos: [sizeConstant/2, 0, 0],
-            density: 1
-        })
-        canvas.wallBack = world.add({
-            size: [sizeConstant,100,1],
-            pos: [0,0,-3],
-            density: 1,
-        })
-        canvas.wallFront = world.add({
-            size: [sizeConstant,100,1],
-            pos: [0,0,.5],
-            density: 1
-        })
         this.wallPositionLeft = new THREE.Vector3().copy(canvas.wallLeft.getPosition())
         this.wallPositionRight = new THREE.Vector3().copy(canvas.wallRight.getPosition())
         this.wallPositionBack = new THREE.Vector3().copy(canvas.wallBack.getPosition())
@@ -83,13 +128,14 @@ import {Debug, ThreePhysicsStore} from './Store'
         props.projects.forEach((project, i)=>{
             const model = project.physicsModel || {types: ['box'], sizes: [1,1,1], positions: [0,0,0]}
             const body = {
+                name: project.name,
                 type: model.types,
                 size: model.sizes,
                 posShape: model.positions,
-                density: model.density || 1,
+                density: model.density || 10,
                 restitution: model.restitution || 0.001,
                 //random / programmatic for scene purposes
-                pos: [((Math.random()*sizeConstant)-(sizeConstant/2))*.25, 6+(i*2), -0.75],
+                pos: [((Math.random()*sizeConstant)-(sizeConstant/2))*.25, sizeConstant+(i*2), -0.75],
                 rot: [(Math.random()*30)-15, (Math.random()*30)-15, (Math.random()*30)-15],
                 move: true,
                 world: world,
@@ -161,31 +207,90 @@ import {Debug, ThreePhysicsStore} from './Store'
                 body.sleeping = false
                 body.setPosition({x: this.x, y: this.y, z: this.z})
             })
-            .onComplete(()=> { body.sleeping = true })
+            .onComplete(()=> { body.sleeping = true }) //unset body.controlPos?
             .start()
     }
+
+    forceRotate = (body, targetRotation, duration) => {
+        const start = body.getQuaternion().clone()
+        const tgt = body.getQuaternion().clone().setFromEuler(rads(targetRotation.x), rads(targetRotation.y), rads(targetRotation.z))
+
+        body.rotationTween = new TWEEN.Tween(start)
+            .to(tgt, duration)
+            .onUpdate(function(){
+                body.sleeping = false
+                body.setQuaternion(({
+                    x: this.x, 
+                    y: this.y, 
+                    z: this.z,
+                    w: this.w
+                }))
+            })
+            .onComplete(()=> { 
+                body.sleeping = true
+                // body.controlRot = true
+             })
+            .start()
+    }
+
     reenablePhysics = (body) => {
+        body.controlRot = false
         body.isKinematic = false
         body.sleeping = false 
     }
-    removeGround = () => {
-        canvas.ground.collidesWith = canvas.nonCollisionGroup
-        canvas.ground.setupMass(0x1, true)
+
+    phaseConstraints = () => {
+        this.batchConstraintAction('belongsTo', null, true, canvas.nonCollisionGroup)
+        this.batchConstraintAction('setupMass', [0x1, true])
     }
-    reconstituteGround = () => {
-        canvas.ground.collidesWith = canvas.normalCollisions
-        canvas.ground.setupMass(0x1, true)
-        this.restoreLostBodies()
-    }
+    
     restoreLostBodies = () => {
         //map through all bodies that are below a certain Y coord (-10)
+        const sizeConstant = canvas.viewableSizingConstant
         const allBodies = Object.keys(canvas.bodies)
+
         allBodies.forEach((key, i) => {
             const body = canvas.bodies[key] 
-            if(body.position.y < -0){
-                body.setPosition({x: 0, y: 6+(i*2), z: 0})
+            // console.log(body.getPosition())
+            if(body.position.y < -5){
+                console.log(key + ' restored')
+                const oldPos = body.getPosition()
+                if(body.sleeping) body.sleeping = false
+                body.setPosition({
+                    x: ((Math.random()*sizeConstant)-(sizeConstant/2))*.25, 
+                    y: sizeConstant + (i*2), 
+                    z: -0.75
+                })
+                body.setRotation({
+                    x: (Math.random()*30)-15,
+                    y: (Math.random()*30)-15,
+                    z: (Math.random()*30)-15
+                })
+                // console.log(body.linearVelocity)
+                setTimeout(()=>this.reenablePhysics(body), 100 + (i*50))
+                // this.reenablePhysics(body)
             }
-        }) 
+        }
+                
+        ) 
+    }
+
+    @action
+    select = (body) => {
+        this.props.store.selectedProject = body.name
+        this.phaseConstraints()
+        body.setPosition(body.getPosition())
+        this.forceRotate(body, {x: 0, y: 0, z: 0}, 500)
+        this.forceMove(body, {x: 0, y: body.getPosition().y, z: body.getPosition().z}, 400)
+        // body.timeOutMovement = setTimeout(() => this.forceMove(body, {x: 0, y: 1, z: body.getPosition().z}, 400), 400)
+    }
+    @action
+    unselect = () => {
+        // window.clearTimeout(body.timeOutMovement)
+        // body.timeOutMovement = undefined
+        this.establishConstraints(true)
+        this.reenablePhysics(canvas.bodies[this.props.store.selectedProject])
+        this.props.store.selectedProject = null
     }
 
     render(){

@@ -23,11 +23,11 @@ class JLPortfolioStore{
         introvideo: false
     }
     @computed get assetsReady(){ return !flatMap(this.loadcontent).includes(false) }
-
+    @observable selectedProject = null
 }
 
 class Debug{
-    @observable walls = true
+    @observable walls = false
     @observable amblight = true
     @observable spotlight = true
     @observable runWorld = true
