@@ -17,11 +17,13 @@ import { degs, rads} from './helpers.js'
 
 @observer export default class ThreeOimoTest extends React.Component{
 
+    @observable raycaster = new THREE.Raycaster()
+    @observable containerDims = null
+
     constructor(props, context){
         super(props, context)
 
-        console.log(OIMO.TO_RAD)
-        console.log(OIMO.EulerToAxis)
+        document.addEventListener('click', this.raycast)
 
         const d = 50
         this.lightPosition = new THREE.Vector3(0, 10, 0)
@@ -161,6 +163,27 @@ import { degs, rads} from './helpers.js'
                 })
             }
         })
+    }
+
+    componentDidMount(){
+        this.containerDims = this.refs.container.getBoundingClientRect()
+    }
+
+    raycast = (event) => {
+        console.log(window.innerWidth, window.innerHeight)
+        console.log(this.containerDims)
+        console.log(event.clientX, event.clientY)
+
+        const offsetX = (window.innerWidth - this.containerDims.width) / 2
+        const offsetY = (window.innerHeight - this.containerDims.height) / 2
+
+        let mouse = {
+            x: ( (event.clientX - offsetX) / this.containerDims.width ) * 2 - 1,
+            y: - ( (event.clientY - offsetY) / this.containerDims.height ) * 2 + 1
+        }
+       
+        console.log(mouse.x, mouse.y)
+        //compute...
     }
 
     animate = () =>{
@@ -325,21 +348,21 @@ import { degs, rads} from './helpers.js'
         })
 
         return(
-            <div> 
+            <div ref = "container"> 
             { debug.fps && <FPSStats />}
             <React3 
                 mainCamera = "camera"
-                width = {1400}
-                height = {700}
+                width = {this.props.width}
+                height = {this.props.height}
                 onAnimate = {this.animate}
                 // antialias
             >
-                <scene>
+                <scene ref = "scene">
                 <perspectiveCamera 
                     name = "camera"
                     ref = "camera"
                     fov = {canvas.fov}
-                    aspect = {1400/700}
+                    aspect = {this.props.width/this.props.height}
                     near = {0.001}
                     far = {100}
                     position = {this.cameraPosition}

@@ -15,7 +15,7 @@ class JLPortfolioStore{
     @computed get userViewingWork(){ return this.scrollposition >= this.worktop }
     @observable loadcontent = {
         //wait until all contents are true 
-        //before rendering any page content
+        //sbefore rendering any page content
 
         //although, only relevant content should hold up the render
         //so maybe this needs to be modified to reflect viewed section only
