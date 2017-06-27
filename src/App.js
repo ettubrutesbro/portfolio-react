@@ -32,21 +32,8 @@ import ThreeOimoTest from './ThreeOimo'
           // className={[styles.website, !assetsReady? styles.load: ''].join(' ')} 
           className={styles.website} 
       >
-        {!assetsReady && <div className = {styles.loader} > Loading </div>}
-        
-        <FixedTitleBlock />
-        <Moballax
-            className = {styles.fullWidth}
-            yStart = {0}
-            yEnd = {600}
-            styleAtStart = {{transform: {x: 0} }}
-            styleAtEnd = {{transform: {x: 100} }}
-            // easing = {false}
-        >
-        <Intro store = {store}/ >
-        </Moballax>
-        <Work store = {store}/>
-        <ThreeOimoTest store = {store} projects = {Projects} />
+
+        <ThreeOimoTest store = {store} projects = {Projects} width = {1600} height = {800} />
         
       </div>
     )
