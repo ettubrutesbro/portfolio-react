@@ -81,6 +81,7 @@ export default class ProjectGroup extends React.Component{
             <group
                 position = {physics.groups[index].position}
                 quaternion = {physics.groups[index].rotation}
+                onClick = {()=>console.log('what')}
             >
                 {this.props.debug &&
                     this.physicsMeshes.map((pmesh, it) => {
@@ -89,8 +90,10 @@ export default class ProjectGroup extends React.Component{
                         : <boxGeometry width = {0.1} height = {0.1} depth = {0.1} />
 
                         return (
-                            <mesh key = {project.name + 'PhysicsMesh' + it} 
-                                position = {new THREE.Vector3(pmesh.pos.x, pmesh.pos.y, pmesh.pos.z)} >
+                            <mesh 
+                                    name = {project.name} 
+                                    key = {project.name + 'PhysicsMesh' + it} 
+                                    position = {new THREE.Vector3(pmesh.pos.x, pmesh.pos.y, pmesh.pos.z)} >
                                 {geo}
                                 <meshBasicMaterial color = {pmesh.color} transparent opacity = {0.4} />
                             </mesh>

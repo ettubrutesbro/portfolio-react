@@ -10,15 +10,18 @@ import * as OIMO from 'oimo'
 //utilities
 import MouseInput from './MouseInput'
 import {FPSStats} from 'react-stats'
+const tempVector2 = new THREE.Vector2()
 //my stuff
 import {Debug, ThreePhysicsStore} from '../Store'
 import { degs, rads} from '../helpers.js'
 import ProjectGroup from './ProjectGroup'
 
+
 @observer export default class ProjectHeap extends React.Component{
     @observable mouseInput = null
     @observable eligibleForClick = []
     @observable projectsReady = false
+
 
     constructor(props, context){
         super(props, context)
@@ -272,6 +275,17 @@ import ProjectGroup from './ProjectGroup'
         ) 
     }
 
+    handleClick = (evt) => {
+        const intersections = this.mouseInput._getIntersections(tempVector2.set(evt.clientX, evt.clientY))
+        if(this.props.store.selectedProject === null){
+            this.select(physics.bodies[intersections[0].object.name])
+        }
+        else{
+            if(intersections.length === 0) this.unselect()
+        }
+        
+    }
+
     @action
     select = (body) => {
         this.props.store.selectedProject = body.name
@@ -310,7 +324,7 @@ import ProjectGroup from './ProjectGroup'
         })
 
         return(
-            <div ref = "container"> 
+            <div ref = "container" onClick = {this.handleClick}> 
             { debug.fps && <FPSStats />}
             <React3 
                 mainCamera = "camera"

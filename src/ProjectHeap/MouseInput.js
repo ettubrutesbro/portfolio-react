@@ -242,7 +242,7 @@ class MouseInput extends Module {
         this._restrictedIntersectionRecursive);
     }
 
-    // console.log(this._raycaster.intersectObject(this._scene, true))
+    // console.log(this._raycaster.intersectObject(this._scene, true)[0].object.name)
     return this._raycaster.intersectObject(this._scene, true);
   }
 
