@@ -1,7 +1,7 @@
 //core
 import React from 'react'
 import React3 from 'react-three-renderer'
-import {observable, action} from 'mobx'
+import {observable, action, computed} from 'mobx'
 import {observer} from 'mobx-react'
 //component-specific
 import * as THREE from 'three'
@@ -19,6 +19,7 @@ import { degs, rads} from './helpers.js'
 
     @observable raycaster = new THREE.Raycaster()
     @observable containerDims = null
+    @computed get raycastDir(){ return this.raycaster.ray.direction }
 
     constructor(props, context){
         super(props, context)
@@ -168,22 +169,26 @@ import { degs, rads} from './helpers.js'
     componentDidMount(){
         this.containerDims = this.refs.container.getBoundingClientRect()
     }
-
+    @action
     raycast = (event) => {
-        console.log(window.innerWidth, window.innerHeight)
-        console.log(this.containerDims)
-        console.log(event.clientX, event.clientY)
 
         const offsetX = (window.innerWidth - this.containerDims.width) / 2
         const offsetY = (window.innerHeight - this.containerDims.height) / 2
+        let mousevec = new THREE.Vector2()
 
         let mouse = {
-            x: ( (event.clientX - offsetX) / this.containerDims.width ) * 2 - 1,
-            y: - ( (event.clientY - offsetY) / this.containerDims.height ) * 2 + 1
+            x: ( (event.clientX - offsetX) / this.containerDims.width ) * 2 ,
+            y: - ( (event.clientY - offsetY) / this.containerDims.height ) * 2 
+            // x: event.clientX - (this.containerDims.left),
+            // y: event.clientY - (this.containerDims.top)
         }
-       
-        console.log(mouse.x, mouse.y)
+
+        mousevec.set(mouse.x, mouse.y)
         //compute...
+        this.raycaster.setFromCamera(mousevec, this.refs.camera)
+        // console.log(this.raycaster.ray.origin)
+        console.log(this.raycaster.ray.direction)
+        console.log(this.raycaster.intersectObject(this.refs.scene, true))
     }
 
     animate = () =>{
@@ -351,7 +356,7 @@ import { degs, rads} from './helpers.js'
             <div ref = "container"> 
             { debug.fps && <FPSStats />}
             <React3 
-                mainCamera = "camera"
+                mainCamera = "perspective_camera"
                 width = {this.props.width}
                 height = {this.props.height}
                 onAnimate = {this.animate}
@@ -359,7 +364,7 @@ import { degs, rads} from './helpers.js'
             >
                 <scene ref = "scene">
                 <perspectiveCamera 
-                    name = "camera"
+                    name = "perspective_camera"
                     ref = "camera"
                     fov = {canvas.fov}
                     aspect = {this.props.width/this.props.height}
@@ -369,6 +374,12 @@ import { degs, rads} from './helpers.js'
                     quaternion = {this.cameraQuaternion}
                     ref = "camera"
                 />
+
+                <arrowHelper 
+                    origin = {new THREE.Vector3()}
+                    dir = {new THREE.Vector3().copy(this.raycaster.ray.direction)}
+                />
+
                 {debug.amblight &&
                     <ambientLight color = {0xffffff} />
                 }
