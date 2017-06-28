@@ -12,7 +12,7 @@ import {computeClipDifference, computeColorDifference, computeXformDifference, e
 
 
 import Intro from './Intro'
-import ThreeOimoTest from './ThreeOimo'
+import ProjectHeap from './ProjectHeap/ProjectHeap'
 
 @observer class App extends React.Component {
   logScroll(){
@@ -32,7 +32,7 @@ import ThreeOimoTest from './ThreeOimo'
           className={styles.website} 
       >
 
-        <ThreeOimoTest store = {store} projects = {Projects} width = {1600} height = {800} />
+        <ProjectHeap store = {store} projects = {Projects} width = {1600} height = {800} />
         
       </div>
     )

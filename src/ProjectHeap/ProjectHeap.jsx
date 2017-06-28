@@ -7,21 +7,21 @@ import {observer} from 'mobx-react'
 import * as THREE from 'three'
 import * as TWEEN from '@tweenjs/tween.js'
 import * as OIMO from 'oimo'
-
+//utilities
+import MouseInput from './MouseInput'
 import {FPSStats} from 'react-stats'
-
-
+const tempVector2 = new THREE.Vector2()
 //my stuff
-import {Debug, ThreePhysicsStore} from './Store'
-import { degs, rads} from './helpers.js'
-import ProjectGroup from './ProjectGroup/ProjectGroup'
+import {Debug, ThreePhysicsStore} from '../Store'
+import { degs, rads} from '../helpers.js'
+import ProjectGroup from './ProjectGroup'
+
 
 @observer export default class ProjectHeap extends React.Component{
+    @observable mouseInput = null
+    @observable eligibleForClick = []
+    @observable projectsReady = false
 
-    @observable tempVector = new THREE.Vector2()
-    @observable raycast = new THREE.Raycaster()
-    @observable intersections = []
-    @observable itemsReady = false
 
     constructor(props, context){
         super(props, context)
@@ -129,17 +129,40 @@ import ProjectGroup from './ProjectGroup/ProjectGroup'
         this.wallPositionFront = new THREE.Vector3().copy(physics.wallFront.getPosition())
     }
 
+    componentDidUpdate(newProps) {
+        const {width, height} = this.props 
+        if(width !== newProps.width || height !== newProps.height){
+            this.refs.mouseInput.containerResized()
+        }
+    }
+
     @action
     setReady = () => {
         console.log('item ready')
-        this.itemsReady++
-        if(this.itemsReady === this.props.projects.length){
+        this.projectsReady++
+        if(this.projectsReady === this.props.projects.length){
             console.log('all items ready')
         }
     }
 
+    onCreateGroup = (group, index) => {
+        this.eligibleForClick[index] = group
+    }
+
+
     animate = () =>{
-        if(debug.runWorld && this.itemsReady === this.props.projects.length){
+        if(debug.runWorld && this.projectsReady === this.props.projects.length){
+
+            const {mouseInput, camera} = this.refs
+            if(!mouseInput.isReady()){
+                const {scene, container} = this.refs
+                mouseInput.ready(scene, container, camera)
+                // when projects have been mounted
+                // mouseInput.restrictIntersections(this.eligibleForClick)
+                mouseInput.setActive(false)
+            }
+            if(this.mouseInput !== mouseInput) this.mouseInput = mouseInput
+
             physics.world.step()
         
             const projects = this.props.projects
@@ -158,8 +181,8 @@ import ProjectGroup from './ProjectGroup/ProjectGroup'
         }
     }
 
-    testImpulse = (body) => {
-        body.applyImpulse(body.position, new THREE.Vector3(0,13,0))
+    testImpulse = (body, impulse) => {
+        body.applyImpulse(body.position, new THREE.Vector3(0,0,-20))
         body.linearVelocity.scaleEqual(0.8)
         body.angularVelocity.scaleEqual(0.2)
     }
@@ -170,8 +193,8 @@ import ProjectGroup from './ProjectGroup/ProjectGroup'
             body.applyImpulse(body.getPosition(), new THREE.Vector3(force[0],force[1],force[2]))    
         }
         else body.applyImpulse(new THREE.Vector3(force[0],force[1],force[2]), body.getPosition())
-        body.linearVelocity.scaleEqual(0.3)
-        body.angularVelocity.scaleEqual(0.15)
+        body.linearVelocity.scaleEqual(0.9)
+        body.angularVelocity.scaleEqual(0.35)
     }
 
     forceMove = (body, coords, duration) => {
@@ -229,7 +252,7 @@ import ProjectGroup from './ProjectGroup/ProjectGroup'
         allBodies.forEach((key, i) => {
             const body = physics.bodies[key] 
             // console.log(body.getPosition())
-            if(body.position.y < -5){
+            if(body.position.y < -1){
                 console.log(key + ' restored')
                 const oldPos = body.getPosition()
                 if(body.sleeping) body.sleeping = false
@@ -252,22 +275,43 @@ import ProjectGroup from './ProjectGroup/ProjectGroup'
         ) 
     }
 
+    handleClick = (evt) => {
+        const intersect = this.mouseInput._getIntersections(tempVector2.set(evt.clientX, evt.clientY))
+        if(this.props.store.selectedProject === null){
+            if(intersect.length > 0) this.select(physics.bodies[intersect[0].object.name])
+        }
+        else{
+            if(intersect.length === 0) this.unselect()
+        }
+        
+    }
+
     @action
     select = (body) => {
         this.props.store.selectedProject = body.name
         this.phaseConstraints()
         body.setPosition(body.getPosition())
         this.forceRotate(body, {x: 0, y: 0, z: 0}, 500)
-        this.forceMove(body, {x: 0, y: body.getPosition().y, z: body.getPosition().z}, 400)
+        this.forceMove(body, {x: 0, y: 1.5, z: body.getPosition().z}, 400)
         // body.timeOutMovement = setTimeout(() => this.forceMove(body, {x: 0, y: 1, z: body.getPosition().z}, 400), 400)
     }
     @action
     unselect = () => {
+        const selected = physics.bodies[this.props.store.selectedProject]
+        console.log(selected)
+        const weight = ((selected.mass * 2) - 10)
+        const randomVector = [
+            (Math.random()*weight)-(weight*2),
+            (Math.random()*weight)-(weight*2),
+            (Math.random()*weight)-(weight*2)
+        ]
         // window.clearTimeout(body.timeOutMovement)
         // body.timeOutMovement = undefined
         this.establishConstraints(true)
-        this.reenablePhysics(physics.bodies[this.props.store.selectedProject])
+        this.reenablePhysics(selected)
+        this.impulse(selected, randomVector, true)
         this.props.store.selectedProject = null
+
     }
 
     render(){
@@ -275,6 +319,7 @@ import ProjectGroup from './ProjectGroup/ProjectGroup'
         const sizeConstant = physics.viewableSizingConstant
 
         const projectGroups = this.props.projects.map((project,i)=>{
+            const onCreate = this.onCreateGroup.bind(this,i)
             return(
                 <ProjectGroup 
                     debug = {true}
@@ -283,12 +328,13 @@ import ProjectGroup from './ProjectGroup/ProjectGroup'
                     store = {physics}
                     index = {i}
                     onReady = {this.setReady}
+                    mouseInput = {this.mouseInput}
                 />
             )
         })
 
         return(
-            <div ref = "container"> 
+            <div ref = "container" onClick = {this.handleClick}> 
             { debug.fps && <FPSStats />}
             <React3 
                 mainCamera = "camera"
@@ -297,7 +343,9 @@ import ProjectGroup from './ProjectGroup/ProjectGroup'
                 onAnimate = {this.animate}
                 // antialias
             >
+                <module ref = "mouseInput" descriptor = {MouseInput} />
                 <scene ref = "scene">
+
                 <perspectiveCamera 
                     name = "camera"
                     ref = "camera"

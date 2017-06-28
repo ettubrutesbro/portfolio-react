@@ -40,7 +40,7 @@ class ThreePhysicsStore{
         // broadphase: 3
     })
     @observable bodies = {}
-    @observable meshes = []
+    @observable groups = []
     @observable physicsMeshes = []
     @observable viewableSizingConstant = 8
 
