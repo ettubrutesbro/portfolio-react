@@ -7,21 +7,18 @@ import {observer} from 'mobx-react'
 import * as THREE from 'three'
 import * as TWEEN from '@tweenjs/tween.js'
 import * as OIMO from 'oimo'
-
+//utilities
+import MouseInput from './MouseInput'
 import {FPSStats} from 'react-stats'
-
-
 //my stuff
-import {Debug, ThreePhysicsStore} from './Store'
-import { degs, rads} from './helpers.js'
-import ProjectGroup from './ProjectGroup/ProjectGroup'
+import {Debug, ThreePhysicsStore} from '../Store'
+import { degs, rads} from '../helpers.js'
+import ProjectGroup from './ProjectGroup'
 
 @observer export default class ProjectHeap extends React.Component{
-
-    @observable tempVector = new THREE.Vector2()
-    @observable raycast = new THREE.Raycaster()
-    @observable intersections = []
-    @observable itemsReady = false
+    @observable mouseInput = null
+    @observable eligibleForClick = []
+    @observable projectsReady = false
 
     constructor(props, context){
         super(props, context)
@@ -129,17 +126,40 @@ import ProjectGroup from './ProjectGroup/ProjectGroup'
         this.wallPositionFront = new THREE.Vector3().copy(physics.wallFront.getPosition())
     }
 
+    componentDidUpdate(newProps) {
+        const {width, height} = this.props 
+        if(width !== newProps.width || height !== newProps.height){
+            this.refs.mouseInput.containerResized()
+        }
+    }
+
     @action
     setReady = () => {
         console.log('item ready')
-        this.itemsReady++
-        if(this.itemsReady === this.props.projects.length){
+        this.projectsReady++
+        if(this.projectsReady === this.props.projects.length){
             console.log('all items ready')
         }
     }
 
+    onCreateGroup = (group, index) => {
+        this.eligibleForClick[index] = group
+    }
+
+
     animate = () =>{
-        if(debug.runWorld && this.itemsReady === this.props.projects.length){
+        if(debug.runWorld && this.projectsReady === this.props.projects.length){
+
+            const {mouseInput, camera} = this.refs
+            if(!mouseInput.isReady()){
+                const {scene, container} = this.refs
+                mouseInput.ready(scene, container, camera)
+                // when projects have been mounted
+                // mouseInput.restrictIntersections(this.eligibleForClick)
+                mouseInput.setActive(false)
+            }
+            if(this.mouseInput !== mouseInput) this.mouseInput = mouseInput
+
             physics.world.step()
         
             const projects = this.props.projects
@@ -275,6 +295,7 @@ import ProjectGroup from './ProjectGroup/ProjectGroup'
         const sizeConstant = physics.viewableSizingConstant
 
         const projectGroups = this.props.projects.map((project,i)=>{
+            const onCreate = this.onCreateGroup.bind(this,i)
             return(
                 <ProjectGroup 
                     debug = {true}
@@ -283,6 +304,7 @@ import ProjectGroup from './ProjectGroup/ProjectGroup'
                     store = {physics}
                     index = {i}
                     onReady = {this.setReady}
+                    mouseInput = {this.mouseInput}
                 />
             )
         })
@@ -297,7 +319,9 @@ import ProjectGroup from './ProjectGroup/ProjectGroup'
                 onAnimate = {this.animate}
                 // antialias
             >
+                <module ref = "mouseInput" descriptor = {MouseInput} />
                 <scene ref = "scene">
+
                 <perspectiveCamera 
                     name = "camera"
                     ref = "camera"

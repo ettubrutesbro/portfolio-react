@@ -5,34 +5,22 @@ import {observable, action} from 'mobx'
 import {observer} from 'mobx-react'
 
 import * as THREE from 'three'
-import * as OIMO from 'oimo'
-import * as TWEEN from '@tweenjs/tween.js'
+// import * as OIMO from 'oimo'
+// import * as TWEEN from '@tweenjs/tween.js'
 
 @observer
 export default class ProjectGroup extends React.Component{
-    /*
-    replaces projectMeshes in ThreeOimo; renders <group> with physics-store-linked
-    position and quaternion/rotation; 
-    creates bodies, physicsmeshes, uploads custom geometries,
-    includes methods for manipulation and selection (?)
-
-    props: physics store (store) + project data (project)
-    */
-
-    // @observable physicsGroup = null
+    
     @observable physicsMeshes = []
 
     constructor(props, context){
         super(props, context)
-        //given a project's JSON data, instantiate....
-
-
-
-        
-    } //end constructor
+    } 
 
     @action
     instantiateModel = () => {
+
+        //given project's JSON data thru props, instantiate physics model and meshes
 
         const project = this.props.project
         let physics = this.props.store
