@@ -181,8 +181,8 @@ import ProjectGroup from './ProjectGroup'
         }
     }
 
-    testImpulse = (body) => {
-        body.applyImpulse(body.position, new THREE.Vector3(0,13,0))
+    testImpulse = (body, impulse) => {
+        body.applyImpulse(body.position, new THREE.Vector3(0,0,-20))
         body.linearVelocity.scaleEqual(0.8)
         body.angularVelocity.scaleEqual(0.2)
     }
@@ -193,8 +193,8 @@ import ProjectGroup from './ProjectGroup'
             body.applyImpulse(body.getPosition(), new THREE.Vector3(force[0],force[1],force[2]))    
         }
         else body.applyImpulse(new THREE.Vector3(force[0],force[1],force[2]), body.getPosition())
-        body.linearVelocity.scaleEqual(0.3)
-        body.angularVelocity.scaleEqual(0.15)
+        body.linearVelocity.scaleEqual(0.9)
+        body.angularVelocity.scaleEqual(0.35)
     }
 
     forceMove = (body, coords, duration) => {
@@ -252,7 +252,7 @@ import ProjectGroup from './ProjectGroup'
         allBodies.forEach((key, i) => {
             const body = physics.bodies[key] 
             // console.log(body.getPosition())
-            if(body.position.y < -5){
+            if(body.position.y < -1){
                 console.log(key + ' restored')
                 const oldPos = body.getPosition()
                 if(body.sleeping) body.sleeping = false
@@ -276,12 +276,12 @@ import ProjectGroup from './ProjectGroup'
     }
 
     handleClick = (evt) => {
-        const intersections = this.mouseInput._getIntersections(tempVector2.set(evt.clientX, evt.clientY))
+        const intersect = this.mouseInput._getIntersections(tempVector2.set(evt.clientX, evt.clientY))
         if(this.props.store.selectedProject === null){
-            this.select(physics.bodies[intersections[0].object.name])
+            if(intersect.length > 0) this.select(physics.bodies[intersect[0].object.name])
         }
         else{
-            if(intersections.length === 0) this.unselect()
+            if(intersect.length === 0) this.unselect()
         }
         
     }
@@ -292,16 +292,26 @@ import ProjectGroup from './ProjectGroup'
         this.phaseConstraints()
         body.setPosition(body.getPosition())
         this.forceRotate(body, {x: 0, y: 0, z: 0}, 500)
-        this.forceMove(body, {x: 0, y: body.getPosition().y, z: body.getPosition().z}, 400)
+        this.forceMove(body, {x: 0, y: 1.5, z: body.getPosition().z}, 400)
         // body.timeOutMovement = setTimeout(() => this.forceMove(body, {x: 0, y: 1, z: body.getPosition().z}, 400), 400)
     }
     @action
     unselect = () => {
+        const selected = physics.bodies[this.props.store.selectedProject]
+        console.log(selected)
+        const weight = ((selected.mass * 2) - 10)
+        const randomVector = [
+            (Math.random()*weight)-(weight*2),
+            (Math.random()*weight)-(weight*2),
+            (Math.random()*weight)-(weight*2)
+        ]
         // window.clearTimeout(body.timeOutMovement)
         // body.timeOutMovement = undefined
         this.establishConstraints(true)
-        this.reenablePhysics(physics.bodies[this.props.store.selectedProject])
+        this.reenablePhysics(selected)
+        this.impulse(selected, randomVector, true)
         this.props.store.selectedProject = null
+
     }
 
     render(){
