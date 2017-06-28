@@ -12,7 +12,6 @@ import {computeClipDifference, computeColorDifference, computeXformDifference, e
 
 
 import Intro from './Intro'
-import Work from './Work'
 import ThreeOimoTest from './ThreeOimo'
 
 @observer class App extends React.Component {
