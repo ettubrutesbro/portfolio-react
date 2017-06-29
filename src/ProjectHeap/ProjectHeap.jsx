@@ -16,6 +16,8 @@ import {Debug, ThreePhysicsStore} from '../Store'
 import { degs, rads} from '../helpers.js'
 import ProjectGroup from './ProjectGroup'
 
+//test
+import Seseme from './Seseme/Seseme'
 
 @observer export default class ProjectHeap extends React.Component{
     @observable mouseInput = null
@@ -423,6 +425,8 @@ import ProjectGroup from './ProjectGroup'
                 }
 
                 {projectGroups}
+
+                <Seseme />
 
                 </scene>
 
