@@ -120,7 +120,8 @@ const duckJSON=require('./duck.model.json')
                 {this.parsedModel && 
                     <mesh 
                             scale = {new THREE.Vector3(0.05, 0.05, 0.05)}
-                            position = {new THREE.Vector3(-2, 2, -5)} >
+                            position = {new THREE.Vector3(-2, 2, -5)}
+                            rotation = {new THREE.Euler(0,45,0)} >
                        <geometry
                          vertices={this.parsedModel.geometry.vertices}
                          faces={this.parsedModel.geometry.faces}
