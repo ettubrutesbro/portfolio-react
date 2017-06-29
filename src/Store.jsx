@@ -1,6 +1,6 @@
 // import {observable, toJS, computed, autorun, action, useStrict} from "mobx";
 import {observable, computed} from 'mobx'
-import {observer} from 'mobx-react'
+// import {observer} from 'mobx-react'
 import {flatMap} from 'lodash'
 // import {projects} from './data/projects'
 import {World} from 'oimo'

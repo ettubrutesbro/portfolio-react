@@ -1,48 +1,89 @@
 import React from 'react'
-import {observable} from 'mobx'
+import {observable, action} from 'mobx'
 import {observer} from 'mobx-react'
-import React3 from 'react-three-renderer'
+// import React3 from 'react-three-renderer'
 import * as THREE from 'three'
 
 
-import ParsedModel from '../parsed_model.js'
+// import ParsedModel from '../parsed_model.js'
 
-var OBJLoader = require('three-obj-loader')(THREE)
+require('three-obj-loader')(THREE)
         
 
-const duck = require('./duck.obj')
+const duckOBJ=require('./duck.obj')
+// const duckJSON=require('./duck.model.json')
 
-export default class Seseme extends React.Component{
+import {duck} from './duck.model.json'
 
-    @observable parsedModel = null
-    @observable geometry
+@observer export default class Seseme extends React.Component{
+
+    @observable parsedModel=null
+    @observable geometry=null
 
     constructor( props, context) {
         super( props, context )
         // console.log(seseme)
-        // let loader = require('three-json-loader')(THREE)
+        // let loader=require('three-json-loader')(THREE)
         // this.parsedModel.load('./duck.obj')
-        // this.parsedModel = loader(duck)
-        var loader = new THREE.OBJLoader()
-        // loader.onLoad = ()=>{console.log('yay')}
-        this.parsedModel = loader.load(duck, (stuff1, stuff2)=>{
-            console.log(stuff1, stuff2)
-            console.log('yay!')
+        // this.parsedModel=loader(duck)
+        
+        // loader.onLoad=()=>{console.log('yay')}
+        // this.loadOBJ()
+        // this.loadJSON()
+        this.askwonLoad()
+
+    }
+
+    @action
+    askwonLoad = () => {
+        const loadingManager = new THREE.LoadingManager();
+        loadingManager.itemStart('./duck.model.json');
+
+        const jsonLoader = new THREE.JSONLoader()
+        jsonLoader.load('./duck.model.json', duck => {
+            console.log(duck)
+            // this.setState({ myshit });
+            loadingManager.itemEnd('./duck.model.json');
+        });
+    }
+
+
+    @action
+    loadJSON = () => {
+        // const duck = require('./duck.model.js')
+        // console.log(duck)
+        const duckjson = JSON.parse(duck)
+        console.log(duckjson)
+        var loader = new THREE.JSONLoader()
+        loader.load(duckjson, (geo) => {
+            // this.refs.group.add(object)
+            console.log(geo)
         })
-
-
+    }
+    @action
+    loadOBJ = () =>{
+        var loader=new THREE.OBJLoader()
+        loader.load(duckOBJ, object => {
+            for(let child of object.children) {
+                child.material.side = THREE.DoubleSide
+                this.refs.group.add(child)
+            }
+            // this.parsedModel = object
+            // this.refs.group.add(object)
+        })
     }
 
     componentDidMount(){
         console.log(this.parsedModel)
+        // this.refs.group.add(this.parsedModel)
     }
 
     render(){
-        // let meshes = [];
+        // let meshes=[];
 
         //   this.parsedModel.geometries.forEach((geometry, uuid) => {
         //     // get the right material for this geometry using the material index
-        //     // let material = this.parsedModel.materialArray[materialIndices.get(uuid)];
+        //     // let material=this.parsedModel.materialArray[materialIndices.get(uuid)];
 
         //     meshes.push(
         //       <mesh
@@ -56,13 +97,11 @@ export default class Seseme extends React.Component{
         //       </mesh>
         //     );
         //   })
-
+        // console.log('parsed mdl children 1')
+        console.log(this.parsedModel)
 
         return (
-            <mesh position = {new THREE.Vector3()} rotation = {new THREE.Quaternion()} >
-                <boxGeometry width = {1} height = {1} depth = {1} />
-                <meshBasicMaterial color = {0xfff000} />
-            </mesh>
+            <group ref = "group" />
         )
 
     }

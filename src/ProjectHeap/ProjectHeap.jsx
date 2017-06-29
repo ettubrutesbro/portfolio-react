@@ -6,44 +6,50 @@ import {observer} from 'mobx-react'
 //component-specific
 import * as THREE from 'three'
 import * as TWEEN from '@tweenjs/tween.js'
-import * as OIMO from 'oimo'
+// import * as OIMO from 'oimo'
 //utilities
 import MouseInput from './MouseInput'
 import {FPSStats} from 'react-stats'
-const tempVector2 = new THREE.Vector2()
+const tempVector2=new THREE.Vector2()
 //my stuff
 import {Debug, ThreePhysicsStore} from '../Store'
-import { degs, rads} from '../helpers.js'
+import { rads} from '../helpers.js'
 import ProjectGroup from './ProjectGroup'
 
 //test
 import Seseme from './Seseme/Seseme'
 
+const debug=new Debug()
+window.debug=debug
+const physics=new ThreePhysicsStore()
+window.world=physics
+
+
 @observer export default class ProjectHeap extends React.Component{
-    @observable mouseInput = null
-    @observable eligibleForClick = []
-    @observable projectsReady = false
-    @observable static = false
-    @observable renderTrigger = null
+    @observable mouseInput=null
+    @observable eligibleForClick=[]
+    @observable projectsReady=false
+    @observable static=false
+    @observable renderTrigger=null
 
     constructor(props, context){
         super(props, context)
 
-        const d = 50
-        this.lightPosition = new THREE.Vector3(0, 10, 0)
-        this.lightTarget = new THREE.Vector3(0, 2, 0)
+        // const d=50
+        this.lightPosition=new THREE.Vector3(0, 10, 0)
+        this.lightTarget=new THREE.Vector3(0, 2, 0)
         
-        this.cameraPosition = new THREE.Vector3(0, 2, 10)
-        this.cameraQuaternion = new THREE.Quaternion()
+        this.cameraPosition=new THREE.Vector3(0, 2, 10)
+        this.cameraQuaternion=new THREE.Quaternion()
 
-        const world = physics.world
-        const sizeConstant = physics.viewableSizingConstant 
+        const world=physics.world
+        const sizeConstant=physics.viewableSizingConstant 
 
-        this.establishConstraints = (reestablish) => {
-            const sizeConstant = physics.viewableSizingConstant
-            const world = physics.world
+        this.establishConstraints=(reestablish) => {
+            const sizeConstant=physics.viewableSizingConstant
+            const world=physics.world
             if(reestablish) this.batchConstraintAction('remove',[])
-            physics.ground = world.add({
+            physics.ground=world.add({
                 type: 'box',
                 size: [sizeConstant, 10, sizeConstant], 
                 pos: [0, -5, 0], 
@@ -51,28 +57,28 @@ import Seseme from './Seseme/Seseme'
                 belongsTo: physics.normalCollisions,
                 collidesWith: physics.collidesWithAll,
             })
-            physics.wallLeft = world.add({
+            physics.wallLeft=world.add({
                 type: 'box',
                 size: [1,100,sizeConstant],
                 pos: [-(sizeConstant/2), 0, 0],
                 belongsTo: physics.normalCollisions,
                 collidesWith: physics.collidesWithAll
             })
-            physics.wallRight = world.add({
+            physics.wallRight=world.add({
                 type: 'box',
                 size: [1,100,sizeConstant],
                 pos: [sizeConstant/2, 0, 0],
                 belongsTo: physics.normalCollisions,
                 collidesWith: physics.collidesWithAll
             })
-            physics.wallBack = world.add({
+            physics.wallBack=world.add({
                 type: 'box',
                 size: [sizeConstant,100,1],
                 pos: [0,0,-3],
                 belongsTo: physics.normalCollisions,
                 collidesWith: physics.collidesWithAll
             })
-            physics.wallFront = world.add({
+            physics.wallFront=world.add({
                 type: 'box',
                 size: [sizeConstant,100,1],
                 pos: [0,0,.5],
@@ -84,7 +90,7 @@ import Seseme from './Seseme/Seseme'
                 this.restoreLostBodies()   
             }
         }
-        this.batchConstraintAction = (funcCall, parameters, equals, newVal) => {
+        this.batchConstraintAction=(funcCall, parameters, equals, newVal) => {
             if(!equals){
                 physics.ground[funcCall](...parameters)
                 physics.wallLeft[funcCall](...parameters)
@@ -93,47 +99,47 @@ import Seseme from './Seseme/Seseme'
                 physics.wallBack[funcCall](...parameters)
             }
             else{
-                physics.ground[funcCall] = newVal
-                physics.wallLeft[funcCall] = newVal
-                physics.wallRight[funcCall] = newVal
-                physics.wallFront[funcCall] = newVal
-                physics.wallBack[funcCall] = newVal
+                physics.ground[funcCall]=newVal
+                physics.wallLeft[funcCall]=newVal
+                physics.wallRight[funcCall]=newVal
+                physics.wallFront[funcCall]=newVal
+                physics.wallBack[funcCall]=newVal
             }
         }
         this.establishConstraints()
 
-        physics.roof = world.add({
+        physics.roof=world.add({
             size: [sizeConstant, 10, sizeConstant],
             pos: [0, 40, 0],
             belongsTo: physics.normalCollisions,
             collidesWith: physics.collidesWithAll
         })
 
-         this.groundQuaternion = new THREE.Quaternion()
+         this.groundQuaternion=new THREE.Quaternion()
             .setFromAxisAngle(new THREE.Vector3(1, 0, 0), -Math.PI / 2)
 
         Object.defineProperty(physics.ground, 'belongsTo', {
                 get: function(){ return this.shapes.belongsTo },
                 set: function(newBits){ 
-                    this.shapes.belongsTo = newBits 
+                    this.shapes.belongsTo=newBits 
                 }
             })
 
-        this.wallPositionLeft = new THREE.Vector3().copy(physics.wallLeft.getPosition())
-        this.wallPositionRight = new THREE.Vector3().copy(physics.wallRight.getPosition())
-        this.wallPositionBack = new THREE.Vector3().copy(physics.wallBack.getPosition())
-        this.wallPositionFront = new THREE.Vector3().copy(physics.wallFront.getPosition())
+        this.wallPositionLeft=new THREE.Vector3().copy(physics.wallLeft.getPosition())
+        this.wallPositionRight=new THREE.Vector3().copy(physics.wallRight.getPosition())
+        this.wallPositionBack=new THREE.Vector3().copy(physics.wallBack.getPosition())
+        this.wallPositionFront=new THREE.Vector3().copy(physics.wallFront.getPosition())
     }
 
     componentDidUpdate(newProps) {
-        const {width, height} = this.props 
+        const {width, height}=this.props 
         if(width !== newProps.width || height !== newProps.height){
             this.refs.mouseInput.containerResized()
         }
     }
 
     @action
-    setReady = () => {
+    setReady=() => {
         console.log('item ready')
         this.projectsReady++
         if(this.projectsReady === this.props.projects.length){
@@ -141,37 +147,37 @@ import Seseme from './Seseme/Seseme'
         }
     }
 
-    onCreateGroup = (group, index) =>  this.eligibleForClick[index] = group
-    createManualRenderTrigger = (trigger) => this.renderTrigger = trigger
+    onCreateGroup=(group, index) =>  this.eligibleForClick[index]=group
+    createManualRenderTrigger=(trigger) => this.renderTrigger=trigger
 
-    animate = () =>{
+    animate=() =>{
         // console.log('anim')
         if(debug.runWorld && this.projectsReady === this.props.projects.length){
-            const {mouseInput, camera} = this.refs
+            const {mouseInput, camera}=this.refs
             if(!mouseInput.isReady()){
-                const {scene, container} = this.refs
+                const {scene, container}=this.refs
                 mouseInput.ready(scene, container, camera)
                 mouseInput.setActive(false)
             }
-            if(this.mouseInput !== mouseInput) this.mouseInput = mouseInput
+            if(this.mouseInput !== mouseInput) this.mouseInput=mouseInput
 
             physics.world.step()
         
-            let numberOfSleepingBodies = 0
-            const projects = this.props.projects
+            let numberOfSleepingBodies=0
+            const projects=this.props.projects
 
-            for(var i = 0; i<projects.length; i++){
-                const name = projects[i].name
+            for(var i=0; i<projects.length; i++){
+                const name=projects[i].name
                 if(!physics.bodies[name].sleeping){
-                    const newPos = physics.bodies[name].getPosition()
-                    physics.groups[i].position = new THREE.Vector3().copy(newPos)
-                    physics.groups[i].rotation = new THREE.Quaternion().copy(physics.bodies[name].getQuaternion())
+                    const newPos=physics.bodies[name].getPosition()
+                    physics.groups[i].position=new THREE.Vector3().copy(newPos)
+                    physics.groups[i].rotation=new THREE.Quaternion().copy(physics.bodies[name].getQuaternion())
                     if(newPos.y < -10){
                         //TODO: 
                         //eliminates need for physical basement,
                         //but may need adjustment depending on perspective / forces
                         console.log(name, 'is below threshold')
-                        physics.bodies[name].sleeping = true
+                        physics.bodies[name].sleeping=true
                     }
                 }
                 if(physics.bodies[name].sleeping){ 
@@ -183,15 +189,15 @@ import Seseme from './Seseme/Seseme'
 
             if(numberOfSleepingBodies === projects.length){
                 console.log('all are asleep, stopping constant renders')
-                this.static = true
+                this.static=true
             }
 
             TWEEN.update()
         }
     }
 
-    impulse = (body, vector, wonky) => {
-        const force = vector? vector : [0, 1, 0]
+    impulse=(body, vector, wonky) => {
+        const force=vector? vector : [0, 1, 0]
         if(!wonky){
             body.applyImpulse(body.getPosition(), new THREE.Vector3(force[0],force[1],force[2]))    
         }
@@ -200,28 +206,28 @@ import Seseme from './Seseme/Seseme'
         body.angularVelocity.scaleEqual(0.35)
     }
 
-    forceMove = (body, coords, duration) => {
-        const bodypos = body.getPosition()
-        const start = {x: bodypos.x, y: bodypos.y, z: bodypos.z}
+    forceMove=(body, coords, duration) => {
+        const bodypos=body.getPosition()
+        const start={x: bodypos.x, y: bodypos.y, z: bodypos.z}
 
-        body.moveTween = new TWEEN.Tween(start)
+        body.moveTween=new TWEEN.Tween(start)
             .to({x: coords.x, y: coords.y, z: coords.z}, duration)
             .onUpdate(function(){
-                body.sleeping = false
+                body.sleeping=false
                 body.setPosition({x: this.x, y: this.y, z: this.z})
             })
-            .onComplete(()=> { body.sleeping = true }) //unset body.controlPos?
+            .onComplete(()=> { body.sleeping=true }) //unset body.controlPos?
             .start()
     }
 
-    forceRotate = (body, targetRotation, duration) => {
-        const start = body.getQuaternion().clone()
-        const tgt = body.getQuaternion().clone().setFromEuler(rads(targetRotation.x), rads(targetRotation.y), rads(targetRotation.z))
+    forceRotate=(body, targetRotation, duration) => {
+        const start=body.getQuaternion().clone()
+        const tgt=body.getQuaternion().clone().setFromEuler(rads(targetRotation.x), rads(targetRotation.y), rads(targetRotation.z))
 
-        body.rotationTween = new TWEEN.Tween(start)
+        body.rotationTween=new TWEEN.Tween(start)
             .to(tgt, duration)
             .onUpdate(function(){
-                body.sleeping = false
+                body.sleeping=false
                 body.setQuaternion(({
                     x: this.x, 
                     y: this.y, 
@@ -230,35 +236,35 @@ import Seseme from './Seseme/Seseme'
                 }))
             })
             .onComplete(()=> { 
-                body.sleeping = true
-                // body.controlRot = true
+                body.sleeping=true
+                // body.controlRot=true
              })
             .start()
     }
 
-    reenablePhysics = (body) => {
-        body.controlRot = false
-        body.isKinematic = false
-        body.sleeping = false 
+    reenablePhysics=(body) => {
+        body.controlRot=false
+        body.isKinematic=false
+        body.sleeping=false 
     }
 
-    phaseConstraints = () => {
+    phaseConstraints=() => {
         this.batchConstraintAction('belongsTo', null, true, physics.nonCollisionGroup)
         this.batchConstraintAction('setupMass', [0x1, true])
     }
     
-    restoreLostBodies = () => {
+    restoreLostBodies=() => {
         //map through all bodies that are below a certain Y coord (-10)
-        const sizeConstant = physics.viewableSizingConstant
-        const allBodies = Object.keys(physics.bodies)
+        const sizeConstant=physics.viewableSizingConstant
+        const allBodies=Object.keys(physics.bodies)
 
         allBodies.forEach((key, i) => {
-            const body = physics.bodies[key] 
+            const body=physics.bodies[key] 
             // console.log(body.getPosition())
             if(body.position.y < -1){
                 console.log(key + ' restored')
-                const oldPos = body.getPosition()
-                if(body.sleeping) body.sleeping = false
+                // const oldPos=body.getPosition()
+                if(body.sleeping) body.sleeping=false
                 body.setPosition({
                     x: ((Math.random()*sizeConstant)-(sizeConstant/2))*.25, 
                     y: sizeConstant + (i*2), 
@@ -276,9 +282,9 @@ import Seseme from './Seseme/Seseme'
         ) 
     }
 
-    handleClick = (evt) => {
+    handleClick=(evt) => {
         // console.log('clicked')
-        const intersect = this.mouseInput._getIntersections(tempVector2.set(evt.clientX, evt.clientY))
+        const intersect=this.mouseInput._getIntersections(tempVector2.set(evt.clientX, evt.clientY))
         if(this.props.store.selectedProject === null){
             if(intersect.length > 0) this.select(physics.bodies[intersect[0].object.name])
         }
@@ -289,21 +295,21 @@ import Seseme from './Seseme/Seseme'
     }
 
     @action
-    select = (body) => {
-        if(this.static) this.static = false
-        this.props.store.selectedProject = body.name
+    select=(body) => {
+        if(this.static) this.static=false
+        this.props.store.selectedProject=body.name
         this.phaseConstraints()
         body.setPosition(body.getPosition())
         this.forceRotate(body, {x: 0, y: 0, z: 0}, 500)
         this.forceMove(body, {x: 0, y: 1.5, z: body.getPosition().z}, 400)
     }
     @action
-    unselect = () => {
-        if(this.static) this.static = false
-        const selected = physics.bodies[this.props.store.selectedProject]
+    unselect=() => {
+        if(this.static) this.static=false
+        const selected=physics.bodies[this.props.store.selectedProject]
         console.log(selected)
-        const weight = ((selected.mass * 2) - 10)
-        const randomVector = [
+        const weight=((selected.mass * 2) - 10)
+        const randomVector=[
             (Math.random()*weight)-(weight*2),
             (Math.random()*weight)-(weight*2),
             (Math.random()*weight)-(weight*2)
@@ -311,115 +317,114 @@ import Seseme from './Seseme/Seseme'
         this.establishConstraints(true)
         this.reenablePhysics(selected)
         this.impulse(selected, randomVector, true)
-        this.props.store.selectedProject = null
+        this.props.store.selectedProject=null
 
     }
 
     render(){
 
-        const sizeConstant = physics.viewableSizingConstant
+        const sizeConstant=physics.viewableSizingConstant
 
-        const projectGroups = this.props.projects.map((project,i)=>{
-            const onCreate = this.onCreateGroup.bind(this,i)
+        const projectGroups=this.props.projects.map((project,i)=>{
+            this.onCreateGroup.bind(this,i)
             return(
                 <ProjectGroup 
-                    debug = {true}
-                    key = {project.name + 'Group'}
-                    project = {project}
-                    store = {physics}
-                    index = {i}
-                    onReady = {this.setReady}
-                    mouseInput = {this.mouseInput}
+                    debug={true}
+                    key={project.name + 'Group'}
+                    project={project}
+                    store={physics}
+                    index={i}
+                    onReady={this.setReady}
+                    mouseInput={this.mouseInput}
                 />
             )
         })
 
         return(
-            <div ref = "container" onClick = {this.handleClick}> 
+            <div ref="container" onClick={this.handleClick}> 
             { debug.fps && <FPSStats />}
             <React3 
-                mainCamera = "camera"
-                width = {this.props.width}
-                height = {this.props.height}
-                onAnimate = {this.animate}
-                forceManualRender = {this.static}
-                onManualRenderTriggerCreated = {this.createManualRenderTrigger}
+                mainCamera="camera"
+                width={this.props.width}
+                height={this.props.height}
+                onAnimate={this.animate}
+                forceManualRender={this.static}
+                onManualRenderTriggerCreated={this.createManualRenderTrigger}
                 // antialias
             >
-                <module ref = "mouseInput" descriptor = {MouseInput} />
-                <scene ref = "scene">
+                <module ref="mouseInput" descriptor={MouseInput} />
+                <scene ref="scene">
 
                 <perspectiveCamera 
-                    name = "camera"
-                    ref = "camera"
-                    fov = {physics.fov}
-                    aspect = {this.props.width/this.props.height}
-                    near = {0.001}
-                    far = {100}
-                    position = {this.cameraPosition}
-                    quaternion = {this.cameraQuaternion}
-                    ref = "camera"
+                    name="camera"
+                    ref="camera"
+                    fov={physics.fov}
+                    aspect={this.props.width/this.props.height}
+                    near={0.001}
+                    far={100}
+                    position={this.cameraPosition}
+                    quaternion={this.cameraQuaternion}
                 />
                 {debug.amblight &&
-                    <ambientLight color = {0xffffff} />
+                    <ambientLight color={0xffffff} />
                 }
                 {debug.spotlight &&
                     <directionalLight 
-                        color = {0xffffff}
-                        intensity = {1.75}
+                        color={0xffffff}
+                        intensity={1.75}
                         // castShadow
-                        position = {this.lightPosition}
-                        lookAt = {this.lightTarget}
+                        position={this.lightPosition}
+                        lookAt={this.lightTarget}
                     />
                 }
                 {debug.walls && 
                 <group>
-                    <mesh quaternion = {this.groundQuaternion}>
+                    <mesh quaternion={this.groundQuaternion}>
                         <planeBufferGeometry
-                            width = {sizeConstant}
-                            height = {sizeConstant}
+                            width={sizeConstant}
+                            height={sizeConstant}
                         />
-                        <meshBasicMaterial color = {0xffffff} />
+                        <meshBasicMaterial color={0xffffff} />
                     </mesh>
                 
                 
                     <mesh 
-                        position = {this.wallPositionLeft}
+                        position={this.wallPositionLeft}
                         >
                         <boxGeometry
-                            width = {1}
-                            height = {10}
-                            depth = {sizeConstant}
+                            width={1}
+                            height={10}
+                            depth={sizeConstant}
                         />
-                        <meshBasicMaterial color = {0xff0000} />
+                        <meshBasicMaterial color={0xff0000} />
                     </mesh>
 
-                    <mesh position = {this.wallPositionRight}
+                    <mesh position={this.wallPositionRight}
                         >
                         <boxGeometry
-                            width = {1}
-                            height = {10}
-                            depth = {sizeConstant}
+                            width={1}
+                            height={10}
+                            depth={sizeConstant}
                             />
-                            <meshBasicMaterial color = {0x0000ff} />
+                            <meshBasicMaterial color={0x0000ff} />
                     </mesh>
-                    <mesh position = {this.wallPositionFront}
+                    <mesh position={this.wallPositionFront}
                         >
                         <boxGeometry
-                            width = {sizeConstant}
-                            height = {10}
-                            depth = {1}
+                            width={sizeConstant}
+                            height={10}
+                            depth={1}
                             />
-                            <meshBasicMaterial color = {0xffffff}  transparent opacity = {0.3} />
+                            <meshBasicMaterial color={0xffffff}  transparent opacity={0.3} />
                     </mesh>
-                    <mesh position = {this.wallPositionBack}
+                    <mesh position={this.wallPositionBack}
                         >
                         <boxGeometry
-                            width = {sizeConstant}
-                            height = {10}
-                            depth = {1}
+                            width={sizeConstant}
+                            height={10}
+                            depth={1}
                             />
-                            <meshBasicMaterial color = {0x550055} transparent  />
+                            <meshBasicMaterial color={0x550055} transparent  />
                     </mesh>
                 </group>
                 }
@@ -436,11 +441,7 @@ import Seseme from './Seseme/Seseme'
     }
 }
 
-const debug = new Debug()
-window.debug = debug
-const physics = new ThreePhysicsStore()
-window.world = physics
 
-ProjectHeap.defaultProps = {
+ProjectHeap.defaultProps={
     debugModels: true
 }

@@ -1,6 +1,6 @@
 import React from 'react'
-import {observable, action, observe} from 'mobx'
-import {observer} from 'mobx-react'
+import {action} from 'mobx'
+// import {observer} from 'mobx-react'
 
 import styles from './Intro.css'
 
@@ -9,14 +9,14 @@ import QuirkyVid from './QuirkyVid/QuirkyVid'
 export default class Intro extends React.Component{
 
   @action loaded(){
-    this.props.store.loadcontent.introvideo = true
+    this.props.store.loadcontent.introvideo=true
   }
   render(){
     return(
-      <section className = {styles.intro}>
+      <section className={styles.intro}>
         <QuirkyVid
           id="intro"
-          className = {styles.introVideo}
+          className={styles.introVideo}
           clips={[
             require('../assets/3d.mp4'),
             require('../assets/weavin.mp4'),
@@ -25,7 +25,7 @@ export default class Intro extends React.Component{
             require('../assets/sketch.mp4'),
             require('../assets/paint.mp4'),
           ]}
-          loaded = {()=>{this.loaded()}}
+          loaded={()=>{this.loaded()}}
         />
       </section>
     )
