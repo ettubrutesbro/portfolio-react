@@ -21,7 +21,8 @@ import ProjectGroup from './ProjectGroup'
     @observable mouseInput = null
     @observable eligibleForClick = []
     @observable projectsReady = false
-
+    @observable static = false
+    @observable renderTrigger = null
 
     constructor(props, context){
         super(props, context)
@@ -44,7 +45,7 @@ import ProjectGroup from './ProjectGroup'
                 type: 'box',
                 size: [sizeConstant, 10, sizeConstant], 
                 pos: [0, -5, 0], 
-                friction: 0.4,
+                friction: 0.6,
                 belongsTo: physics.normalCollisions,
                 collidesWith: physics.collidesWithAll,
             })
@@ -105,13 +106,13 @@ import ProjectGroup from './ProjectGroup'
             belongsTo: physics.normalCollisions,
             collidesWith: physics.collidesWithAll
         })
-        physics.basement = world.add({
-            size: [30, 10, 30],
-            pos: [0, -25, 0],
-            friction: 1,
-            belongsTo: physics.normalCollisions,
-            collidesWith: physics.collidesWithAll
-        })
+        // physics.basement = world.add({
+        //     size: [200, 10, 200],
+        //     pos: [0, -25, 0],
+        //     friction: 1,
+        //     belongsTo: physics.normalCollisions,
+        //     collidesWith: physics.collidesWithAll
+        // })
 
          this.groundQuaternion = new THREE.Quaternion()
             .setFromAxisAngle(new THREE.Vector3(1, 0, 0), -Math.PI / 2)
@@ -145,46 +146,58 @@ import ProjectGroup from './ProjectGroup'
         }
     }
 
-    onCreateGroup = (group, index) => {
-        this.eligibleForClick[index] = group
-    }
-
+    onCreateGroup = (group, index) =>  this.eligibleForClick[index] = group
+    createManualRenderTrigger = (trigger) => this.renderTrigger = trigger
 
     animate = () =>{
+        // console.log('anim')
         if(debug.runWorld && this.projectsReady === this.props.projects.length){
+            // if(!this.static) this.renderTrigger()
+
+            // console.log('animate')
 
             const {mouseInput, camera} = this.refs
             if(!mouseInput.isReady()){
                 const {scene, container} = this.refs
                 mouseInput.ready(scene, container, camera)
-                // when projects have been mounted
-                // mouseInput.restrictIntersections(this.eligibleForClick)
                 mouseInput.setActive(false)
             }
             if(this.mouseInput !== mouseInput) this.mouseInput = mouseInput
 
             physics.world.step()
         
+            let numberOfSleepingBodies = 0
             const projects = this.props.projects
 
-            for(var i = 0; i<this.props.projects.length; i++){
+            for(var i = 0; i<projects.length; i++){
                 // console.log(projects[i])
+                
                 const name = projects[i].name
                 if(!physics.bodies[name].sleeping){
-                    physics.groups[i].position = new THREE.Vector3().copy(physics.bodies[name].getPosition())
+                    const newPos = physics.bodies[name].getPosition()
+                    physics.groups[i].position = new THREE.Vector3().copy(newPos)
                     physics.groups[i].rotation = new THREE.Quaternion().copy(physics.bodies[name].getQuaternion())
+                    if(newPos.y < -10){
+                        //eliminates need for physical basement
+                        console.log(name, 'is below threshold')
+                        physics.bodies[name].sleeping = true
+                    }
+                }
+                if(physics.bodies[name].sleeping){ 
+                    numberOfSleepingBodies++
                 }
                 
+                
+            }
+            // console.log('num sleeping bodies: ', numberOfSleepingBodies)
+
+            if(numberOfSleepingBodies === projects.length){
+                console.log('all are asleep, stopping constant renders')
+                this.static = true
             }
 
             TWEEN.update()
         }
-    }
-
-    testImpulse = (body, impulse) => {
-        body.applyImpulse(body.position, new THREE.Vector3(0,0,-20))
-        body.linearVelocity.scaleEqual(0.8)
-        body.angularVelocity.scaleEqual(0.2)
     }
 
     impulse = (body, vector, wonky) => {
@@ -276,6 +289,7 @@ import ProjectGroup from './ProjectGroup'
     }
 
     handleClick = (evt) => {
+        // console.log('clicked')
         const intersect = this.mouseInput._getIntersections(tempVector2.set(evt.clientX, evt.clientY))
         if(this.props.store.selectedProject === null){
             if(intersect.length > 0) this.select(physics.bodies[intersect[0].object.name])
@@ -288,6 +302,7 @@ import ProjectGroup from './ProjectGroup'
 
     @action
     select = (body) => {
+        if(this.static) this.static = false
         this.props.store.selectedProject = body.name
         this.phaseConstraints()
         body.setPosition(body.getPosition())
@@ -297,6 +312,7 @@ import ProjectGroup from './ProjectGroup'
     }
     @action
     unselect = () => {
+        if(this.static) this.static = false
         const selected = physics.bodies[this.props.store.selectedProject]
         console.log(selected)
         const weight = ((selected.mass * 2) - 10)
@@ -341,7 +357,7 @@ import ProjectGroup from './ProjectGroup'
                 width = {this.props.width}
                 height = {this.props.height}
                 onAnimate = {this.animate}
-                forceManualRender = {true}
+                forceManualRender = {this.static}
                 onManualRenderTriggerCreated = {this.createManualRenderTrigger}
                 // antialias
             >
