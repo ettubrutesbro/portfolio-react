@@ -341,6 +341,8 @@ import ProjectGroup from './ProjectGroup'
                 width = {this.props.width}
                 height = {this.props.height}
                 onAnimate = {this.animate}
+                forceManualRender = {true}
+                onManualRenderTriggerCreated = {this.createManualRenderTrigger}
                 // antialias
             >
                 <module ref = "mouseInput" descriptor = {MouseInput} />
