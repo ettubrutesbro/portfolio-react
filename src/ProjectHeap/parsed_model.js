@@ -5,8 +5,8 @@ export default class ParsedModel{
 
   constructor(settings){
     // this._colladaLoader = new THREE.ColladaLoader();
-    // this._objectLoader = new THREE.JSONLoader();
-    this._objectLoader = new THREE.ObjectLoader();
+    this._objectLoader = require('three-json-loader')(THREE)
+    // this._objectLoader = new THREE.ObjectLoader();
     this._parseSettings(settings || {});
   }
 
@@ -118,7 +118,7 @@ export default class ParsedModel{
     }
 
     return new Promise((resolve, reject) => {
-      this._objectLoader.load(
+      this._objectLoader(
         url,
         // success callback
         (data) => {

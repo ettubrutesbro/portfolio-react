@@ -6,24 +6,31 @@ import * as THREE from 'three'
 
 
 import ParsedModel from '../parsed_model.js'
-const seseme = require('./orb_lo.js')
 
+var OBJLoader = require('three-obj-loader')(THREE)
+        
+
+const duck = require('./duck.obj')
 
 export default class Seseme extends React.Component{
 
-    @observable parsedModel = new ParsedModel()
+    @observable parsedModel = null
+    @observable geometry
 
     constructor( props, context) {
         super( props, context )
-        console.log(seseme)
-        this.parsedModel.loadJSON(seseme).then(
-            function resolve(m){
-                console.log('loaded', m)
-            },
-            function reject(e){
-                console.log('error', e)
-            }
-        )
+        // console.log(seseme)
+        // let loader = require('three-json-loader')(THREE)
+        // this.parsedModel.load('./duck.obj')
+        // this.parsedModel = loader(duck)
+        var loader = new THREE.OBJLoader()
+        // loader.onLoad = ()=>{console.log('yay')}
+        this.parsedModel = loader.load(duck, (stuff1, stuff2)=>{
+            console.log(stuff1, stuff2)
+            console.log('yay!')
+        })
+
+
     }
 
     componentDidMount(){
