@@ -348,7 +348,8 @@ window.world=physics
                 width={this.props.width}
                 height={this.props.height}
                 onAnimate={this.animate}
-                forceManualRender={this.static}
+                // forceManualRender={this.static}
+                forceManualRender={false}
                 onManualRenderTriggerCreated={this.createManualRenderTrigger}
                 // antialias
             >
