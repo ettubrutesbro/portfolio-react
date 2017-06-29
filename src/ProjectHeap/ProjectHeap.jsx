@@ -106,13 +106,6 @@ import ProjectGroup from './ProjectGroup'
             belongsTo: physics.normalCollisions,
             collidesWith: physics.collidesWithAll
         })
-        // physics.basement = world.add({
-        //     size: [200, 10, 200],
-        //     pos: [0, -25, 0],
-        //     friction: 1,
-        //     belongsTo: physics.normalCollisions,
-        //     collidesWith: physics.collidesWithAll
-        // })
 
          this.groundQuaternion = new THREE.Quaternion()
             .setFromAxisAngle(new THREE.Vector3(1, 0, 0), -Math.PI / 2)
@@ -152,10 +145,6 @@ import ProjectGroup from './ProjectGroup'
     animate = () =>{
         // console.log('anim')
         if(debug.runWorld && this.projectsReady === this.props.projects.length){
-            // if(!this.static) this.renderTrigger()
-
-            // console.log('animate')
-
             const {mouseInput, camera} = this.refs
             if(!mouseInput.isReady()){
                 const {scene, container} = this.refs
@@ -170,15 +159,15 @@ import ProjectGroup from './ProjectGroup'
             const projects = this.props.projects
 
             for(var i = 0; i<projects.length; i++){
-                // console.log(projects[i])
-                
                 const name = projects[i].name
                 if(!physics.bodies[name].sleeping){
                     const newPos = physics.bodies[name].getPosition()
                     physics.groups[i].position = new THREE.Vector3().copy(newPos)
                     physics.groups[i].rotation = new THREE.Quaternion().copy(physics.bodies[name].getQuaternion())
                     if(newPos.y < -10){
-                        //eliminates need for physical basement
+                        //TODO: 
+                        //eliminates need for physical basement,
+                        //but may need adjustment depending on perspective / forces
                         console.log(name, 'is below threshold')
                         physics.bodies[name].sleeping = true
                     }
@@ -189,7 +178,6 @@ import ProjectGroup from './ProjectGroup'
                 
                 
             }
-            // console.log('num sleeping bodies: ', numberOfSleepingBodies)
 
             if(numberOfSleepingBodies === projects.length){
                 console.log('all are asleep, stopping constant renders')
@@ -279,9 +267,7 @@ import ProjectGroup from './ProjectGroup'
                     y: (Math.random()*30)-15,
                     z: (Math.random()*30)-15
                 })
-                // console.log(body.linearVelocity)
                 setTimeout(()=>this.reenablePhysics(body), 100 + (i*50))
-                // this.reenablePhysics(body)
             }
         }
                 
@@ -308,7 +294,6 @@ import ProjectGroup from './ProjectGroup'
         body.setPosition(body.getPosition())
         this.forceRotate(body, {x: 0, y: 0, z: 0}, 500)
         this.forceMove(body, {x: 0, y: 1.5, z: body.getPosition().z}, 400)
-        // body.timeOutMovement = setTimeout(() => this.forceMove(body, {x: 0, y: 1, z: body.getPosition().z}, 400), 400)
     }
     @action
     unselect = () => {
@@ -321,8 +306,6 @@ import ProjectGroup from './ProjectGroup'
             (Math.random()*weight)-(weight*2),
             (Math.random()*weight)-(weight*2)
         ]
-        // window.clearTimeout(body.timeOutMovement)
-        // body.timeOutMovement = undefined
         this.establishConstraints(true)
         this.reenablePhysics(selected)
         this.impulse(selected, randomVector, true)
