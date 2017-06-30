@@ -5,8 +5,6 @@ import {observable, action} from 'mobx'
 import {observer} from 'mobx-react'
 
 import * as THREE from 'three'
-// import * as OIMO from 'oimo'
-// import * as TWEEN from '@tweenjs/tween.js'
 
 @observer
 export default class ProjectGroup extends React.Component{
@@ -17,11 +15,13 @@ export default class ProjectGroup extends React.Component{
         super(props, context)
     } 
 
+    componentWillMount(){
+        this.instantiateModel()
+    }
+
     @action
     instantiateModel = () => {
-
         //given project's JSON data thru props, instantiate physics model and meshes
-
         const project = this.props.project
         let physics = this.props.store
 
@@ -64,26 +64,23 @@ export default class ProjectGroup extends React.Component{
         }
     }
 
-    componentWillMount(){
-        this.instantiateModel()
-    }
-
     componentDidMount(){
-        console.log('component mounted')
         this.props.onReady()
     }
 
     render(){
         const physics = this.props.store 
         const { project, index } = this.props
-        console.log
         return(
             <group
+                name = {project.name}
                 position = {physics.groups[index].position}
                 quaternion = {physics.groups[index].rotation}
                 onClick = {()=>console.log('what')}
             >
-                {this.props.debug &&
+                {project.presentationModel}
+                {//PHYSICSGROUP
+                 this.props.debug &&
                     this.physicsMeshes.map((pmesh, it) => {
                         const geo = pmesh.geo === 'box'? ( <boxGeometry width = {pmesh.size.w} height = {pmesh.size.h} depth = {pmesh.size.d} /> )
                         : pmesh.geo === 'sphere'? ( <sphereGeometry radius = {pmesh.size.r} widthSegments = {8} heightSegments = {8}/>  )

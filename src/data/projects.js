@@ -3,6 +3,8 @@
 //     lights: true,
 //     runWorld: true,
 // }
+import React from 'react'
+import Seseme from '../ProjectHeap/Seseme/Seseme'
 
 const Projects = [
     {
@@ -18,6 +20,7 @@ const Projects = [
     },
     {
         name: 'seseme',
+        presentationModel: (<Seseme />),
         physicsModel: {
             types:        ['box', 'box',           'box'],
             sizes:        [1.15,.25,1.15,      .9,1,.9,     .8,1,.8],

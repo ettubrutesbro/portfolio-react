@@ -17,7 +17,6 @@ import { rads} from '../helpers.js'
 import ProjectGroup from './ProjectGroup'
 
 //test
-import Seseme from './Seseme/Seseme'
 
 const debug=new Debug()
 window.debug=debug
@@ -285,9 +284,13 @@ window.world=physics
     handleClick=(evt) => {
         console.log('clicked')
         const intersect=this.mouseInput._getIntersections(tempVector2.set(evt.clientX, evt.clientY))
-        if(this.props.store.selectedProject === null){
-            console.log(intersect[0].object.name)
-            if(intersect.length > 0) this.select(physics.bodies[intersect[0].object.name])
+        if(this.props.store.selectedProject === null && intersect.length > 0){
+            if(!intersect[0].object || !intersect[0].object.name || !physics.bodies[intersect[0].object.name]){
+                console.log(intersect[0].object.name)
+                console.log('target doesnt have name or isnt registered in physics bodies')
+                return
+            }
+            this.select(physics.bodies[intersect[0].object.name])
         }
         else{
             if(intersect.length === 0) this.unselect()
@@ -431,8 +434,6 @@ window.world=physics
                 }
 
                 {projectGroups}
-
-                <Seseme />
 
                 </scene>
 
