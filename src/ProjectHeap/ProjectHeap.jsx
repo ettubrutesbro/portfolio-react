@@ -340,6 +340,7 @@ window.world=physics
                     index={i}
                     onReady={this.setReady}
                     mouseInput={this.mouseInput}
+                    // tween = {TWEEN}
                 />
             )
         })

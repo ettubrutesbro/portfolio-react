@@ -78,7 +78,9 @@ export default class ProjectGroup extends React.Component{
                 quaternion = {physics.groups[index].rotation}
                 onClick = {()=>console.log('what')}
             >
-                {project.presentationModel}
+                { //TODO TODO TODO: HOW TO GET PROPS (store) TO THIS? need to affect static...
+                    project.presentationModel
+                }
 
                 {//PHYSICS MESHES: 
                  this.props.debug && project.debug && 
