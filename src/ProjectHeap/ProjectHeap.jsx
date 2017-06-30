@@ -283,9 +283,10 @@ window.world=physics
     }
 
     handleClick=(evt) => {
-        // console.log('clicked')
+        console.log('clicked')
         const intersect=this.mouseInput._getIntersections(tempVector2.set(evt.clientX, evt.clientY))
         if(this.props.store.selectedProject === null){
+            console.log(intersect[0].object.name)
             if(intersect.length > 0) this.select(physics.bodies[intersect[0].object.name])
         }
         else{
@@ -348,8 +349,7 @@ window.world=physics
                 width={this.props.width}
                 height={this.props.height}
                 onAnimate={this.animate}
-                // forceManualRender={this.static}
-                forceManualRender={false}
+                forceManualRender={this.static}
                 onManualRenderTriggerCreated={this.createManualRenderTrigger}
                 // antialias
             >
