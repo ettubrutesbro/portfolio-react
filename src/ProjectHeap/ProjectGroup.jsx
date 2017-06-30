@@ -79,8 +79,9 @@ export default class ProjectGroup extends React.Component{
                 onClick = {()=>console.log('what')}
             >
                 {project.presentationModel}
-                {//PHYSICSGROUP
-                 this.props.debug &&
+
+                {//PHYSICS MESHES: 
+                 this.props.debug && project.debug && 
                     this.physicsMeshes.map((pmesh, it) => {
                         const geo = pmesh.geo === 'box'? ( <boxGeometry width = {pmesh.size.w} height = {pmesh.size.h} depth = {pmesh.size.d} /> )
                         : pmesh.geo === 'sphere'? ( <sphereGeometry radius = {pmesh.size.r} widthSegments = {8} heightSegments = {8}/>  )

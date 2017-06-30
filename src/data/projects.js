@@ -9,9 +9,11 @@ import Seseme from '../ProjectHeap/Seseme/Seseme'
 const Projects = [
     {
         name: 'sendbloom',
+        debug: true,
     },
     {
         name: 'origami',
+        debug: true,
         physicsModel: {
             types: ['sphere', 'box'],
             sizes: [.75,0,0,     .5,2,.5],
@@ -20,11 +22,12 @@ const Projects = [
     },
     {
         name: 'seseme',
+        // debug: true,
         presentationModel: (<Seseme />),
         physicsModel: {
-            types:        ['box', 'box',           'box'],
-            sizes:        [1.15,.25,1.15,      .9,1,.9,     .8,1,.8],
-            positions:    [0,-.75,0,      0,-.25,0,           0,.75,0],
+            types:        ['box'],
+            sizes:        [.9,2.5,.9],
+            positions:    [0,0,0],
             debugColor: 0xff0000
         },
     }
