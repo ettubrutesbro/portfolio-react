@@ -27,7 +27,7 @@ class JLPortfolioStore{
 }
 
 class Debug{
-    @observable walls = false
+    // @observable walls = true
     @observable amblight = true
     @observable spotlight = true
     @observable runWorld = true
@@ -52,6 +52,9 @@ class ThreePhysicsStore{
     @observable normalCollisions = 1 << 2
     //collidesWith hexes
     @observable collidesWithAll = 0xffffffff
+
+    @observable static = false
+
 }
 
 export {JLPortfolioStore, Debug, ThreePhysicsStore}

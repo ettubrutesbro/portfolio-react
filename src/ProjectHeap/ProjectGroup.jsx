@@ -5,6 +5,19 @@ import {observable, action} from 'mobx'
 import {observer} from 'mobx-react'
 
 import * as THREE from 'three'
+import * as PresentationComponents from '../data/projects.js'
+
+function makePresentationComponent(props){
+    //in projects: export Seseme from './Seseme/Seseme', etc.
+    //import * as ProjectPresentationModels from './projects.js'
+    //use <Components.Seseme />
+
+    // import { Seseme } from  './dir' //this might be a dealbreaker
+    // const components = { Seseme: Seseme }
+    // makePresentationComponent({storytype: project.presentationGroup, store: this.props.store})
+    const PresentationComponent = PresentationComponents[props.name]
+    return <PresentationComponent store = {props.store} />
+}
 
 @observer
 export default class ProjectGroup extends React.Component{
@@ -68,9 +81,15 @@ export default class ProjectGroup extends React.Component{
         this.props.onReady()
     }
 
+
+
     render(){
         const physics = this.props.store 
         const { project, index } = this.props
+        // const someShit = <project.presentationModel />
+        const someShit = (<group>{project.presentationModel}</group>)
+
+
         return(
             <group
                 name = {project.name}
@@ -79,7 +98,7 @@ export default class ProjectGroup extends React.Component{
                 onClick = {()=>console.log('what')}
             >
                 { //TODO TODO TODO: HOW TO GET PROPS (store) TO THIS? need to affect static...
-                    project.presentationModel
+                    makePresentationComponent({name: 'Seseme', store: this.props.store})
                 }
 
                 {//PHYSICS MESHES: 

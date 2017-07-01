@@ -33,4 +33,4 @@ const Projects = [
     }
 ]
 
-export {Projects}
+export {Projects, Seseme}

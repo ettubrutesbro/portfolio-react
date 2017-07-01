@@ -28,7 +28,6 @@ window.world=physics
     @observable mouseInput=null
     @observable eligibleForClick=[]
     @observable projectsReady=false
-    @observable static=false
     @observable renderTrigger=null
 
     constructor(props, context){
@@ -149,6 +148,7 @@ window.world=physics
     onCreateGroup=(group, index) =>  this.eligibleForClick[index]=group
     createManualRenderTrigger=(trigger) => this.renderTrigger=trigger
 
+    @action
     animate=() =>{
         // console.log('anim')
         if(debug.runWorld && this.projectsReady === this.props.projects.length){
@@ -188,7 +188,7 @@ window.world=physics
 
             if(numberOfSleepingBodies === projects.length){
                 console.log('all are asleep, stopping constant renders')
-                this.static=true
+                physics.static = true
             }
 
             TWEEN.update()
@@ -300,7 +300,7 @@ window.world=physics
 
     @action
     select=(body) => {
-        if(this.static) this.static=false
+        if(physics.static) physics.static=false
         this.props.store.selectedProject=body.name
         this.phaseConstraints()
         body.setPosition(body.getPosition())
@@ -309,7 +309,7 @@ window.world=physics
     }
     @action
     unselect=() => {
-        if(this.static) this.static=false
+        if(physics.static) physics.static=false
         const selected=physics.bodies[this.props.store.selectedProject]
         console.log(selected)
         const weight=((selected.mass * 2) - 10)
@@ -353,7 +353,7 @@ window.world=physics
                 width={this.props.width}
                 height={this.props.height}
                 onAnimate={this.animate}
-                forceManualRender={this.static}
+                forceManualRender={physics.static}
                 onManualRenderTriggerCreated={this.createManualRenderTrigger}
                 // antialias
             >
@@ -377,7 +377,7 @@ window.world=physics
                     <directionalLight 
                         color={0xffffff}
                         intensity={1.75}
-                        // castShadow
+                        castShadow
                         position={this.lightPosition}
                         lookAt={this.lightTarget}
                     />
