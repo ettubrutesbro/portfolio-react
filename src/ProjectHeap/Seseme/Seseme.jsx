@@ -32,6 +32,12 @@ export default class Seseme extends React.Component{
         const setter = this.setYPos
         let target = this.pillars[0].pos.y
         const start = {y: this.pillars[0].pos.y}
+        
+        this.props.store.bodies.seseme.sleeping = false
+        this.props.store.static = false
+
+        console.log('presentation component settnig world static to false')
+        console.log(this.props.store.static)
         this.tween = new TWEEN.Tween(start).to({y: .5}, 300)
         .onUpdate(function(stuff, stuff2){
             console.log(stuff, stuff2)
@@ -40,6 +46,8 @@ export default class Seseme extends React.Component{
         })
         .onComplete(()=>{
             console.log('reenable manual render') //TODO
+            this.props.store.bodies.seseme.sleeping = true
+            // this.props.store.static = true
         })
         .start()
     }
