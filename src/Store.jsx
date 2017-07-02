@@ -24,6 +24,7 @@ class JLPortfolioStore{
     }
     @computed get assetsReady(){ return !flatMap(this.loadcontent).includes(false) }
     @observable selectedProject = null
+    @observable expandedProject = null
 }
 
 class Debug{

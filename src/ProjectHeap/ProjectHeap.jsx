@@ -340,6 +340,8 @@ window.world=physics
                     index={i}
                     onReady={this.setReady}
                     mouseInput={this.mouseInput}
+                    isSelected = {this.props.store.selectedProject === project.name}
+                    isExpanded = {this.props.store.expandedProject === project.name}
                     // tween = {TWEEN}
                 />
             )

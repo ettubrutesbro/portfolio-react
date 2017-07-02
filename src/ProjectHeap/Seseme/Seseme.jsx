@@ -1,5 +1,5 @@
 import React from 'react'
-import {observable, action} from 'mobx'
+import {observable, action, autorun} from 'mobx'
 import {observer} from 'mobx-react'
 import * as THREE from 'three'
 import * as TWEEN from '@tweenjs/tween.js'
@@ -7,7 +7,7 @@ import * as TWEEN from '@tweenjs/tween.js'
 
 @observer
 export default class Seseme extends React.Component{
-
+    @observable mode = this.props.mode
     @observable tween = null
 
     @observable pillars = [
@@ -27,8 +27,19 @@ export default class Seseme extends React.Component{
         this.pedestal=loader.parse(require('./pedestal.json'))
         this.pillar=loader.parse(require('./pillar.json'))
     }
+    
+
+    componentWillReceiveProps(newProps){
+        console.log(this.props.mode, newProps.mode)
+        if(this.props.mode !== newProps.mode){
+            if(newProps.mode === 'expanded') this.onExpand()
+            else if(newProps.mode === 'selected') this.onSelect()
+            else if(newProps.mode === 'normal') this.onNormal()
+        }
+    }
+
     @action
-    select = () => {
+    onSelect = () => {
         const setter = this.setYPos
         let target = this.pillars[0].pos.y
         const start = {y: this.pillars[0].pos.y}
@@ -36,19 +47,13 @@ export default class Seseme extends React.Component{
         this.props.store.bodies.seseme.sleeping = false
         this.props.store.static = false
 
-        console.log('presentation component settnig world static to false')
-        console.log(this.props.store.static)
         this.tween = new TWEEN.Tween(start).to({y: .5}, 300)
         .onUpdate(function(stuff, stuff2){
             console.log(stuff, stuff2)
             setter(this.y)
             // this.tween = this.y
         })
-        .onComplete(()=>{
-            console.log('reenable manual render') //TODO
-            this.props.store.bodies.seseme.sleeping = true
-            // this.props.store.static = true
-        })
+        .onComplete(()=>this.props.store.bodies.seseme.sleeping = true)
         .start()
     }
 

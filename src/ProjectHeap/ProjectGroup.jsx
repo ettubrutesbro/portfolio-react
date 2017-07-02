@@ -9,7 +9,7 @@ import * as PresentationComponents from '../data/projects.js'
 
 function makePresentationComponent(props){
     const PresentationComponent = PresentationComponents[props.name]
-    return PresentationComponent? <PresentationComponent store = {props.store} />
+    return PresentationComponent? <PresentationComponent {...props} />
     : null
 }
 
@@ -79,13 +79,9 @@ export default class ProjectGroup extends React.Component{
 
     render(){
         const physics = this.props.store 
-        const { project, index } = this.props
+        const { project, index, isExpanded, isSelected } = this.props
         const capitalizedName = project.name.charAt(0).toUpperCase() + project.name.substr(1)
-        // const someShit = <project.presentationModel />
-        // const someShit = (<group>{project.presentationModel}</group>)
-        // console.log(project.name.charAt(0).toUpperCase() + project.name.substr(1))
-
-
+        
         return(
             <group
                 name = {project.name}
@@ -93,9 +89,12 @@ export default class ProjectGroup extends React.Component{
                 quaternion = {physics.groups[index].rotation}
                 onClick = {()=>console.log('what')}
             >
-                { 
-                    makePresentationComponent({name: capitalizedName, store: this.props.store})
-                }
+                { makePresentationComponent({
+                    name: capitalizedName, 
+                    store: physics, 
+                    index: index,
+                    mode: isExpanded? 'expanded' : isSelected? 'selected' : 'normal'
+                })}
 
                 {//PHYSICS MESHES: 
                  this.props.debug && project.debug && 
