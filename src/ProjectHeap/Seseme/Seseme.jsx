@@ -9,6 +9,7 @@ import * as TWEEN from '@tweenjs/tween.js'
 export default class Seseme extends React.Component{
     @observable mode = this.props.mode
     @observable tween = null
+    @observable plrTweens = [null,null,null,null]
 
     @observable pillars = [
         {pos: {x:-0.18, y: -.25, z:0.18}, quat: new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0), -Math.PI/2)},
@@ -30,36 +31,62 @@ export default class Seseme extends React.Component{
     
 
     componentWillReceiveProps(newProps){
-        console.log(this.props.mode, newProps.mode)
         if(this.props.mode !== newProps.mode){
             if(newProps.mode === 'expanded') this.onExpand()
             else if(newProps.mode === 'selected') this.onSelect()
-            else if(newProps.mode === 'normal') this.onNormal()
+            else if(newProps.mode === 'normal') this.restoreNormal()
         }
     }
 
     @action
     onSelect = () => {
-        const setter = this.setYPos
-        let target = this.pillars[0].pos.y
-        const start = {y: this.pillars[0].pos.y}
+        let store = this.props.store
+        const setYPos = this.setYPos
+        const newPositions = [ .1, .425, -.3, .27 ]
         
         this.props.store.bodies.seseme.sleeping = false
         this.props.store.static = false
 
-        this.tween = new TWEEN.Tween(start).to({y: .5}, 300)
-        .onUpdate(function(stuff, stuff2){
-            console.log(stuff, stuff2)
-            setter(this.y)
-            // this.tween = this.y
+        this.plrTweens.map((plrtween, i)=>{
+            if(plrtween) plrtween.stop()
+            plrtween = new TWEEN.Tween({y: this.pillars[i].pos.y})
+                .to({y: newPositions[i] })
+                .onUpdate(function(){
+                    setYPos(i,this.y)
+                })
+                .onComplete(function(){
+                    store.bodies.seseme.sleeping=true
+                })
+                .start()
         })
-        .onComplete(()=>this.props.store.bodies.seseme.sleeping = true)
-        .start()
+
     }
 
-    @action setYPos = (y) => {
-        this.pillars[0].pos.y = y
+    @action
+    restoreNormal = () => {
+        let store = this.props.store
+        const setYPos = this.setYPos
+        const originalPositions = [  -.25, 0, .37, .5 ]
+
+        this.props.store.bodies.seseme.sleeping = false
+        this.props.store.static = false
+      
+        this.plrTweens.map((plrtween, i)=>{
+            if(plrtween) plrtween.stop()
+            plrtween = new TWEEN.Tween({y: this.pillars[i].pos.y})
+                .to({y: originalPositions[i] })
+                .onUpdate(function(){
+                    setYPos(i,this.y)
+                })
+                .onComplete(function(){
+                    // this.props.store.bodies.seseme.sleeping=true
+                })
+                .start()
+        })
+
     }
+
+    @action setYPos = (i,y) =>  this.pillars[i].pos.y = y
 
     render(){
         const scaleAdjust = new THREE.Vector3(0.08,0.08,0.08)
