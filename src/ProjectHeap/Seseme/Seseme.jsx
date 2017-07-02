@@ -19,10 +19,10 @@ export default class Seseme extends React.Component{
 
     constructor( props, context) {
         super( props, context )
-        this.setModel()
+        this.loadModels()
     }
     // @action
-    setModel = () => {
+    loadModels = () => {
         const loader=new THREE.JSONLoader()
         this.pedestal=loader.parse(require('./pedestal.json'))
         this.pillar=loader.parse(require('./pillar.json'))
@@ -88,9 +88,10 @@ export default class Seseme extends React.Component{
                 }
                 {this.pillar &&
                     <group>
-                        {this.pillars.map((p)=>{
+                        {this.pillars.map((p,i)=>{
                             return(
                                 <mesh
+                                    key = {'pillar'+i}
                                     name = 'seseme'
                                     scale = {scaleAdjust} 
                                     position = {new THREE.Vector3(p.pos.x, p.pos.y, p.pos.z)}

@@ -23,7 +23,6 @@ const Projects = [
     {
         name: 'seseme',
         // debug: true,
-        presentationModel: (<Seseme />),
         physicsModel: {
             types:        ['box'],
             sizes:        [.9,2.5,.9],

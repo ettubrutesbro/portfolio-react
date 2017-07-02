@@ -8,15 +8,9 @@ import * as THREE from 'three'
 import * as PresentationComponents from '../data/projects.js'
 
 function makePresentationComponent(props){
-    //in projects: export Seseme from './Seseme/Seseme', etc.
-    //import * as ProjectPresentationModels from './projects.js'
-    //use <Components.Seseme />
-
-    // import { Seseme } from  './dir' //this might be a dealbreaker
-    // const components = { Seseme: Seseme }
-    // makePresentationComponent({storytype: project.presentationGroup, store: this.props.store})
     const PresentationComponent = PresentationComponents[props.name]
-    return <PresentationComponent store = {props.store} />
+    return PresentationComponent? <PresentationComponent store = {props.store} />
+    : null
 }
 
 @observer
@@ -86,8 +80,10 @@ export default class ProjectGroup extends React.Component{
     render(){
         const physics = this.props.store 
         const { project, index } = this.props
+        const capitalizedName = project.name.charAt(0).toUpperCase() + project.name.substr(1)
         // const someShit = <project.presentationModel />
-        const someShit = (<group>{project.presentationModel}</group>)
+        // const someShit = (<group>{project.presentationModel}</group>)
+        // console.log(project.name.charAt(0).toUpperCase() + project.name.substr(1))
 
 
         return(
@@ -97,8 +93,8 @@ export default class ProjectGroup extends React.Component{
                 quaternion = {physics.groups[index].rotation}
                 onClick = {()=>console.log('what')}
             >
-                { //TODO TODO TODO: HOW TO GET PROPS (store) TO THIS? need to affect static...
-                    makePresentationComponent({name: 'Seseme', store: this.props.store})
+                { 
+                    makePresentationComponent({name: capitalizedName, store: this.props.store})
                 }
 
                 {//PHYSICS MESHES: 
