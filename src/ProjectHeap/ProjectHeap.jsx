@@ -304,25 +304,27 @@ window.world=physics
         this.props.store.selectedProject=body.name
         this.phaseConstraints()
         body.setPosition(body.getPosition())
-        this.forceRotate(body, {x: 0, y: 0, z: 0}, 500)
+        // console.log('what?')
+        this.forceRotate(body, {x: 0, y: -135, z: 0}, 500)
         this.forceMove(body, {x: 0, y: 1.5, z: body.getPosition().z}, 400)
     }
     @action
     unselect=() => {
-        if(physics.static) physics.static=false
-        const selected=physics.bodies[this.props.store.selectedProject]
-        console.log(selected)
-        const weight=((selected.mass * 2) - 10)
-        const randomVector=[
-            (Math.random()*weight)-(weight*2),
-            (Math.random()*weight)-(weight*2),
-            (Math.random()*weight)-(weight*2)
-        ]
-        this.establishConstraints(true)
-        this.reenablePhysics(selected)
-        this.impulse(selected, randomVector, true)
-        this.props.store.selectedProject=null
-
+        if(this.props.store.selectedProject){
+            if(physics.static) physics.static=false
+            const selected=physics.bodies[this.props.store.selectedProject]
+            console.log(selected)
+            const weight=((selected.mass * 2) - 10)
+            const randomVector=[
+                (Math.random()*weight)-(weight*2),
+                (Math.random()*weight)-(weight*2),
+                (Math.random()*weight)-(weight*2)
+            ]
+            this.establishConstraints(true)
+            this.reenablePhysics(selected)
+            this.impulse(selected, randomVector, true)
+            this.props.store.selectedProject=null
+        }
     }
 
     render(){

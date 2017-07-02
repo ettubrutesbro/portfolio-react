@@ -17,7 +17,8 @@ export default class Seseme extends React.Component{
         {pos: {x:0.18, y: .37, z:-0.18}, quat: new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0), Math.PI/2)},
         {pos: {x:-0.18, y: .5, z:-0.18}, quat: new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,-1,0), Math.PI)}
     ]
-
+    //constructor, loadModels, and componentWillReceiveProps should be 
+    //generic class function
     constructor( props, context) {
         super( props, context )
         this.loadModels()
@@ -28,8 +29,6 @@ export default class Seseme extends React.Component{
         this.pedestal=loader.parse(require('./pedestal.json'))
         this.pillar=loader.parse(require('./pillar.json'))
     }
-    
-
     componentWillReceiveProps(newProps){
         if(this.props.mode !== newProps.mode){
             if(newProps.mode === 'expanded') this.onExpand()
@@ -59,14 +58,12 @@ export default class Seseme extends React.Component{
                 })
                 .start()
         })
-
     }
-
     @action
     restoreNormal = () => {
         let store = this.props.store
         const setYPos = this.setYPos
-        const originalPositions = [  -.25, 0, .37, .5 ]
+        const originalPositions = [  -.25, 0, .35, .475 ]
 
         this.props.store.bodies.seseme.sleeping = false
         this.props.store.static = false

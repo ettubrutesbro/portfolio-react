@@ -22,12 +22,13 @@ const Projects = [
     },
     {
         name: 'seseme',
-        // debug: true,
+        debug: true,
         physicsModel: {
             types:        ['box'],
             sizes:        [.9,2.5,.9],
             positions:    [0,0,0],
-            debugColor: 0xff0000
+            debugColor: 0xff0000,
+            selectRotation: 45,
         },
     }
 ]
