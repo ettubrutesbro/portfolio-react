@@ -289,12 +289,22 @@ window.world=physics
                 console.log(intersect[0].object.name)
                 console.log('target doesnt have name or isnt registered in physics bodies')
                 return
+            // }
+            // if(intersect[0].object.name === this.props.store.selectedProject){ //expansion
+            //     console.log('expand ', intersect[0].object.name)
+            }else{ //selection
+                const index = Object.keys(physics.bodies).indexOf(intersect[0].object.name)
+                const rot = this.props.projects[index].selectRotation || {x: 0, y: 0, z: 0}
+                this.select(physics.bodies[intersect[0].object.name], rot)
             }
 
-            const index = Object.keys(physics.bodies).indexOf(intersect[0].object.name)
-            const rot = this.props.projects[index].selectRotation || {x: 0, y: 0, z: 0}
-
-            this.select(physics.bodies[intersect[0].object.name], rot)
+            
+        }
+        else if(intersect.length > 0){
+            //something is already selected
+            if(intersect[0].object.name === this.props.store.selectedProject){
+                console.log('expand',intersect[0].object.name)
+            }
         }
         else{
             if(intersect.length === 0) this.unselect()
