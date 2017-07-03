@@ -41,7 +41,7 @@ export default class Seseme extends React.Component{
     onSelect = () => {
         let store = this.props.store
         const setYPos = this.setYPos
-        const newPositions = [ .1, .425, -.3, .27 ]
+        const newPositions = [ .1, .475, -.3, .27 ]
         
         this.props.store.bodies.seseme.sleeping = false
         this.props.store.static = false

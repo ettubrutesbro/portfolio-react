@@ -290,7 +290,11 @@ window.world=physics
                 console.log('target doesnt have name or isnt registered in physics bodies')
                 return
             }
-            this.select(physics.bodies[intersect[0].object.name])
+
+            const index = Object.keys(physics.bodies).indexOf(intersect[0].object.name)
+            const rot = this.props.projects[index].selectRotation || {x: 0, y: 0, z: 0}
+
+            this.select(physics.bodies[intersect[0].object.name], rot)
         }
         else{
             if(intersect.length === 0) this.unselect()
@@ -299,13 +303,14 @@ window.world=physics
     }
 
     @action
-    select=(body) => {
+    select=(body, selectRotation) => {
         if(physics.static) physics.static=false
         this.props.store.selectedProject=body.name
         this.phaseConstraints()
         body.setPosition(body.getPosition())
         // console.log('what?')
-        this.forceRotate(body, {x: 0, y: -135, z: 0}, 500)
+        // how to get the 
+        this.forceRotate(body, selectRotation, 500)
         this.forceMove(body, {x: 0, y: 1.5, z: body.getPosition().z}, 400)
     }
     @action
