@@ -12,7 +12,8 @@ import {computeClipDifference, computeColorDifference, computeXformDifference, e
 
 
 import Intro from './Intro'
-import ProjectHeap from './ProjectHeap/ProjectHeap'
+import ProjectHeap from './Projects/ProjectHeap'
+import ProjectInfo from './Projects/ProjectInfo'
 
 @observer class App extends React.Component {
   logScroll(){
@@ -33,11 +34,22 @@ import ProjectHeap from './ProjectHeap/ProjectHeap'
       >
 
         <ProjectHeap store = {store} projects = {Projects} width = {1600} height = {800} />
-        
+        <ProjectInfo />
       </div>
     )
   }
 }
+
+
+
+
+
+
+
+
+
+
+
 
 class FixedTitleBlock extends React.Component {
   render(){

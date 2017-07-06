@@ -4,7 +4,7 @@
 //     runWorld: true,
 // }
 import React from 'react'
-import Seseme from '../ProjectHeap/Seseme/Seseme'
+import Seseme from '../Projects/Seseme/Seseme'
 
 const Projects = [
     {
@@ -18,7 +18,7 @@ const Projects = [
             types: ['sphere', 'box'],
             sizes: [.75,0,0,     .5,2,.5],
             positions: [0,0,0, 0,0,0]
-        }
+        },
     },
     {
         name: 'seseme',
@@ -33,9 +33,9 @@ const Projects = [
             debugColor: 0xff0000
         },
         selected: {
-            rotation: {x: 0, y: -135, z: 0},
+            rotation: {x: 15, y: -135, z: -0},
             camera: {
-                position: {x: 1, y: 3, z: 7}
+                position: {x: 2.5, y: 1.4, z: 7.7}
             }
         },
     }

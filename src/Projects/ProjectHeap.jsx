@@ -371,7 +371,7 @@ window.world=physics
         this.props.store.selectedProject=body.name
 
         if(selectCamera) this.moveCamera(selectCamera.position, 600)
-        else this.moveCamera({x: 5, y: 2, z: 8}, 500)
+        else this.moveCamera({x: 2.5, y: 1.5, z: 8}, 500)
 
         this.phaseConstraints()
         body.setPosition(body.getPosition())

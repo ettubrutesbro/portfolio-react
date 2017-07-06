@@ -78,6 +78,7 @@ export default class Seseme extends React.Component{
                 .onComplete(function(){
                     // this.props.store.bodies.seseme.sleeping=true
                 })
+                .easing(TWEEN.Easing.Quadratic.Out)
                 .start()
         })
 
