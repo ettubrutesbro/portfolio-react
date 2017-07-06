@@ -32,7 +32,12 @@ const Projects = [
             positions: [0,0,0],
             debugColor: 0xff0000
         },
-        selectRotation: {x:0,y:-135,z:0}
+        selected: {
+            rotation: {x: 0, y: -135, z: 0},
+            camera: {
+                position: {x: 1, y: 3, z: 7}
+            }
+        },
     }
 ]
 

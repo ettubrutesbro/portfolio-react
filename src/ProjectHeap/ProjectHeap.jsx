@@ -30,6 +30,10 @@ window.world=physics
     @observable projectsReady=false
     @observable renderTrigger=null
 
+    @observable defaultCameraPosition = new THREE.Vector3(0,2,10)
+    @observable cameraPosition = this.defaultCameraPosition
+    @observable cameraTween = null
+
     constructor(props, context){
         super(props, context)
 
@@ -37,7 +41,7 @@ window.world=physics
         this.lightPosition=new THREE.Vector3(0, 10, 0)
         this.lightTarget=new THREE.Vector3(0, 2, 0)
         
-        this.cameraPosition=new THREE.Vector3(0, 2, 10)
+        // this.cameraPosition=new THREE.Vector3(0, 2, 10)
         this.cameraQuaternion=new THREE.Quaternion()
 
         const world=physics.world
@@ -135,6 +139,7 @@ window.world=physics
             this.refs.mouseInput.containerResized()
         }
     }
+    //TODO: resize event?
 
     @action
     setReady=() => {
@@ -209,6 +214,12 @@ window.world=physics
         const bodypos=body.getPosition()
         const start={x: bodypos.x, y: bodypos.y, z: bodypos.z}
 
+        if(!duration){ //dynamic duration
+            const startVector = new THREE.Vector3().copy(bodypos)
+            const endVector = new THREE.Vector3(coords.x, coords.y, coords.z)
+            duration = (startVector.distanceTo(endVector) * 100) + 125
+        }
+
         body.moveTween=new TWEEN.Tween(start)
             .to({x: coords.x, y: coords.y, z: coords.z}, duration)
             .onUpdate(function(){
@@ -216,12 +227,20 @@ window.world=physics
                 body.setPosition({x: this.x, y: this.y, z: this.z})
             })
             .onComplete(()=> { body.sleeping=true }) //unset body.controlPos?
+            .easing(TWEEN.Easing.Quadratic.Out)
             .start()
     }
-
+   
     forceRotate=(body, targetRotation, duration) => {
         const start=body.getQuaternion().clone()
         const tgt=body.getQuaternion().clone().setFromEuler(rads(targetRotation.x), rads(targetRotation.y), rads(targetRotation.z))
+
+        if(!duration){ //dynamic duration
+            const startEuler = new THREE.Euler().setFromQuaternion(new THREE.Quaternion().copy(start)).toVector3()
+            const endEuler = new THREE.Euler().setFromQuaternion(new THREE.Quaternion().copy(tgt)).toVector3()
+            duration = (startEuler.distanceTo(endEuler) * 90) + 50
+            console.log(duration)
+        }
 
         body.rotationTween=new TWEEN.Tween(start)
             .to(tgt, duration)
@@ -238,6 +257,29 @@ window.world=physics
                 body.sleeping=true
                 // body.controlRot=true
              })
+            .easing(TWEEN.Easing.Quadratic.Out)
+            .start()
+    }
+
+    @action //only mobx'd because it manipulates store's static boolean
+    moveCamera=(newPos, duration)=>{
+        //direct manipulation
+        const camera = this.refs.camera
+        const current = {
+            x: camera.position.x,
+            y: camera.position.y,
+            z: camera.position.z
+        }
+        physics.static = false
+        if(this.cameraTween) this.cameraTween.stop()
+        this.cameraTween = new TWEEN.Tween({x: current.x, y: current.y, z: current.z})
+            .to({x: newPos.x, y: newPos.y, z: newPos.z}, 400)
+            .onUpdate(function(){
+                if(physics.static) physics.static = false
+                camera.position.set(this.x, this.y, this.z)
+                camera.updateProjectionMatrix()
+            })
+            .easing(TWEEN.Easing.Quadratic.Out)
             .start()
     }
 
@@ -261,6 +303,7 @@ window.world=physics
             const body=physics.bodies[key] 
             // console.log(body.getPosition())
             if(body.position.y < -1){
+                //TODO: more foolproof version of this.
                 console.log(key + ' restored')
                 // const oldPos=body.getPosition()
                 if(body.sleeping) body.sleeping=false
@@ -294,8 +337,17 @@ window.world=physics
             //     console.log('expand ', intersect[0].object.name)
             }else{ //selection
                 const index = Object.keys(physics.bodies).indexOf(intersect[0].object.name)
-                const rot = this.props.projects[index].selectRotation || {x: 0, y: 0, z: 0}
-                this.select(physics.bodies[intersect[0].object.name], rot)
+                if(this.props.projects[index].selected){
+                    //custom selection object specifies rotation / position / other
+                    const custom = this.props.projects[index].selected
+                    const pos = custom.position
+                    const rot = custom.rotation
+                    const cam = custom.camera
+                    this.select(physics.bodies[intersect[0].object.name], pos, rot, cam)
+                }
+                else{
+                    this.select(physics.bodies[intersect[0].object.name])
+                }
             }
 
             
@@ -304,6 +356,7 @@ window.world=physics
             //something is already selected
             if(intersect[0].object.name === this.props.store.selectedProject){
                 console.log('expand',intersect[0].object.name)
+
             }
         }
         else{
@@ -313,20 +366,25 @@ window.world=physics
     }
 
     @action
-    select=(body, selectRotation) => {
+    select=(body, selectPosition, selectRotation, selectCamera) => {
         if(physics.static) physics.static=false
         this.props.store.selectedProject=body.name
+
+        if(selectCamera) this.moveCamera(selectCamera.position, 600)
+        else this.moveCamera({x: 5, y: 2, z: 8}, 500)
+
         this.phaseConstraints()
         body.setPosition(body.getPosition())
         // console.log('what?')
         // how to get the 
-        this.forceRotate(body, selectRotation, 500)
-        this.forceMove(body, {x: 0, y: 1.5, z: body.getPosition().z}, 400)
+        this.forceRotate(body, selectRotation || {x: 0, y: 0, z: 0} )
+        this.forceMove(body, selectPosition || {x: 0, y: 1.5, z: body.getPosition().z} )
     }
     @action
     unselect=() => {
         if(this.props.store.selectedProject){
             if(physics.static) physics.static=false
+            this.moveCamera(this.defaultCameraPosition, 500)
             const selected=physics.bodies[this.props.store.selectedProject]
             console.log(selected)
             const weight=((selected.mass * 2) - 10)
@@ -340,6 +398,15 @@ window.world=physics
             this.impulse(selected, randomVector, true)
             this.props.store.selectedProject=null
         }
+    }
+
+    expand = () =>{
+        //moves camera, accommodating for ProjectInfo component expansion
+        this.moveCamera({x: 0, y: 1.5, z: 8})
+
+    }
+    unexpand = () => {
+        this.moveCamera({x: 0, y: 2, z: 10})
     }
 
     render(){
