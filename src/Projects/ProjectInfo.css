@@ -1,4 +1,10 @@
 .ProjectInfo{
+    display: flex;
+    align-items: center;
     color: white;
     position: absolute;
+    width: 50%;
+    height: 50%;
+    right: 0;
+    border: 1px red solid;
 }
