@@ -31,6 +31,7 @@ const Projects = [
                 position: {x: 2.5, y: 1.4, z: 7.7}
             }
         },
+        blurb: 'public data vis / robotics installation proposing public monuments with public data and blah blah blah',
         expandable: true,
     }
 ]

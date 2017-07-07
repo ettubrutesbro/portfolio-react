@@ -9,6 +9,8 @@ import styles from './ProjectInfo.css'
 export default class ProjectInfo extends React.Component{
     //renders DOM
     render(){
+        //title
+        //blurb OR ExpandedInfoComponent
 
         return(
             <div className = {styles.ProjectInfo}>
