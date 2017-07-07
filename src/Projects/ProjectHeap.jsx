@@ -355,7 +355,11 @@ window.world=physics
         else if(intersect.length > 0){
             //something is already selected
             if(intersect[0].object.name === this.props.store.selectedProject){
-                console.log('expand',intersect[0].object.name)
+                const index = Object.keys(physics.bodies).indexOf(intersect[0].object.name)
+                if(this.props.projects[index].expandable){
+                    console.log('expand', intersect[0].object.name)
+                }
+                else console.log('not gonna expand',intersect[0].object.name)
 
             }
         }

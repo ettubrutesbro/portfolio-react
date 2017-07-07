@@ -1,10 +1,7 @@
-// const debug = {
-//     walls: false,
-//     lights: true,
-//     runWorld: true,
-// }
-import React from 'react'
+
+//PresentationComponents: THREE groups/meshes/geometries with event animations
 import Seseme from '../Projects/Seseme/Seseme'
+const PresentationComponents = { Seseme }
 
 const Projects = [
     {
@@ -22,11 +19,7 @@ const Projects = [
     },
     {
         name: 'seseme',
-        // debug: true,
         physicsModel: {
-            // types:        ['box',     'box'],
-            // sizes:        [.915,1.475,.915,   .7,1.2,.7],
-            // positions:    [0,-.55,0,        0,.625,0],
             types: ['box'],
             sizes: [.9,2.5,.9],
             positions: [0,0,0],
@@ -38,7 +31,8 @@ const Projects = [
                 position: {x: 2.5, y: 1.4, z: 7.7}
             }
         },
+        expandable: true,
     }
 ]
 
-export {Projects, Seseme}
+export {Projects, PresentationComponents}
