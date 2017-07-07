@@ -33,7 +33,12 @@ import ProjectInfo from './Projects/ProjectInfo'
           className={styles.website} 
       >
 
-        <ProjectHeap store = {store} projects = {Projects} width = {1600} height = {800} />
+        <ProjectHeap 
+            store = {store} 
+            projects = {Projects} 
+            width = {window.innerWidth} 
+            height = {window.innerHeight} 
+        />
         <ProjectInfo />
       </div>
     )

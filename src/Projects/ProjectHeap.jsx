@@ -32,7 +32,8 @@ window.world=physics
 
     @observable defaultCameraPosition = new THREE.Vector3(0,2,10)
     @observable cameraPosition = this.defaultCameraPosition
-    @observable cameraTween = null
+    // @observable cameraRotationTween = null
+    @observable cameraPositionTween = null
 
     constructor(props, context){
         super(props, context)
@@ -282,6 +283,29 @@ window.world=physics
             .easing(TWEEN.Easing.Quadratic.Out)
             .start()
     }
+    @action
+    lookAt=( body )=>{
+        const camera = this.refs.camera
+        const startRotation = new THREE.Euler().copy( camera.rotation )
+        
+
+        camera.lookAt( new THREE.Vector3().copy(body.getPosition()) )
+        const endRotation = new THREE.Euler().copy( camera.rotation )
+        camera.rotation.copy( startRotation )
+
+        console.log(startRotation, endRotation)
+        physics.static = false
+        this.cameraRotationTween = new TWEEN.Tween( {x: startRotation.x, y: startRotation.y, z: startRotation.z} )
+            .to( {x: endRotation.x, y: endRotation.y, z: endRotation.z}, 350)
+            .onUpdate(function(){
+                if(physics.static) physics.static = false
+                camera.rotation.set(this.x, this.y, this.z)
+                camera.updateProjectionMatrix()
+            })
+            .onComplete(function(){ physics.static = true })
+            .easing(TWEEN.Easing.Quadratic.Out)
+            .start()
+    }
 
     reenablePhysics=(body) => {
         body.controlRot=false
@@ -439,6 +463,8 @@ window.world=physics
             <div ref="container" onClick={this.handleClick}> 
             { debug.fps && <FPSStats />}
             <React3 
+                alpha
+                clearColor = {0xededed}
                 mainCamera="camera"
                 width={this.props.width}
                 height={this.props.height}
