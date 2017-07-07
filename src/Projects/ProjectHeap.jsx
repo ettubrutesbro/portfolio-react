@@ -284,12 +284,11 @@ window.world=physics
             .start()
     }
     @action
-    lookAt=( body )=>{
+    lookAt=( position )=>{
         const camera = this.refs.camera
+        // const bodyPos = body? new THREE.Vector3().copy(body.getPosition()) : new THREE.Vector3()
         const startRotation = new THREE.Euler().copy( camera.rotation )
-        
-
-        camera.lookAt( new THREE.Vector3().copy(body.getPosition()) )
+        camera.lookAt( position )
         const endRotation = new THREE.Euler().copy( camera.rotation )
         camera.rotation.copy( startRotation )
 
@@ -302,7 +301,7 @@ window.world=physics
                 camera.rotation.set(this.x, this.y, this.z)
                 camera.updateProjectionMatrix()
             })
-            .onComplete(function(){ physics.static = true })
+            // .onComplete(function(){ physics.static = true })
             .easing(TWEEN.Easing.Quadratic.Out)
             .start()
     }
@@ -400,9 +399,11 @@ window.world=physics
 
         if(selectCamera) this.moveCamera(selectCamera.position, 600)
         else this.moveCamera({x: 2.5, y: 1.5, z: 8}, 500)
+        
 
         this.phaseConstraints()
         body.setPosition(body.getPosition())
+        // this.lookAt(selectPosition ||  {x: 0, y: 1.5, z: body.getPosition().z})
         // console.log('what?')
         // how to get the 
         this.forceRotate(body, selectRotation || {x: 0, y: 0, z: 0} )
@@ -413,6 +414,8 @@ window.world=physics
         if(this.props.store.selectedProject){
             if(physics.static) physics.static=false
             this.moveCamera(this.defaultCameraPosition, 500)
+            // this.lookAt({x: 0, y: 0, z: 0}) //TODO: default camera target
+
             const selected=physics.bodies[this.props.store.selectedProject]
             console.log(selected)
             const weight=((selected.mass * 2) - 10)
