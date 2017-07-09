@@ -7,15 +7,19 @@ import * as InfoComponents from '../data/projects.js'
 import styles from './ProjectInfo.css'
 
 export default class ProjectInfo extends React.Component{
-    //renders DOM
     render(){
         //title
         //blurb OR ExpandedInfoComponent
 
+        console.log(this.props.project)
+
         return(
-            <div className = {styles.ProjectInfo}>
-                Info
-            </div>
+            <article 
+                className = {styles.ProjectInfo}
+                style = {this.props.style}
+            >
+                <h2>Fuck you</h2>
+            </article>
         )
 
     }

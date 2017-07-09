@@ -3,17 +3,18 @@ import {observable, action, observe, computed} from 'mobx'
 import {observer} from 'mobx-react'
 import {zipObject} from 'lodash'
 
+import {TransitionMotion, spring} from 'react-motion'
 
 import styles from './Portfolio.css'
 import {Projects }from './data/projects.js'
 import {JLPortfolioStore} from './Store'
 import {computeClipDifference, computeColorDifference, computeXformDifference, easings} from './helpers.js'
 
-
-
 import Intro from './Intro'
 import ProjectHeap from './Projects/ProjectHeap'
 import ProjectInfo from './Projects/ProjectInfo'
+
+const projectNames = Projects.map(function(proj) {return proj.name})
 
 @observer class App extends React.Component {
   logScroll(){
@@ -23,9 +24,27 @@ import ProjectInfo from './Projects/ProjectInfo'
   componentDidMount(){
     window.addEventListener('scroll',()=>{window.requestAnimationFrame(this.logScroll)})
   }
+
+  willEnter = () => { 
+    return {
+      opacity: 0,
+      transform: 100
+    }
+  }
+  willLeave = () => { 
+    return {
+      opacity: spring(0),
+      transform: spring(100)
+
+    }
+  }
+
   render() {
     const assetsReady = store.assetsReady
     console.log(Projects)
+    const activeProject = Projects[projectNames.indexOf(store.selectedProject)]
+    // console.log(activeProject)
+    
     //render either initialloader or portfolio depending on assetsReady
     return (
       <div 
@@ -39,9 +58,45 @@ import ProjectInfo from './Projects/ProjectInfo'
             width = {window.innerWidth} 
             height = {window.innerHeight} 
         />
-        {store.selectedProject && 
-          <ProjectInfo />
-        }
+        <TransitionMotion
+          styles = { !store.selectedProject ? [] : [{
+            key: 'info',
+            data: {},
+            style: {
+              opacity: spring(1),
+              transform: spring(0)
+
+            }
+          }]}
+          willEnter = {this.willEnter}
+          willLeave = {this.willLeave}
+        >
+          {(items) => {
+            return (
+              <div>
+                {
+                  (items).map(item => {
+                    return(
+                      <ProjectInfo
+                        key = {item.key}
+                        style = {{
+                          opacity: item.style.opacity,
+                          transform: 'translateX('+item.style.transform+'px)'
+                        }}
+                      />
+                    )
+                  })
+                }
+              </div>
+            )
+          }
+
+            
+
+          }
+
+        </TransitionMotion>
+        
       </div>
     )
   }

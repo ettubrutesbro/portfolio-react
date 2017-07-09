@@ -6,10 +6,12 @@ const PresentationComponents = { Seseme }
 const Projects = [
     {
         name: 'sendbloom',
+        displayTitle: 'Sendbloom',
         debug: true,
     },
     {
         name: 'origami',
+        displayTitle: 'Origami Logic',
         debug: true,
         physicsModel: {
             types: ['sphere', 'box'],
@@ -19,6 +21,7 @@ const Projects = [
     },
     {
         name: 'seseme',
+        displayTitle: 'SESEME',
         physicsModel: {
             types: ['box'],
             sizes: [.9,2.5,.9],

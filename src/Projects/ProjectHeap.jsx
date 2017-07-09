@@ -420,7 +420,7 @@ window.world=physics
         // how to get the 
         this.forceRotate(body, rotation)
         this.forceMove(body, position)
-        this.lookAt(position, selectCamera.position)
+        this.lookAt(position, selectCamera? selectCamera.position : this.defaultCameraPosition)
     }
     @action
     unselect=() => {
