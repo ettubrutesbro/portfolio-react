@@ -275,7 +275,7 @@ window.world=physics
         physics.static = false
         if(this.cameraTween) this.cameraTween.stop()
         this.cameraTween = new TWEEN.Tween({x: current.x, y: current.y, z: current.z})
-            .to({x: newPos.x, y: newPos.y, z: newPos.z}, 400)
+            .to({x: newPos.x, y: newPos.y, z: newPos.z}, 600)
             .onUpdate(function(){
                 if(physics.static) physics.static = false
                 camera.position.set(this.x, this.y, this.z)
@@ -306,7 +306,7 @@ window.world=physics
         console.log(startRotation, endRotation)
         physics.static = false
         this.cameraRotationTween = new TWEEN.Tween( {x: startRotation.x, y: startRotation.y, z: startRotation.z} )
-            .to( {x: endRotation.x, y: endRotation.y, z: endRotation.z}, 350)
+            .to( {x: endRotation.x, y: endRotation.y, z: endRotation.z}, 600)
             .onUpdate(function(){
                 if(physics.static) physics.static = false
                 camera.rotation.set(this.x, this.y, this.z)
