@@ -26,9 +26,9 @@ const Projects = [
             debugColor: 0xff0000
         },
         selected: {
-            rotation: {x: 15, y: -135, z: -0},
+            rotation: {x: 0, y: -135, z: -0},
             camera: {
-                position: {x: 2.5, y: 1.4, z: 7.7}
+                position: {x: 0, y: 7, z: 7}
             }
         },
         blurb: 'public data vis / robotics installation proposing public monuments with public data and blah blah blah',

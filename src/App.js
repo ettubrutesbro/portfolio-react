@@ -39,7 +39,9 @@ import ProjectInfo from './Projects/ProjectInfo'
             width = {window.innerWidth} 
             height = {window.innerHeight} 
         />
-        <ProjectInfo />
+        {store.selectedProject && 
+          <ProjectInfo />
+        }
       </div>
     )
   }

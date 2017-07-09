@@ -15,6 +15,7 @@ const tempVector2=new THREE.Vector2()
 import {Debug, ThreePhysicsStore} from '../Store'
 import { rads} from '../helpers.js'
 import ProjectGroup from './ProjectGroup'
+import styles from './ProjectHeap.css'
 
 //test
 
@@ -284,13 +285,23 @@ window.world=physics
             .start()
     }
     @action
-    lookAt=( position )=>{
+    lookAt=( position , origin)=>{
         const camera = this.refs.camera
         // const bodyPos = body? new THREE.Vector3().copy(body.getPosition()) : new THREE.Vector3()
         const startRotation = new THREE.Euler().copy( camera.rotation )
-        camera.lookAt( position )
-        const endRotation = new THREE.Euler().copy( camera.rotation )
-        camera.rotation.copy( startRotation )
+        const startPosition = new THREE.Vector3().copy( camera.position )
+        let endRotation
+        if(position){
+            if(origin) camera.position.copy(origin)
+            camera.lookAt( position )
+            endRotation = new THREE.Euler().copy( camera.rotation )
+            camera.rotation.copy( startRotation )
+        }
+        else{
+            if(origin) camera.position.copy( startPosition )
+            endRotation = new THREE.Euler()
+        }
+        
 
         console.log(startRotation, endRotation)
         physics.static = false
@@ -398,23 +409,25 @@ window.world=physics
         this.props.store.selectedProject=body.name
 
         if(selectCamera) this.moveCamera(selectCamera.position, 600)
-        else this.moveCamera({x: 2.5, y: 1.5, z: 8}, 500)
+        // else this.moveCamera({x: 1, y: 1.5, z: 8}, 500)
         
+        const position = selectPosition || {x: 0, y: 1.5, z: body.getPosition().z}
+        const rotation = selectRotation || {x: 0, y: 0, z: 0}
 
         this.phaseConstraints()
         body.setPosition(body.getPosition())
-        // this.lookAt(selectPosition ||  {x: 0, y: 1.5, z: body.getPosition().z})
         // console.log('what?')
         // how to get the 
-        this.forceRotate(body, selectRotation || {x: 0, y: 0, z: 0} )
-        this.forceMove(body, selectPosition || {x: 0, y: 1.5, z: body.getPosition().z} )
+        this.forceRotate(body, rotation)
+        this.forceMove(body, position)
+        this.lookAt(position, selectCamera.position)
     }
     @action
     unselect=() => {
         if(this.props.store.selectedProject){
             if(physics.static) physics.static=false
             this.moveCamera(this.defaultCameraPosition, 500)
-            // this.lookAt({x: 0, y: 0, z: 0}) //TODO: default camera target
+            this.lookAt() //TODO: default camera target
 
             const selected=physics.bodies[this.props.store.selectedProject]
             console.log(selected)
@@ -432,12 +445,11 @@ window.world=physics
     }
 
     expand = () =>{
-        //moves camera, accommodating for ProjectInfo component expansion
-        this.moveCamera({x: 0, y: 1.5, z: 8})
+        
 
     }
     unexpand = () => {
-        this.moveCamera({x: 0, y: 2, z: 10})
+       
     }
 
     render(){
@@ -463,11 +475,18 @@ window.world=physics
         })
 
         return(
-            <div ref="container" onClick={this.handleClick}> 
+            <div ref="container" 
+                onClick={this.handleClick} 
+                style = {this.props.style}
+                className = {[
+                    styles.container,
+                    this.props.store.selectedProject? styles.selected : ''
+                ].join(' ')}
+            > 
             { debug.fps && <FPSStats />}
             <React3 
                 alpha
-                clearColor = {0xededed}
+                clearColor = {0xffffff}
                 mainCamera="camera"
                 width={this.props.width}
                 height={this.props.height}
