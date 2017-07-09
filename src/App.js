@@ -61,7 +61,9 @@ const projectNames = Projects.map(function(proj) {return proj.name})
         <TransitionMotion
           styles = { !store.selectedProject ? [] : [{
             key: 'info',
-            data: {},
+            data: {
+              project: activeProject
+            },
             style: {
               opacity: spring(1),
               transform: spring(0)
@@ -78,6 +80,7 @@ const projectNames = Projects.map(function(proj) {return proj.name})
                   (items).map(item => {
                     return(
                       <ProjectInfo
+                        project = {item.data.project}
                         key = {item.key}
                         style = {{
                           opacity: item.style.opacity,

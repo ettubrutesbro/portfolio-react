@@ -18,7 +18,7 @@ export default class ProjectInfo extends React.Component{
                 className = {styles.ProjectInfo}
                 style = {this.props.style}
             >
-                <h2>Fuck you</h2>
+                <h2>{this.props.project.name}</h2>
             </article>
         )
 
