@@ -1,8 +1,15 @@
 
 //PresentationComponents: THREE groups/meshes/geometries with event animations
-import Seseme from '../Projects/Seseme/Seseme'
-const PresentationComponents = { Seseme }
+import {SesemeModel} from '../Projects/Seseme/Seseme'
+//with each new project, update this manifest
+const PresentationModels = { SesemeModel }
 
+//InfoComponents: HOC that renders Blurb or Article depending on app state
+import {SesemeInfo} from '../Projects/Seseme/Seseme'
+//with each new project, update this manifest
+const InfoComponents = { SesemeInfo }
+
+//basic project data: physics models, title, debug things
 const Projects = [
     {
         name: 'sendbloom',
@@ -34,9 +41,8 @@ const Projects = [
                 position: {x: 0, y: 7, z: 7}
             }
         },
-        blurb: 'public data vis / robotics installation proposing public monuments with public data and blah blah blah',
         expandable: true,
     }
 ]
 
-export {Projects, PresentationComponents}
+export {Projects, PresentationModels, InfoComponents}

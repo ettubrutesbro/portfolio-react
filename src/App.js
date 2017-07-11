@@ -76,8 +76,7 @@ const projectNames = Projects.map(function(proj) {return proj.name})
           {(items) => {
             return (
               <div>
-                {
-                  (items).map(item => {
+                {(items).map(item => {
                     return(
                       <ProjectInfo
                         project = {item.data.project}
@@ -92,13 +91,14 @@ const projectNames = Projects.map(function(proj) {return proj.name})
                 }
               </div>
             )
-          }
-
-            
-
-          }
-
+          }}
         </TransitionMotion>
+
+        {/*store.selectedProject && 
+           <ProjectInfo
+              project = {activeProject}
+            />
+        */}
         
       </div>
     )

@@ -4,9 +4,10 @@ import {observer} from 'mobx-react'
 import * as THREE from 'three'
 import * as TWEEN from '@tweenjs/tween.js'
 
+import styles from './Seseme.css'
 
 @observer
-export default class Seseme extends React.Component{
+export class SesemeModel extends React.Component{
     @observable mode = this.props.mode
     @observable tween = null
     @observable plrTweens = [null,null,null,null]
@@ -140,5 +141,16 @@ export default class Seseme extends React.Component{
             </group>
         )
 
+    }
+}
+
+@observer export class SesemeInfo extends React.Component{
+    //extend InfoComponent someday....
+    render(){
+        return(
+            <article className = {styles.seseme}>
+                Robotics ahoy, fuck you.
+            </article>
+        )
     }
 }

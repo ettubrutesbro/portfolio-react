@@ -12,7 +12,8 @@
     "react": "15.5.3",
     "react-dom": "15.5.3",
     "react-stats": "0.0.5",
-    "react-three-renderer": "^3.1.0"
+    "react-three-renderer": "^3.1.0",
+    "react-motion": "^0.5.0"
   },
   "devDependencies": {
     "custom-react-scripts": "0.0.23"

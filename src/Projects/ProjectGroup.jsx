@@ -5,10 +5,10 @@ import {observable, action} from 'mobx'
 import {observer} from 'mobx-react'
 
 import * as THREE from 'three'
-import { PresentationComponents } from '../data/projects.js'
+import { PresentationModels } from '../data/projects.js'
 
 function makePresentationComponent(props){
-    const PresentationComponent = PresentationComponents[props.name]
+    const PresentationComponent = PresentationModels[props.name + 'Model']
     return PresentationComponent? <PresentationComponent {...props} />
     : null
 }

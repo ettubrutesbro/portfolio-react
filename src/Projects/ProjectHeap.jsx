@@ -486,7 +486,7 @@ window.world=physics
             { debug.fps && <FPSStats />}
             <React3 
                 alpha
-                clearColor = {0xffffff}
+                clearColor = {0xfbfbfc}
                 mainCamera="camera"
                 width={this.props.width}
                 height={this.props.height}

@@ -1,6 +1,7 @@
-/*.container{
+.container{
+    position: absolute; left: 0;
     transition: transform .5s;
 }
     .selected{
         transform: translateX(-25%);
-    }*/
+    }
