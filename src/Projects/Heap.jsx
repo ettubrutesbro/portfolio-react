@@ -15,7 +15,7 @@ const tempVector2=new THREE.Vector2()
 import {Debug, ThreePhysicsStore} from '../Store'
 import { rads} from '../helpers.js'
 import ProjectGroup from './ProjectGroup'
-import styles from './ProjectHeap.css'
+import styles from './Heap.css'
 
 //test
 
@@ -25,14 +25,13 @@ const physics=new ThreePhysicsStore()
 window.world=physics
 
 
-@observer export default class ProjectHeap extends React.Component{
+@observer export default class Heap extends React.Component{
     @observable mouseInput=null
     @observable eligibleForClick=[]
     @observable projectsReady=false
     @observable renderTrigger=null
 
     @observable defaultCameraPosition = new THREE.Vector3(0,2,10)
-    
     @observable cameraPosition = this.defaultCameraPosition
     // @observable cameraRotationTween = null
     @observable cameraPositionTween = null
@@ -142,7 +141,6 @@ window.world=physics
             this.refs.mouseInput.containerResized()
         }
     }
-    //TODO: resize event?
 
     @action
     setReady=() => {
@@ -487,7 +485,7 @@ window.world=physics
             { debug.fps && <FPSStats />}
             <React3 
                 alpha
-                clearColor = {0xfbfbfc}
+                clearColor = {0xffffff}
                 mainCamera="camera"
                 width={this.props.width}
                 height={this.props.height}
@@ -584,6 +582,6 @@ window.world=physics
 }
 
 
-ProjectHeap.defaultProps={
+Heap.defaultProps={
     debugModels: true
 }

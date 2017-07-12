@@ -148,9 +148,9 @@ export class SesemeModel extends React.Component{
     //extend InfoComponent someday....
     render(){
         return(
-            <article className = {styles.seseme}>
-                Robotics ahoy, fuck you.
-            </article>
+            <div className = {styles.seseme}>
+                An interactive installation combining robotics & a webapp, SESEME is what I mostly worked on for 2 1/2 years after graduation, and a project I remember very fondly.
+            </div>
         )
     }
 }

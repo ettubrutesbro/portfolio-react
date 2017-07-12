@@ -25,7 +25,7 @@ export default class ProjectInfo extends React.Component{
 
 
         return(
-            <article 
+            <section 
                 className = {styles.ProjectInfo}
                 style = {this.props.style}
             >
@@ -39,7 +39,7 @@ export default class ProjectInfo extends React.Component{
 
                 }
 
-            </article>
+            </section>
         )
 
     }
