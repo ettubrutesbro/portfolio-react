@@ -1,12 +1,11 @@
 
 //PresentationComponents: THREE groups/meshes/geometries with event animations
-import {SesemeModel} from '../Projects/Seseme/Seseme'
+import {SesemeModel, SesemeInfo} from '../Projects/Seseme/Seseme'
+import {SendbloomModel} from '../Projects/Sendbloom/Sendbloom.jsx'
 //with each new project, update this manifest
-const PresentationModels = { SesemeModel }
+const PresentationModels = { SesemeModel, SendbloomModel }
 
 //InfoComponents: HOC that renders Blurb or Article depending on app state
-import {SesemeInfo} from '../Projects/Seseme/Seseme'
-//with each new project, update this manifest
 const InfoComponents = { SesemeInfo }
 
 //basic project data: physics models, title, debug things

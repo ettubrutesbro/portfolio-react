@@ -149,7 +149,7 @@ export class SesemeModel extends React.Component{
     render(){
         return(
             <div className = {styles.seseme}>
-                An interactive installation combining robotics & a webapp, SESEME is what I mostly worked on for 2 1/2 years after graduation, and a project I remember very fondly.
+                An interactive installation combining robotics & a webapp, SESEME is what I mostly worked on for 2 1/2 years after graduation — and a project I remember very fondly. 
             </div>
         )
     }
