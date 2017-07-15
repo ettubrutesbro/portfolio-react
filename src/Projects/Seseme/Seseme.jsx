@@ -93,6 +93,15 @@ export class SesemeModel extends React.Component{
 
         return (
             <group ref = "group">
+                <resources>
+                    {this.pillar &&
+                        <geometry 
+                            resourceId = "pillar" 
+                            vertices = {this.pillar.geometry.vertices}
+                            faces = {this.pillar.geometry.faces}
+                        />
+                    }
+                </resources>
                 <mesh
                     name = 'seseme'
                     position = {new THREE.Vector3(0,-1.29,0)}
@@ -128,9 +137,8 @@ export class SesemeModel extends React.Component{
                                     position = {new THREE.Vector3(p.pos.x, p.pos.y, p.pos.z)}
                                     quaternion = {p.quat || null}
                                 >
-                                    <geometry
-                                        vertices = {this.pillar.geometry.vertices}
-                                        faces = {this.pillar.geometry.faces}
+                                    <geometryResource
+                                       resourceId = "pillar"
                                     />
                                     <meshNormalMaterial />
                                 </mesh>

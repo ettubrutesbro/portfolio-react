@@ -13,7 +13,16 @@ const Projects = [
     {
         name: 'sendbloom',
         displayTitle: 'Sendbloom',
-        debug: true,
+        // debug: true,
+        physicsModel: {
+            types: ['box'],
+            sizes: [1.6,1,0.375],
+            positions: [0,0.1,0],
+            debugColor: 0xff0000
+        },
+        selected: {
+            rotation: {x: 0, y: -180, z: 0}
+        }
     },
     {
         name: 'origami',
@@ -22,7 +31,7 @@ const Projects = [
         physicsModel: {
             types: ['sphere', 'box'],
             sizes: [.75,0,0,     .5,2,.5],
-            positions: [0,0,0, 0,0,0]
+            positions: [0,0,0, 0,0,0],
         },
     },
     {
