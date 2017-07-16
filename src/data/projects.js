@@ -21,7 +21,7 @@ const Projects = [
             debugColor: 0xff0000
         },
         selected: {
-            rotation: {x: 0, y: -180, z: 0}
+            rotation: {x: 10, y: 35, z: 0}
         }
     },
     {

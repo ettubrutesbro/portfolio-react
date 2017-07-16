@@ -44,8 +44,8 @@ export class SesemeModel extends React.Component{
         const setYPos = this.setYPos
         const newPositions = [ .1, .475, -.3, .27 ]
         
-        this.props.store.bodies.seseme.sleeping = false
-        this.props.store.static = false
+        store.bodies.seseme.sleeping = false
+        store.static = false
 
         this.plrTweens.map((plrtween, i)=>{
             if(plrtween) plrtween.stop()
