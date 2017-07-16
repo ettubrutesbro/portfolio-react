@@ -11,6 +11,9 @@ export class SendbloomModel extends React.Component{
 
     @observable modalTween = null
     @observable overlayTween = null
+    @observable navItemTween = [null, null, null, null]
+
+    @observable navItemPositions = [0, 0, 0.0925, .3525]
 
     constructor(props, context){
         super( props, context )
@@ -147,6 +150,18 @@ export class SendbloomModel extends React.Component{
             })
             .delay(300)
             .start()
+        for(var i = 0; i<4; i++){
+            const navitem = this.refs['navitem'+i]
+            const delay = i>=2? (i-1)*175 : i*175
+            if(this.navItemTween[i]) this.navItemTween[i].stop()
+            this.navItemTween[i] = new TWEEN.Tween({opacity: 0})
+                .to({opacity: 1}, 250)
+                .onUpdate(function(){
+                    navitem.material.opacity = this.opacity
+                })
+                .delay(300 + delay)
+                .start()
+        }
         this.refs.overlay.visible = true
         const logo = this.refs.logo.children[0]
         this.logoTween = new TWEEN.Tween({
@@ -217,9 +232,11 @@ export class SendbloomModel extends React.Component{
         const navItemPositions = [0, 0.2, 0.2925, .5525]
         const navItems = [0.15, 0.04, 0.095, 0.22].map((width,i)=>{
             return(
-                <mesh ref = {'navitem'+i} position = {new THREE.Vector3(-.475 + navItemPositions[i], 0, 0.125)}>
+                <mesh ref = {'navitem'+i} 
+                    position = {new THREE.Vector3(-.475 + navItemPositions[i], 0, 0.125)}
+                >
                     <planeBufferGeometry width = {width} height = {0.035} segments = {i} />
-                    <meshBasicMaterial color = {0xededed} transparent />
+                    <meshBasicMaterial color = {0xededed} transparent opacity = {0}/>
                 </mesh>
             )
         })
