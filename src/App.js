@@ -3,8 +3,6 @@ import {observable, action, observe, computed} from 'mobx'
 import {observer} from 'mobx-react'
 import {zipObject} from 'lodash'
 
-import {TransitionMotion, spring} from 'react-motion'
-
 import styles from './Portfolio.css'
 import {Projects }from './data/projects.js'
 import {JLPortfolioStore} from './Store'
@@ -23,20 +21,6 @@ const projectNames = Projects.map(function(proj) {return proj.name})
 
   componentDidMount(){
     window.addEventListener('scroll',()=>{window.requestAnimationFrame(this.logScroll)})
-  }
-
-  willEnter = () => { 
-    return {
-      opacity: 0,
-      transform: 100
-    }
-  }
-  willLeave = () => { 
-    return {
-      opacity: spring(0),
-      transform: spring(100)
-
-    }
   }
 
   render() {

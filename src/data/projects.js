@@ -21,7 +21,10 @@ const Projects = [
             debugColor: 0xff0000
         },
         selected: {
-            rotation: {x: 10, y: 35, z: 0}
+            rotation: {x: 10, y: 35, z: 0},
+            camera: {
+                position: {x: 0, y: 2, z: 6.5}
+            }
         }
     },
     {
@@ -50,6 +53,38 @@ const Projects = [
             }
         },
         expandable: true,
+    },
+    {
+        name: 'wake',
+        debug: true
+    },
+    {
+        name: 'eclipse',
+        debug: true
+    },
+    {
+        name: 'fnric',
+        debug: true
+    },
+    {
+        name: 'sos',
+        debug: true
+    },
+    {
+        name: 'tempr',
+        debug: true
+    },
+    {
+        name: 'museum',
+        debug: true
+    },
+    {
+        name: 'stuffrage',
+        debug: true
+    },
+    {
+        name: 'walmart',
+        debug: true
     }
 ]
 

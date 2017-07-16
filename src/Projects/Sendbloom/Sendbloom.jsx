@@ -95,16 +95,26 @@ export class SendbloomModel extends React.Component{
         this.makeLogoMesh()
         this.makeBoxWithFaceMtl(
             this.refs.window, 
-            [1.6, 0.85, 0.15], 
+            [1.6, 0.8, 0.15], 
             {front: 0xededed, left: 0xd7d7cc, bottom: 0xd7d7cc, right: 0xd7d7cc,
                 top: 0x5e5e5e, back: 0xededed}
         )
         this.makeBoxWithFaceMtl(
             this.refs.navbar, 
-            [1.6, 0.15, 0.2], 
-            {front: 0x8397a7, left: 0x698191, bottom: 0x698191, right: 0x698191,
-                top: 0x9db2ba, back: 0x8397a7}
+            [1.6, 0.2, 0.19], 
+            {front: 0x3c647c, left: 0x25485e, bottom: 0x25485e, right: 0x25485e,
+                top: 0x8397a7, back: 0x3c647c}
         )
+            // const navitemWidths = [0.175, 0.07, 0.085, 0.5, 0.03]
+            // for(var i = 0; i<navitemWidths.length; i++){
+            //     this.makeBoxWithFaceMtl(
+            //         this.refs['navitem'+(i+1)],
+            //         [navitemWidths[i], 0.035, 0.025],
+            //         {front: 0xededed, left: 0xd7d7cc, bottom: 0xd7d7cc, right: 0xd7d7cc,
+            //             top: 0xfbfbfc, back: 0xededed}
+            //     )
+            // }
+            
         this.makeBoxWithFaceMtl(
             this.refs.modal,
             [1.3, .6, 0.085],
@@ -112,6 +122,8 @@ export class SendbloomModel extends React.Component{
             top: 0xfbfbfc, back: 0xededed},
             0.01
         )
+
+
         this.refs.modal.visible = false
         this.refs.overlay.visible = false
 
@@ -125,15 +137,28 @@ export class SendbloomModel extends React.Component{
 
         this.refs.modal.visible = true
         if(this.modalTween) this.modalTween.stop()
-        this.modalTween = new TWEEN.Tween({z: 0, opacity: 0})
-            .to({opacity: 1, z: 0.3}, 350)
+        this.modalTween = new TWEEN.Tween({z: 0, opacity: 0, scaleY: 0.01})
+            .to({opacity: 1, scaleY: 1}, 400)
             .onUpdate(function(){
-                setModal(this.z, this.opacity)
+                setModal(this.opacity, this.scaleY)
             })
             .onComplete(function(){
                 store.bodies.sendbloom.sleeping = true
             })
-            .delay(100)
+            .delay(300)
+            .start()
+        this.refs.overlay.visible = true
+        const logo = this.refs.logo.children[0]
+        this.logoTween = new TWEEN.Tween({
+            x: logo.position.x, y: logo.position.y, z: logo.position.z,
+            scale: logo.scale.x
+        })
+            .to({x: -0.675, y: -0.005, z: -0.485, scale: 0.26}, 250)
+            .onUpdate(function(){
+                logo.position.set(this.x, this.y, this.z)
+                logo.scale.set(this.scale, 0.9, this.scale)
+            })
+            .delay(150)
             .start()
 
     }
@@ -146,25 +171,42 @@ export class SendbloomModel extends React.Component{
         store.static = false
 
         if(this.modalTween) this.modalTween.stop()
-        this.modalTween = new TWEEN.Tween({opacity: 1, z: 0.3})
-            .to({opacity: 0, z: 0}, 350)
+        this.modalTween = new TWEEN.Tween({opacity: 1, scaleY: 1})
+            .to({opacity: 0, scaleY: 0.01}, 250)
             .onUpdate(function(){
-                setModal(this.z, this.opacity)
+                setModal(this.opacity, this.scaleY)
             })
             .onComplete(function(){
                 modal.visible = false
                 store.bodies.sendbloom.sleeping = true
             })
             .start()
+        const logo = this.refs.logo.children[0]
+        this.logoTween = new TWEEN.Tween({
+            x: logo.position.x, y: logo.position.y, z: logo.position.z,
+            scale: logo.scale.x
+        })
+            .to({x: 0, y: 0, z: 0, scale: 1}, 350)
+            .onUpdate(function(){
+                logo.position.set(this.x, this.y, this.z)
+                logo.scale.set(this.scale, this.scale, this.scale)
+            })
+            .start()
+
     }
     // @action
-    setModal = (newZ, o) => {
+    setModal = ( o, scaleY) => {
         const modal = this.refs.modal
         //direct updates (not react or mobx)
-        modal.children[0].position.set(0, 0, newZ)
+        modal.children[0].scale.set(1, scaleY, 1)
         modal.children[0].material.forEach((mtl) => {
             mtl.opacity = o
         })
+        const shadow = this.refs.overlay 
+        // const shadowMtl = this.refs
+        shadow.scale.set(1, scaleY, 1)
+        shadow.material.opacity = o 
+
     }
 
     onExpand = () => {
@@ -172,10 +214,21 @@ export class SendbloomModel extends React.Component{
     }
 
     render(){
-        const logo = this.logo
-        const modal = this.modal
+        const navItemPositions = [0, 0.2, 0.2925, .5525]
+        const navItems = [0.15, 0.04, 0.095, 0.22].map((width,i)=>{
+            return(
+                <mesh ref = {'navitem'+i} position = {new THREE.Vector3(-.475 + navItemPositions[i], 0, 0.125)}>
+                    <planeBufferGeometry width = {width} height = {0.035} segments = {i} />
+                    <meshBasicMaterial color = {0xededed} transparent />
+                </mesh>
+            )
+        })
+
         return(
             <group ref = "group">
+                <resources>
+                    <texture resourceId = "shadow" url = {require('./shadow.png')}/> 
+                </resources>
                 <group 
                     ref = "logo"
                     rotation = {new THREE.Euler(rads(90),0,0)}
@@ -184,14 +237,24 @@ export class SendbloomModel extends React.Component{
                 />
                    
                 <group ref = "window">
-                    <mesh name = "sendbloom" ref = "overlay" position = {new THREE.Vector3(0,0,0.081)}>
+                    <mesh name = "sendbloom" ref = "overlay" position = {new THREE.Vector3(0,0.01,0.08)}>
                         <planeBufferGeometry width = {1.6} height = {0.85} segments = {1} />
-                        <meshBasicMaterial ref = "overlay-mtl" color = {0x5e5e5e} transparent opacity = {0} />
+                        <meshBasicMaterial ref = "overlayMtl" transparent opacity = {0}>
+                             <textureResource resourceId = "shadow" />
+                        </meshBasicMaterial>
                     </mesh>
+      
                 </group>
-                <group ref = "navbar" position = {new THREE.Vector3(0,.5,0)}/>
-                <group ref = "modal" position = {new THREE.Vector3(0, 0.1, 0.15)}/>
+                <group ref = "navbar" position = {new THREE.Vector3(0,.5,0)}>
+                    {navItems}
+                </group>
 
+                <group ref = "modal" position = {new THREE.Vector3(0, 0.1, 0.45)} />
+                    <group ref = "listrow1" position = {new THREE.Vector3(0,0.2,0.49)} />
+                    <group ref = "listrow2" position = {new THREE.Vector3(0,0.075,0.49)}/>
+                    <group ref = "listrow3" position = {new THREE.Vector3(0,-.05,0.49)}/>
+                    <group ref = "listrow4" position = {new THREE.Vector3(0,-.175,.49)}/>
+                
             </group>
         )
     }
