@@ -85,7 +85,7 @@ export class SendbloomModel extends React.Component{
         for(var i = 0; i<box.faces.length; i++){
             box.faces[i].materialIndex = i
         }
-        // box.sortFacesByMaterialIndex()
+        box.sortFacesByMaterialIndex()
 
         let mesh = new THREE.Mesh( box, mtls )
         mesh.name = "sendbloom"
@@ -107,17 +107,7 @@ export class SendbloomModel extends React.Component{
             [1.6, 0.2, 0.19], 
             {front: 0x3c647c, left: 0x25485e, bottom: 0x25485e, right: 0x25485e,
                 top: 0x8397a7, back: 0x3c647c}
-        )
-            // const navitemWidths = [0.175, 0.07, 0.085, 0.5, 0.03]
-            // for(var i = 0; i<navitemWidths.length; i++){
-            //     this.makeBoxWithFaceMtl(
-            //         this.refs['navitem'+(i+1)],
-            //         [navitemWidths[i], 0.035, 0.025],
-            //         {front: 0xededed, left: 0xd7d7cc, bottom: 0xd7d7cc, right: 0xd7d7cc,
-            //             top: 0xfbfbfc, back: 0xededed}
-            //     )
-            // }
-            
+        )            
         this.makeBoxWithFaceMtl(
             this.refs.modal,
             [1.3, .6, 0.085],
@@ -207,6 +197,16 @@ export class SendbloomModel extends React.Component{
                 logo.scale.set(this.scale, this.scale, this.scale)
             })
             .start()
+        for(var i = 0; i<4; i++){
+            const navitem = this.refs['navitem'+i]
+            if(this.navItemTween[i]) this.navItemTween[i].stop()
+            this.navItemTween[i] = new TWEEN.Tween({opacity: 1})
+                .to({opacity: 0}, 250)
+                .onUpdate(function(){
+                    navitem.material.opacity = this.opacity
+                })
+                .start()
+        }
 
     }
     // @action
