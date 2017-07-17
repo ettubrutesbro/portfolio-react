@@ -23,7 +23,7 @@ const Projects = [
         selected: {
             rotation: {x: 10, y: 35, z: 0},
             camera: {
-                position: {x: 0, y: 2, z: 6.5}
+                position: {x: 0, y: 4, z: 6.5}
             }
         }
     },

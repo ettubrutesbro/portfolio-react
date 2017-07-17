@@ -498,16 +498,21 @@ window.world=physics
                 <module ref="mouseInput" descriptor={MouseInput} />
                 <scene ref="scene">
 
-                <perspectiveCamera 
-                    name="camera"
-                    ref="camera"
-                    fov={physics.fov}
-                    aspect={this.props.width/this.props.height}
-                    near={0.001}
-                    far={100}
-                    position={this.cameraPosition}
-                    quaternion={this.cameraQuaternion}
+
+
+                <orthographicCamera
+                    name = "camera"
+                    ref = "camera"
+                    left =  {-4.2}
+                    right = {4.2} 
+                    top = {2.05}
+                    bottom = {-2.05}
+                    near = {0.001} 
+                    far = {100}
+                    position = {this.cameraPosition}
+                    quaternion = {this.cameraQuaternion}
                 />
+
                 {debug.amblight &&
                     <ambientLight color={0xffffff} />
                 }
