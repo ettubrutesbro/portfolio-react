@@ -54,38 +54,38 @@ const Projects = [
         },
         expandable: true,
     },
-    {
-        name: 'wake',
-        debug: true
-    },
-    {
-        name: 'eclipse',
-        debug: true
-    },
-    {
-        name: 'fnric',
-        debug: true
-    },
-    {
-        name: 'sos',
-        debug: true
-    },
-    {
-        name: 'tempr',
-        debug: true
-    },
-    {
-        name: 'museum',
-        debug: true
-    },
-    {
-        name: 'stuffrage',
-        debug: true
-    },
-    {
-        name: 'walmart',
-        debug: true
-    }
+    // {
+    //     name: 'wake',
+    //     debug: true
+    // },
+    // {
+    //     name: 'eclipse',
+    //     debug: true
+    // },
+    // {
+    //     name: 'fnric',
+    //     debug: true
+    // },
+    // {
+    //     name: 'sos',
+    //     debug: true
+    // },
+    // {
+    //     name: 'tempr',
+    //     debug: true
+    // },
+    // {
+    //     name: 'museum',
+    //     debug: true
+    // },
+    // {
+    //     name: 'stuffrage',
+    //     debug: true
+    // },
+    // {
+    //     name: 'walmart',
+    //     debug: true
+    // }
 ]
 
 export {Projects, PresentationModels, InfoComponents}

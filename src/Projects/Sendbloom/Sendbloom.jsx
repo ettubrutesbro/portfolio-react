@@ -27,16 +27,43 @@ export class SendbloomModel extends React.Component{
         
     }
     makeLogoMesh = () => {
-        this.makeMeshWithMtlIndices('sendbloom', this.refs.logo, this.sblogo.geometry, [
+        this.makeMeshWithMtlIndices('sendbloom', 'logo', this.sblogo.geometry, [
             {range: [0, 17], color: 0x16a8a8},
             {range: [18, 35], color: 0xef9900},
             {range: [36, 53], color: 0xdb543e},
             {range: [54, 60], color: 0xffab01},
             {range: [61, 67], color: 0x09c3cc},
             {range: [68, 74], color: 0xf96244},
-            {range: [75, 81], color: 0xffab01}, //these'd benefit from non-dumb range
-            {range: [82, 88], color: 0x09c3cc}, //these'd benefit from non-dumb range
-            {range: [89, 95], color: 0xf96244}, //these'd benefit from non-dumb range
+            {range: [75, 81], color: 0xffab01}, 
+            {range: [82, 88], color: 0x09c3cc}, 
+            {range: [89, 95], color: 0xf96244}, //dumb repetition but whatever for now
+        ])
+
+    }
+    makeModalMesh = () => {
+        this.makeMeshWithMtlIndices('sendbloom', 'modal', this.sbmodal.geometry, [
+            {faces: [6,7], color: 0xfcfdff}, //top
+            {range: [118,119], color: 0xb1b1b1}, //chamfers
+            {range: [138,145], color: 0xccd2d6}, //sides
+            {faces: [42,43,44,45,82,83], color: 0xededed}, //front
+            {range: [101,115], color: 0xededed}, 
+            {range: [120,137], color: 0xededed}, 
+            {range: [95,101], color: 0xededed}, 
+            {faces: [89,90], color: 0xededed}, //inside front
+            {range: [78,81], color: 0xededed}, 
+            {range: [48,51], color: 0xccd2d6}, //sides
+            {range: [54,57], color: 0xccd2d6}, 
+            {range: [62,65], color: 0xccd2d6}, 
+            {faces: [70,71], color: 0xccd2d6}, 
+            {faces: [87,88], color: 0xccd2d6}, 
+            {faces: [84, 85, 86, 91, 92, 93, 94], color: 0xccd2d6}, //bottom
+            {faces: [46,47,58,59,66,67], color: 0xccd2d6},
+            {range: [20,29], color: 0xb1b1b1}, //inside X face
+            {range: [8,19], color: 0xd7d7d7}, //X walls
+            {range: [30,38], color: 0xd7d7d7}, 
+            // {faces: [3], color: 0x39aef8}, //interior highlight for top listrow
+            // {range: [45,52], color: 0x39aef8}, 
+            {faces: [76,77], color: 0xffffff}
         ])
 
     }
@@ -54,34 +81,42 @@ export class SendbloomModel extends React.Component{
         */
         const faces = geometry.faces
         let colors = []
+        console.log('inserting ' + faces.length + '-face geometry into ' + groupref)
         for (var i = 0; i<faces.length; i++){
             //which range am i in? 
             faces[i].materialIndex = i
             let match = false
             let it = 0
             while(!match){ //provided lo-hi range to apply a color to
+                console.log(faceColorArray, it)
+                if(!faceColorArray[it]){ //error?
+                    colors[i] = new THREE.MeshBasicMaterial({color: 0x000000})
+                    match = true
+                    break
+                }
                 if(faceColorArray[it].range){
                     const lo = faceColorArray[it].range[0]
                     const hi = faceColorArray[it].range[1]
                     if(i >= lo && i <= hi){
-                        colors[i] = new THREE.MeshBasicMaterial({color: faceColorArray[it].color})
+                        colors[i] = new THREE.MeshBasicMaterial({color: faceColorArray[it].color, transparent: true})
                         match = true
                         break
                     }
+                    it++
                 }else{ //variable-length list of indices to apply color to `faces`
                     if(faceColorArray[it].faces.includes(i)){
-                        colors[i] = new THREE.MeshBasicMaterial({color: faceColorArray[it].color})
+                        colors[i] = new THREE.MeshBasicMaterial({color: faceColorArray[it].color, transparent: true})
                         match = true
                         break
                     }
+                    it++
                 }
-                it++
             }
         }
         //potentially needs to be separate, but integrated for now: addition into scene
         let mesh = new THREE.Mesh(geometry, colors)
         mesh.name = name
-        groupref.add(mesh)
+        this.refs[groupref].add(mesh)
 
     }
 
@@ -122,10 +157,11 @@ export class SendbloomModel extends React.Component{
 
     componentDidMount = () =>{
         this.makeLogoMesh()
+        this.makeModalMesh()
         this.makeBoxWithFaceMtl(
             this.refs.window, 
             [1.6, 0.8, 0.15], 
-            {front: 0xededed, left: 0xd7d7cc, bottom: 0xd7d7cc, right: 0xd7d7cc,
+            {front: 0xededed, left: 0xccd2d6, bottom: 0xccd2d6, right: 0xccd2d6,
                 top: 0x5e5e5e, back: 0xededed}
         )
         this.makeBoxWithFaceMtl(
@@ -134,13 +170,7 @@ export class SendbloomModel extends React.Component{
             {front: 0x3c647c, left: 0x25485e, bottom: 0x25485e, right: 0x25485e,
                 top: 0x8397a7, back: 0x3c647c}
         )            
-        this.makeBoxWithFaceMtl(
-            this.refs.modal,
-            [1.3, .6, 0.085],
-            {front: 0xededed, left: 0xd7d7cc, bottom: 0xd7d7cc, right: 0xd7d7cc,
-            top: 0xfbfbfc, back: 0xededed},
-            0.01
-        )
+
 
 
         this.refs.modal.visible = false
@@ -293,10 +323,7 @@ export class SendbloomModel extends React.Component{
                 </group>
 
                 <group ref = "modal" position = {new THREE.Vector3(0, 0.1, 0.45)} />
-                    <mesh name = "sendbloom" ref = "modalmesh" position = {new THREE.Vector3(0,0,1)}>
-                        <geometry vertices = {this.sbmodal.geometry.vertices} faces = {this.sbmodal.geometry.faces} />
-                        <meshNormalMaterial />
-                    </mesh>
+
                     <group ref = "listrow1" position = {new THREE.Vector3(0,0.2,0.49)} />
                     <group ref = "listrow2" position = {new THREE.Vector3(0,0.075,0.49)}/>
                     <group ref = "listrow3" position = {new THREE.Vector3(0,-.05,0.49)}/>
