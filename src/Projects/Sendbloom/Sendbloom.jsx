@@ -23,43 +23,95 @@ export class SendbloomModel extends React.Component{
     loadModels = () => {
         const loader = new THREE.JSONLoader()
         this.sblogo = loader.parse(require('./sb-logo.json'))
+        this.sbmodal = loader.parse(require('./sb-modal.json'))
         
     }
     makeLogoMesh = () => {
         //making mesh...
-        let geo = this.sblogo.geometry.clone()
-        const faces = geo.faces
-        let colors = []
-        for (var i = 0; i<faces.length; i++){
-            //96 total faces
-            faces[i].materialIndex = i
-            /*
-            0-53: interior/extrude faces
-            54-74: backside faces
-            75+: frontside faces
-                75-81: orange
-                82-88: blue
-                89-95: red 
-            */
-            if(i <= 17) colors[i] = new THREE.MeshBasicMaterial({color: 0x16a8a8})
-            if(i >= 18 && i <= 35) colors[i] = new THREE.MeshBasicMaterial({color: 0xef9900})
-            if(i >= 36 &&i <= 53) colors[i] = new THREE.MeshBasicMaterial({color: 0xdb543e})
-            //backside
-            if(i>=54 && i<=60) colors[i] = new THREE.MeshBasicMaterial({color: 0xffab01})
-            if(i>=61 && i<=67) colors[i] = new THREE.MeshBasicMaterial({color: 0x09c3cc})
-            if(i>=68 && i<=74) colors[i] = new THREE.MeshBasicMaterial({color: 0xf96244})
-            //frontside    
-            if(i >= 75 && i <= 81 ) colors[i] = new THREE.MeshBasicMaterial({color: 0xffab01})
-            if(i >= 82 && i <= 88) colors[i] = new THREE.MeshBasicMaterial({color: 0x09c3cc})
-            if(i >= 89) colors[i] = new THREE.MeshBasicMaterial({color: 0xf96244})
-        }
+        // let geo = this.sblogo.geometry.clone()
+        // const faces = geo.faces
+        // let colors = []
+        // for (var i = 0; i<faces.length; i++){
+        //     //96 total faces
+        //     faces[i].materialIndex = i
+        //     /*
+        //     0-53: interior/extrude faces
+        //     54-74: backside faces
+        //     75+: frontside faces
+        //         75-81: orange
+        //         82-88: blue
+        //         89-95: red 
+        //     */
+        //     if(i <= 17) colors[i] = new THREE.MeshBasicMaterial({color: 0x16a8a8})
+        //     if(i >= 18 && i <= 35) colors[i] = new THREE.MeshBasicMaterial({color: 0xef9900})
+        //     if(i >= 36 &&i <= 53) colors[i] = new THREE.MeshBasicMaterial({color: 0xdb543e})
+        //     //backside
+        //     if(i>=54 && i<=60) colors[i] = new THREE.MeshBasicMaterial({color: 0xffab01})
+        //     if(i>=61 && i<=67) colors[i] = new THREE.MeshBasicMaterial({color: 0x09c3cc})
+        //     if(i>=68 && i<=74) colors[i] = new THREE.MeshBasicMaterial({color: 0xf96244})
+        //     //frontside    
+        //     if(i >= 75 && i <= 81 ) colors[i] = new THREE.MeshBasicMaterial({color: 0xffab01})
+        //     if(i >= 82 && i <= 88) colors[i] = new THREE.MeshBasicMaterial({color: 0x09c3cc})
+        //     if(i >= 89) colors[i] = new THREE.MeshBasicMaterial({color: 0xf96244})
+        // }
 
-        // let logoGeo = new THREE.Geometry(this.logo.geometry)
-        let mesh = new THREE.Mesh(geo, colors)
-        mesh.name = 'sendbloom'
-        this.refs.logo.add(mesh)
+        // // let logoGeo = new THREE.Geometry(this.logo.geometry)
+        // let mesh = new THREE.Mesh(geo, colors)
+        // mesh.name = 'sendbloom'
+        // this.refs.logo.add(mesh)
+
+        this.makeMeshWithMtlIndices('sendbloom', this.refs.logo, this.sblogo.geometry, [
+            {faces: [0, 17], color: 0x16a8a8},
+            {faces: [18, 35], color: 0xef9900},
+            {faces: [36, 53], color: 0xdb543e},
+            {faces: [54, 60], color: 0xffab01},
+            {faces: [61, 67], color: 0x09c3cc},
+            {faces: [68, 74], color: 0xf96244},
+            {faces: [75, 81], color: 0xffab01}, //these'd benefit from non-dumb range
+            {faces: [82, 88], color: 0x09c3cc}, //these'd benefit from non-dumb range
+            {faces: [89, 95], color: 0xf96244}, //these'd benefit from non-dumb range
+        ])
 
     }
+
+
+    makeMeshWithMtlIndices = (name, groupref, geometry, faceColorArray) => {
+        //eventually, this is probably gonna be a utility function for multiple PresentationModels
+        //given a geometry and sets of ranges
+        /*
+        geometry , [
+            {faces: [0,53], color: 0x16a8a8},
+            {faces: [54,75], color: 0xff0000},
+            ...etc.
+        ]
+        */
+        const faces = geometry.faces
+        let colors = []
+        for (var i = 0; i<faces.length; i++){
+            //which range am i in? 
+            faces[i].materialIndex = i
+            let match = false
+            let it = 0
+            while(!match){
+                const lo = faceColorArray[it].faces[0]
+                const hi = faceColorArray[it].faces[1]
+                if(i >= lo && i <= hi){
+                    colors[i] = new THREE.MeshBasicMaterial({color: faceColorArray[it].color})
+                    console.log(i, faceColorArray[it].color)
+                    match = true
+                    break
+                }
+                it++
+            }
+        }
+        //potentially needs to be separate, but integrated for now: addition into scene
+        let mesh = new THREE.Mesh(geometry, colors)
+        mesh.name = name
+        groupref.add(mesh)
+
+    }
+
+
     componentWillReceiveProps(newProps){
         if(this.props.mode !== newProps.mode){
             if(newProps.mode === 'expanded') this.onExpand()
@@ -267,6 +319,10 @@ export class SendbloomModel extends React.Component{
                 </group>
 
                 <group ref = "modal" position = {new THREE.Vector3(0, 0.1, 0.45)} />
+                    <mesh name = "sendbloom" ref = "modalmesh" position = {new THREE.Vector3(0,0,1)}>
+                        <geometry vertices = {this.sbmodal.geometry.vertices} faces = {this.sbmodal.geometry.faces} />
+                        <meshNormalMaterial />
+                    </mesh>
                     <group ref = "listrow1" position = {new THREE.Vector3(0,0.2,0.49)} />
                     <group ref = "listrow2" position = {new THREE.Vector3(0,0.075,0.49)}/>
                     <group ref = "listrow3" position = {new THREE.Vector3(0,-.05,0.49)}/>
