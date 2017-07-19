@@ -15,12 +15,20 @@ import ProjectInfo from './Projects/ProjectInfo'
 const projectNames = Projects.map(function(proj) {return proj.name})
 
 @observer class App extends React.Component {
-  logScroll(){
+  @observable screenWidth = window.innerWidth
+  @observable screenHeight = window.innerHeight
+
+  @action logScroll(){
     store.scrollposition = window.scrollY
+  }
+  @action userResizedWindow = () => {
+    this.screenWidth = window.innerWidth
+    this.screenHeight = window.innerHeight
   }
 
   componentDidMount(){
     window.addEventListener('scroll',()=>{window.requestAnimationFrame(this.logScroll)})
+    window.addEventListener('resize', this.userResizedWindow)
   }
 
   render() {
@@ -39,8 +47,8 @@ const projectNames = Projects.map(function(proj) {return proj.name})
         <ProjectHeap 
             store = {store} 
             projects = {Projects} 
-            width = {window.innerWidth} 
-            height = {window.innerHeight} 
+            width = {this.screenWidth} 
+            height = {this.screenHeight} 
         />
         
 

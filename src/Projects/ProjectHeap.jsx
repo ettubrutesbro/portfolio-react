@@ -455,6 +455,7 @@ window.world=physics
     render(){
 
         const sizeConstant=physics.viewableSizingConstant
+        const orthographicAspectHeight = sizeConstant * (this.props.height / this.props.width)
 
         const projectGroups=this.props.projects.map((project,i)=>{
             this.onCreateGroup.bind(this,i)
@@ -512,10 +513,10 @@ window.world=physics
                 <orthographicCamera
                     name = "camera"
                     ref = "camera"
-                    left =  {-4}
-                    right = {4} 
-                    top = {2.25}
-                    bottom = {-2.25}
+                    left =  {sizeConstant / -2}
+                    right = {sizeConstant / 2} 
+                    top = {orthographicAspectHeight / 2}
+                    bottom = {orthographicAspectHeight / -2}
                     near = {0.001} 
                     far = {100}
                     position = {this.cameraPosition}
