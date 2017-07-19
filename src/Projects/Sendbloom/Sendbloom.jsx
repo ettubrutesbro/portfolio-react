@@ -42,28 +42,9 @@ export class SendbloomModel extends React.Component{
     }
     makeModalMesh = () => {
         this.makeMeshWithMtlIndices('sendbloom', 'modal', this.sbmodal.geometry, [
-            {faces: [6,7], color: 0xfcfdff}, //top
-            {range: [118,119], color: 0xb1b1b1}, //chamfers
-            {range: [138,145], color: 0xccd2d6}, //sides
-            {faces: [42,43,44,45,82,83], color: 0xededed}, //front
-            {range: [101,115], color: 0xededed}, 
-            {range: [120,137], color: 0xededed}, 
-            {range: [95,101], color: 0xededed}, 
-            {faces: [89,90], color: 0xededed}, //inside front
-            {range: [78,81], color: 0xededed}, 
-            {range: [48,51], color: 0xccd2d6}, //sides
-            {range: [54,57], color: 0xccd2d6}, 
-            {range: [62,65], color: 0xccd2d6}, 
-            {faces: [70,71], color: 0xccd2d6}, 
-            {faces: [87,88], color: 0xccd2d6}, 
-            {faces: [84, 85, 86, 91, 92, 93, 94], color: 0xccd2d6}, //bottom
-            {faces: [46,47,58,59,66,67], color: 0xccd2d6},
-            {range: [20,29], color: 0xb1b1b1}, //inside X face
-            {range: [8,19], color: 0xd7d7d7}, //X walls
-            {range: [30,38], color: 0xd7d7d7}, 
-            // {faces: [3], color: 0x39aef8}, //interior highlight for top listrow
-            // {range: [45,52], color: 0x39aef8}, 
-            {faces: [76,77], color: 0xffffff}
+            {range: [78,108], color: 0xededed},
+            {range: [117,129], color: 0xededed},
+            {faces: [109,110], color: 0x00ff00},
         ], 0)
 
     }
@@ -89,7 +70,7 @@ export class SendbloomModel extends React.Component{
             let it = 0
             while(!match){ //provided lo-hi range to apply a color to
                 if(!faceColorArray[it]){ //error?
-                    colors[i] = new THREE.MeshBasicMaterial({color: 0x000000, opacity: defaultOpacity===0?0:1})
+                    colors[i] = new THREE.MeshBasicMaterial({color: 0xff0000, opacity: defaultOpacity===0?0:1})
                     match = true
                     break
                 }
@@ -325,7 +306,7 @@ export class SendbloomModel extends React.Component{
                     {navItems}
                 </group>
 
-                <group ref = "modal" position = {new THREE.Vector3(0, 0.1, 0.45)} />
+                <group ref = "modal" position = {new THREE.Vector3(0, 0.1, 0.75)} />
 
                     <group ref = "listrow1" position = {new THREE.Vector3(0,0.2,0.49)} />
                     <group ref = "listrow2" position = {new THREE.Vector3(0,0.075,0.49)}/>

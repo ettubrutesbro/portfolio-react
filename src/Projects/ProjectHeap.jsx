@@ -137,6 +137,7 @@ window.world=physics
     componentDidUpdate(newProps) {
         const {width, height}=this.props 
         if(width !== newProps.width || height !== newProps.height){
+            if(physics.static) physics.static = false
             this.resizeForInput()
         }
     }
@@ -458,7 +459,7 @@ window.world=physics
 
         const sizeConstant=physics.viewableSizingConstant
         const orthographicAspectHeight = sizeConstant * (this.props.height / this.props.width)
-
+        console.log(orthographicAspectHeight)
         const projectGroups=this.props.projects.map((project,i)=>{
             this.onCreateGroup.bind(this,i)
             return(
