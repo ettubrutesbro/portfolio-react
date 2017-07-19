@@ -64,12 +64,12 @@ export class SendbloomModel extends React.Component{
             // {faces: [3], color: 0x39aef8}, //interior highlight for top listrow
             // {range: [45,52], color: 0x39aef8}, 
             {faces: [76,77], color: 0xffffff}
-        ])
+        ], 0)
 
     }
 
 
-    makeMeshWithMtlIndices = (name, groupref, geometry, faceColorArray) => {
+    makeMeshWithMtlIndices = (name, groupref, geometry, faceColorArray, defaultOpacity) => {
         //eventually, this is probably gonna be a utility function for multiple PresentationModels
         //given a geometry and sets of ranges
         /*
@@ -88,9 +88,8 @@ export class SendbloomModel extends React.Component{
             let match = false
             let it = 0
             while(!match){ //provided lo-hi range to apply a color to
-                console.log(faceColorArray, it)
                 if(!faceColorArray[it]){ //error?
-                    colors[i] = new THREE.MeshBasicMaterial({color: 0x000000})
+                    colors[i] = new THREE.MeshBasicMaterial({color: 0x000000, opacity: defaultOpacity===0?0:1})
                     match = true
                     break
                 }
@@ -98,14 +97,14 @@ export class SendbloomModel extends React.Component{
                     const lo = faceColorArray[it].range[0]
                     const hi = faceColorArray[it].range[1]
                     if(i >= lo && i <= hi){
-                        colors[i] = new THREE.MeshBasicMaterial({color: faceColorArray[it].color, transparent: true})
+                        colors[i] = new THREE.MeshBasicMaterial({color: faceColorArray[it].color, transparent: true, opacity: defaultOpacity===0?0:1})
                         match = true
                         break
                     }
                     it++
                 }else{ //variable-length list of indices to apply color to `faces`
                     if(faceColorArray[it].faces.includes(i)){
-                        colors[i] = new THREE.MeshBasicMaterial({color: faceColorArray[it].color, transparent: true})
+                        colors[i] = new THREE.MeshBasicMaterial({color: faceColorArray[it].color, transparent: true, opacity: defaultOpacity===0?0:1})
                         match = true
                         break
                     }
@@ -172,7 +171,7 @@ export class SendbloomModel extends React.Component{
         )            
 
 
-
+        for(var i = 0; i<4; i++){ this.refs['navitem'+i].visible = false}
         this.refs.modal.visible = false
         this.refs.overlay.visible = false
 
@@ -198,6 +197,7 @@ export class SendbloomModel extends React.Component{
             .start()
         for(var i = 0; i<4; i++){
             const navitem = this.refs['navitem'+i]
+            navitem.visible = true
             const delay = i>=2? (i-1)*175 : i*175
             if(this.navItemTween[i]) this.navItemTween[i].stop()
             this.navItemTween[i] = new TWEEN.Tween({opacity: 0})
@@ -260,6 +260,9 @@ export class SendbloomModel extends React.Component{
                 .to({opacity: 0}, 250)
                 .onUpdate(function(){
                     navitem.material.opacity = this.opacity
+                })
+                .onComplete(function(){
+                    navitem.visible = false
                 })
                 .start()
         }
