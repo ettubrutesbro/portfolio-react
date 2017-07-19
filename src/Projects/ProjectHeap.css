@@ -5,3 +5,10 @@
     .selected{
         transform: translateX(-25%);
     }
+
+    .fuck{
+        position: absolute;
+        width: 100px; height: 100px;
+        background-color: red;
+        z-index: 10;
+    }

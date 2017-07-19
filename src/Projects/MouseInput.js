@@ -283,6 +283,7 @@ class MouseInput extends Module {
 
   containerResized() {
     this._containerRect = this._container.getBoundingClientRect();
+    console.log(this._containerRect)
   }
 
   update() {

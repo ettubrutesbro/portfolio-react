@@ -8,6 +8,8 @@ import {Projects }from './data/projects.js'
 import {JLPortfolioStore} from './Store'
 import {computeClipDifference, computeColorDifference, computeXformDifference, easings} from './helpers.js'
 
+import {debounce} from 'lodash'
+
 import Intro from './Intro'
 import ProjectHeap from './Projects/ProjectHeap'
 import ProjectInfo from './Projects/ProjectInfo'
@@ -28,7 +30,7 @@ const projectNames = Projects.map(function(proj) {return proj.name})
 
   componentDidMount(){
     window.addEventListener('scroll',()=>{window.requestAnimationFrame(this.logScroll)})
-    window.addEventListener('resize', this.userResizedWindow)
+    window.addEventListener('resize', debounce(this.userResizedWindow, 100))
   }
 
   render() {

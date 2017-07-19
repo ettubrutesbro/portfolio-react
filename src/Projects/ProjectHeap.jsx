@@ -17,8 +17,6 @@ import { rads} from '../helpers.js'
 import ProjectGroup from './ProjectGroup'
 import styles from './ProjectHeap.css'
 
-//test
-
 const debug=new Debug()
 window.debug=debug
 const physics=new ThreePhysicsStore()
@@ -139,9 +137,13 @@ window.world=physics
     componentDidUpdate(newProps) {
         const {width, height}=this.props 
         if(width !== newProps.width || height !== newProps.height){
-            this.refs.mouseInput.containerResized()
+            this.resizeForInput()
         }
     }
+    resizeForInput = () => {
+        this.refs.mouseInput.containerResized()
+    }
+
     //TODO: resize event?
 
     @action
@@ -483,6 +485,7 @@ window.world=physics
                     styles.container,
                     this.props.store.selectedProject? styles.selected : ''
                 ].join(' ')}
+                onTransitionEnd = {this.resizeForInput}
             > 
             { debug.fps && <FPSStats />}
             <React3 
