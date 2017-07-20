@@ -42,9 +42,22 @@ export class SendbloomModel extends React.Component{
     }
     makeModalMesh = () => {
         this.makeMeshWithMtlIndices('sendbloom', 'modal', this.sbmodal.geometry, [
+            {faces: [2,3], color: 0xfbfbfc},
+            {faces: [76,77,138,139], color: 0xfbfbfc},
+            {range: [68,73], color: 0xfbfbfc},
             {range: [78,108], color: 0xededed},
-            {range: [117,129], color: 0xededed},
-            {faces: [109,110], color: 0x00ff00},
+            {range: [115,129], color: 0xededed},
+            {faces: [38,39,50,51,58,59,64,65,134,135], color: 0xe1e3e5}, //bottom inside
+            // {faces: [109,110], color: 0xccd2d6}, 
+            {range: [40,43], color: 0xccd2d6}, //inside sides
+            {range: [46,49], color: 0xccd2d6},
+            {range: [54,57], color: 0xccd2d6},
+            {faces: [62,63,74,75,109,110,113,114130,131,136,137], color: 0xccd2d6},
+            //insied x facing up
+            {faces: [4,5,10,11,14,15], color: 0xccd2d6},
+            {faces: [8,9,12,13,26,27,34,35], color: 0xccd2d6},
+            {range: [16,25], color: 0xb5bfc4},
+            //inside x facing down
         ], 0)
 
     }
@@ -149,6 +162,18 @@ export class SendbloomModel extends React.Component{
             [1.6, 0.2, 0.19], 
             {front: 0x3c647c, left: 0x25485e, bottom: 0x25485e, right: 0x25485e,
                 top: 0x8397a7, back: 0x3c647c}
+        )                    
+        this.makeBoxWithFaceMtl(
+            this.refs.react, 
+            [0.3, 0.3, 0.04], 
+            {front: 0x222222, left: 0x000000, bottom: 0x25485e, right: 0x25485e,
+                top: 0x5e5e5e, back: 0x000000}
+        )          
+        this.makeBoxWithFaceMtl(
+            this.refs.mobx, 
+            [0.3, 0.3, 0.04], 
+            {front: 0xf06b1d, left: 0xc44412, bottom: 0x25485e, right: 0xc44412,
+                top: 0xf2911d, back: 0x000000}
         )            
 
 
@@ -282,9 +307,11 @@ export class SendbloomModel extends React.Component{
         })
 
         return(
-            <group ref = "group">
+            <group ref = "group" position = {new THREE.Vector3(0,-0.05,0)} >
                 <resources>
                     <texture resourceId = "shadow" url = {require('./shadow.png')}/> 
+                    <texture resourceId = "react" url = {require('./react.svg')}/> 
+                    <texture resourceId = "mobx" url = {require('./mobx.png')}/> 
                 </resources>
                 <group 
                     ref = "logo"
@@ -306,13 +333,25 @@ export class SendbloomModel extends React.Component{
                     {navItems}
                 </group>
 
-                <group ref = "modal" position = {new THREE.Vector3(0, 0.1, 0.75)} />
+                <group ref = "modal" position = {new THREE.Vector3(-0, 0.15, 0.9)} />
 
-                    <group ref = "listrow1" position = {new THREE.Vector3(0,0.2,0.49)} />
-                    <group ref = "listrow2" position = {new THREE.Vector3(0,0.075,0.49)}/>
-                    <group ref = "listrow3" position = {new THREE.Vector3(0,-.05,0.49)}/>
-                    <group ref = "listrow4" position = {new THREE.Vector3(0,-.175,.49)}/>
-                
+                <group ref = "react" position = {new THREE.Vector3(.2,0.05,-1.2)}>
+                    <mesh name = "sendbloom" ref = "reactPlane" position = {new THREE.Vector3(-0.025,0.025,0.05)}>
+                    <planeBufferGeometry width = {0.23} height = {0.23} />
+                    <meshBasicMaterial ref = "reactMtl" transparent >
+                        <textureResource resourceId = "react" />
+                    </meshBasicMaterial> 
+                    </mesh>
+                </group>
+
+                <group ref = "mobx" position = {new THREE.Vector3(-0.2,0.05,-1.2)}>
+                    <mesh name = "sendbloom" ref = "mobxPlane" position = {new THREE.Vector3(-0.025,0.025,0.05)}>
+                    <planeBufferGeometry width = {0.23} height = {0.23} />
+                    <meshBasicMaterial ref = "mobxMtl" transparent >
+                        <textureResource resourceId = "mobx" />
+                    </meshBasicMaterial> 
+                    </mesh>
+                </group>
             </group>
         )
     }

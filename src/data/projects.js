@@ -21,9 +21,11 @@ const Projects = [
             debugColor: 0xff0000
         },
         selected: {
+            // position: {x: 2, y: 1, z: 0},
             rotation: {x: 10, y: 35, z: 0},
             camera: {
-                position: {x: 0, y: 4, z: 6.5}
+                position: {x: 0, y: 2.75, z: 2.75},
+                zoom: 1.75
             }
         }
     },
@@ -49,7 +51,8 @@ const Projects = [
         selected: {
             rotation: {x: 0, y: -135, z: -0},
             camera: {
-                position: {x: 0, y: 7, z: 7}
+                position: {x: 0, y: 7, z: 7},
+                zoom: 1.2
             }
         },
         expandable: true,

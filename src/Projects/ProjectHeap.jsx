@@ -289,7 +289,7 @@ window.world=physics
             .start()
     }
     @action
-    lookAt=( position , origin)=>{
+    lookAt=( position , origin, zoom)=>{
         const camera = this.refs.camera
         // const bodyPos = body? new THREE.Vector3().copy(body.getPosition()) : new THREE.Vector3()
         const startRotation = new THREE.Euler().copy( camera.rotation )
@@ -309,10 +309,11 @@ window.world=physics
 
         console.log(startRotation, endRotation)
         physics.static = false
-        this.cameraRotationTween = new TWEEN.Tween( {x: startRotation.x, y: startRotation.y, z: startRotation.z} )
-            .to( {x: endRotation.x, y: endRotation.y, z: endRotation.z}, 600)
+        this.cameraRotationTween = new TWEEN.Tween( {x: startRotation.x, y: startRotation.y, z: startRotation.z, zoom: camera.zoom} )
+            .to( {x: endRotation.x, y: endRotation.y, z: endRotation.z, zoom: zoom || 1}, 600)
             .onUpdate(function(){
                 if(physics.static) physics.static = false
+                camera.zoom = this.zoom
                 camera.rotation.set(this.x, this.y, this.z)
                 camera.updateProjectionMatrix()
             })
@@ -423,7 +424,7 @@ window.world=physics
         // how to get the 
         this.forceRotate(body, rotation)
         this.forceMove(body, position)
-        this.lookAt(position, selectCamera? selectCamera.position : this.defaultCameraPosition)
+        this.lookAt(position, selectCamera? selectCamera.position : this.defaultCameraPosition, selectCamera? selectCamera.zoom : '')
     }
     @action
     unselect=() => {
