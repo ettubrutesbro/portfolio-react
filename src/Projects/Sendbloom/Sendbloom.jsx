@@ -312,6 +312,8 @@ export class SendbloomModel extends React.Component{
                     <texture resourceId = "shadow" url = {require('./shadow.png')}/> 
                     <texture resourceId = "react" url = {require('./react.svg')}/> 
                     <texture resourceId = "mobx" url = {require('./mobx.png')}/> 
+                    <texture resourceId = "cssmodules" url = {require('./cssmodules.png')}/> 
+                    <texture resourceId = "storybook" url = {require('./storybook.png')}/> 
                 </resources>
                 <group 
                     ref = "logo"
@@ -335,7 +337,7 @@ export class SendbloomModel extends React.Component{
 
                 <group ref = "modal" position = {new THREE.Vector3(-0, 0.15, 0.9)} />
 
-                <group ref = "react" position = {new THREE.Vector3(.2,0.05,-1.2)}>
+                <group ref = "react" position = {new THREE.Vector3(.2,0.2,-1.2)}>
                     <mesh name = "sendbloom" ref = "reactPlane" position = {new THREE.Vector3(-0.025,0.025,0.05)}>
                     <planeBufferGeometry width = {0.23} height = {0.23} />
                     <meshBasicMaterial ref = "reactMtl" transparent >
@@ -344,11 +346,27 @@ export class SendbloomModel extends React.Component{
                     </mesh>
                 </group>
 
-                <group ref = "mobx" position = {new THREE.Vector3(-0.2,0.05,-1.2)}>
+                <group ref = "mobx" position = {new THREE.Vector3(-0.2,0.2,-1.2)}>
                     <mesh name = "sendbloom" ref = "mobxPlane" position = {new THREE.Vector3(-0.025,0.025,0.05)}>
                     <planeBufferGeometry width = {0.23} height = {0.23} />
-                    <meshBasicMaterial ref = "mobxMtl" transparent >
+                    <meshBasicMaterial ref = "mobxMtl" transparent color = {0xffffff}>
                         <textureResource resourceId = "mobx" />
+                    </meshBasicMaterial> 
+                    </mesh>
+                </group>
+                <group ref = "cssmodules" position = {new THREE.Vector3(-.2,-0.2,-1.2)}>
+                    <mesh name = "sendbloom" ref = "cssmodulesPlane" position = {new THREE.Vector3(-0.025,0.025,0.05)}>
+                    <planeBufferGeometry width = {0.23} height = {0.23} />
+                    <meshBasicMaterial ref = "cssmodulesMtl" transparent color = {0xffffff}>
+                        <textureResource resourceId = "cssmodules" />
+                    </meshBasicMaterial> 
+                    </mesh>
+                </group>
+                <group ref = "storybook" position = {new THREE.Vector3(0.2,-0.2,-1.2)}>
+                    <mesh name = "sendbloom" ref = "storybookPlane" position = {new THREE.Vector3(-0.025,0.025,0.05)}>
+                    <planeBufferGeometry width = {0.23} height = {0.23} />
+                    <meshBasicMaterial ref = "storybookMtl" transparent color = {0xffffff}>
+                        <textureResource resourceId = "storybook" />
                     </meshBasicMaterial> 
                     </mesh>
                 </group>
