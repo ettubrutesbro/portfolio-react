@@ -43,22 +43,23 @@ export class SendbloomModel extends React.Component{
     makeModalMesh = () => {
         this.makeMeshWithMtlIndices('sendbloom', 'modal', this.sbmodal.geometry, [
             {faces: [2,3], color: 0xfbfbfc},
-            {faces: [76,77,138,139], color: 0xfbfbfc},
+            {faces: [76,77], color: 0xfbfbfc},
             {range: [68,73], color: 0xfbfbfc},
             {range: [78,108], color: 0xededed},
             {range: [115,129], color: 0xededed},
-            {faces: [38,39,50,51,58,59,64,65,134,135], color: 0xe1e3e5}, //bottom inside
+            {range: [130,139], color: 0xededed}, //search bar
+            {faces: [38,39,50,51,58,59,64,65], color: 0xe1e3e5}, //bottom inside
             // {faces: [109,110], color: 0xccd2d6}, 
             {range: [40,43], color: 0xccd2d6}, //inside sides
             {range: [46,49], color: 0xccd2d6},
             {range: [54,57], color: 0xccd2d6},
-            {faces: [62,63,74,75,109,110,113,114130,131,136,137], color: 0xccd2d6},
+            {faces: [62,63,74,75,109,110,113,114], color: 0xccd2d6},
             //insied x facing up
             {faces: [4,5,10,11,14,15], color: 0xccd2d6},
             {faces: [8,9,12,13,26,27,34,35], color: 0xccd2d6},
             {range: [16,25], color: 0xb5bfc4},
             //inside x facing down
-        ], 0)
+        ])
 
     }
 
@@ -162,19 +163,15 @@ export class SendbloomModel extends React.Component{
             [1.6, 0.2, 0.19], 
             {front: 0x3c647c, left: 0x25485e, bottom: 0x25485e, right: 0x25485e,
                 top: 0x8397a7, back: 0x3c647c}
-        )                    
+        )
+                            
         this.makeBoxWithFaceMtl(
-            this.refs.react, 
-            [0.3, 0.3, 0.04], 
-            {front: 0x222222, left: 0x000000, bottom: 0x25485e, right: 0x25485e,
-                top: 0x5e5e5e, back: 0x000000}
+            this.refs.modalbutton, 
+            [0.175, 0.09, 0.0175], 
+            {front: 0x39aef8, left:0x3b8bb8, bottom: 0x3b8bb8, right: 0x3b8bb8,
+                top: 0x3b8bb8, back: 0x3b8bb8}
         )          
-        this.makeBoxWithFaceMtl(
-            this.refs.mobx, 
-            [0.3, 0.3, 0.04], 
-            {front: 0xf06b1d, left: 0xc44412, bottom: 0x25485e, right: 0xc44412,
-                top: 0xf2911d, back: 0x000000}
-        )            
+          
 
 
         for(var i = 0; i<4; i++){ this.refs['navitem'+i].visible = false}
@@ -278,10 +275,8 @@ export class SendbloomModel extends React.Component{
     setModal = ( o, scaleY) => {
         const modal = this.refs.modal
         //direct updates (not react or mobx)
-        modal.children[0].scale.set(1, scaleY, 1)
-        modal.children[0].material.forEach((mtl) => {
-            mtl.opacity = o
-        })
+        modal.scale.set(1, scaleY, 1)
+
         const shadow = this.refs.overlay 
         // const shadowMtl = this.refs
         shadow.scale.set(1, scaleY, 1)
@@ -300,8 +295,21 @@ export class SendbloomModel extends React.Component{
                 <mesh ref = {'navitem'+i} 
                     position = {new THREE.Vector3(-.475 + navItemPositions[i], 0, 0.125)}
                 >
-                    <planeBufferGeometry width = {width} height = {0.035} segments = {i} />
+                    <planeBufferGeometry width = {width} height = {0.035} segments = {1} />
                     <meshBasicMaterial color = {0xededed} transparent opacity = {0}/>
+                </mesh>
+            )
+        })
+        const textItems = [0.168,0.027,-0.115,-0.257].map((yPos,i)=>{
+            return (
+                <mesh 
+                    ref = {'textitem'+i}
+                    position = {new THREE.Vector3(-0.02,yPos,0.0375)}
+                >
+                    <planeBufferGeometry width = {0.75} height = {0.05} segments = {1} />
+                    <meshBasicMaterial >
+                        <textureResource resourceId = "testtext" />
+                    </meshBasicMaterial>
                 </mesh>
             )
         })
@@ -310,10 +318,8 @@ export class SendbloomModel extends React.Component{
             <group ref = "group" position = {new THREE.Vector3(0,-0.05,0)} >
                 <resources>
                     <texture resourceId = "shadow" url = {require('./shadow.png')}/> 
-                    <texture resourceId = "react" url = {require('./react.svg')}/> 
-                    <texture resourceId = "mobx" url = {require('./mobx.png')}/> 
-                    <texture resourceId = "cssmodules" url = {require('./cssmodules.png')}/> 
-                    <texture resourceId = "storybook" url = {require('./storybook.png')}/> 
+                    <texture resourceId = "testtext" url = {require('./testtext.png')}/> 
+
                 </resources>
                 <group 
                     ref = "logo"
@@ -335,41 +341,22 @@ export class SendbloomModel extends React.Component{
                     {navItems}
                 </group>
 
-                <group ref = "modal" position = {new THREE.Vector3(-0, 0.15, 0.9)} />
+                <group ref = "modal" position = {new THREE.Vector3(-0, 0.15, 0.85)} >
+                    <group ref = "modalbutton" position = {new THREE.Vector3(0.425,0.175,0.05)} />
+                    <mesh name = "sendbloom" ref = "modalbuttontext" position = {new THREE.Vector3(0.395,0.175,0.059)} >
+                        <planeBufferGeometry width = {0.057} height = {0.0175} segments = {1} />
+                        <meshBasicMaterial color = {0xfbfbfc} />
+                    </mesh>                   
+                    <mesh name = "sendbloom" ref = "modalbuttontext" position = {new THREE.Vector3(0.455,0.175,0.059)} >
+                        <planeBufferGeometry width = {0.02} height = {0.0175} segments = {1} />
+                        <meshBasicMaterial color = {0xfbfbfc} />
+                    </mesh>
 
-                <group ref = "react" position = {new THREE.Vector3(.2,0.2,-1.2)}>
-                    <mesh name = "sendbloom" ref = "reactPlane" position = {new THREE.Vector3(-0.025,0.025,0.05)}>
-                    <planeBufferGeometry width = {0.23} height = {0.23} />
-                    <meshBasicMaterial ref = "reactMtl" transparent >
-                        <textureResource resourceId = "react" />
-                    </meshBasicMaterial> 
-                    </mesh>
+                    {textItems}
                 </group>
 
-                <group ref = "mobx" position = {new THREE.Vector3(-0.2,0.2,-1.2)}>
-                    <mesh name = "sendbloom" ref = "mobxPlane" position = {new THREE.Vector3(-0.025,0.025,0.05)}>
-                    <planeBufferGeometry width = {0.23} height = {0.23} />
-                    <meshBasicMaterial ref = "mobxMtl" transparent color = {0xffffff}>
-                        <textureResource resourceId = "mobx" />
-                    </meshBasicMaterial> 
-                    </mesh>
-                </group>
-                <group ref = "cssmodules" position = {new THREE.Vector3(-.2,-0.2,-1.2)}>
-                    <mesh name = "sendbloom" ref = "cssmodulesPlane" position = {new THREE.Vector3(-0.025,0.025,0.05)}>
-                    <planeBufferGeometry width = {0.23} height = {0.23} />
-                    <meshBasicMaterial ref = "cssmodulesMtl" transparent color = {0xffffff}>
-                        <textureResource resourceId = "cssmodules" />
-                    </meshBasicMaterial> 
-                    </mesh>
-                </group>
-                <group ref = "storybook" position = {new THREE.Vector3(0.2,-0.2,-1.2)}>
-                    <mesh name = "sendbloom" ref = "storybookPlane" position = {new THREE.Vector3(-0.025,0.025,0.05)}>
-                    <planeBufferGeometry width = {0.23} height = {0.23} />
-                    <meshBasicMaterial ref = "storybookMtl" transparent color = {0xffffff}>
-                        <textureResource resourceId = "storybook" />
-                    </meshBasicMaterial> 
-                    </mesh>
-                </group>
+
+
             </group>
         )
     }
