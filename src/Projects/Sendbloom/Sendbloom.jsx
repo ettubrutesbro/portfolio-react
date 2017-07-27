@@ -306,9 +306,9 @@ export class SendbloomModel extends React.Component{
                     ref = {'textitem'+i}
                     position = {new THREE.Vector3(-0.02,yPos,0.0375)}
                 >
-                    <planeBufferGeometry width = {0.75} height = {0.05} segments = {1} />
-                    <meshBasicMaterial >
-                        <textureResource resourceId = "testtext" />
+                    <planeBufferGeometry width = {0.95} height = {0.05} segments = {1} />
+                    <meshBasicMaterial color = {0xfbfbfc} >
+                        <textureResource resourceId = {'textline'+(i+1)} />
                     </meshBasicMaterial>
                 </mesh>
             )
@@ -318,7 +318,10 @@ export class SendbloomModel extends React.Component{
             <group ref = "group" position = {new THREE.Vector3(0,-0.05,0)} >
                 <resources>
                     <texture resourceId = "shadow" url = {require('./shadow.png')}/> 
-                    <texture resourceId = "testtext" url = {require('./testtext.png')}/> 
+                    <texture resourceId = "textline1" url = {require('./textline1.svg')}/> 
+                    <texture resourceId = "textline2" url = {require('./textline2.svg')}/> 
+                    <texture resourceId = "textline3" url = {require('./textline3.svg')}/> 
+                    <texture resourceId = "textline4" url = {require('./textline4.svg')}/> 
 
                 </resources>
                 <group 
