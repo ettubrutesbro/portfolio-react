@@ -176,6 +176,7 @@ export class SendbloomModel extends React.Component{
 
         for(var i = 0; i<4; i++){ this.refs['navitem'+i].visible = false}
         this.refs.modal.visible = false
+        this.refs.modal.scale.set(1,0.01,1)
         this.refs.overlay.visible = false
 
     }
@@ -183,11 +184,18 @@ export class SendbloomModel extends React.Component{
     onSelect = () => {
         const store = this.props.store
         const setModal = this.setModal
+        const prospects = this.refs.prospects
         store.bodies.sendbloom.sleeping = false
         store.static = false
 
         this.refs.modal.visible = true
         if(this.modalTween) this.modalTween.stop()
+        this.prospectsTween = new TWEEN.Tween({opacity: 0})
+            .to({opacity: 1}, 400)
+            .onUpdate(function(){
+                prospects.material.opacity = this.opacity
+            })
+            .start()
         this.modalTween = new TWEEN.Tween({z: 0, opacity: 0, scaleY: 0.01})
             .to({opacity: 1, scaleY: 1}, 400)
             .onUpdate(function(){
@@ -277,6 +285,10 @@ export class SendbloomModel extends React.Component{
         //direct updates (not react or mobx)
         modal.scale.set(1, scaleY, 1)
 
+        modal.traverse((child)=>{
+            if(child.material) child.material.opacity = o 
+        })
+
         const shadow = this.refs.overlay 
         // const shadowMtl = this.refs
         shadow.scale.set(1, scaleY, 1)
@@ -318,10 +330,11 @@ export class SendbloomModel extends React.Component{
             <group ref = "group" position = {new THREE.Vector3(0,-0.05,0)} >
                 <resources>
                     <texture resourceId = "shadow" url = {require('./shadow.png')}/> 
-                    <texture resourceId = "textline1" url = {require('./textline1.svg')}/> 
-                    <texture resourceId = "textline2" url = {require('./textline2.svg')}/> 
-                    <texture resourceId = "textline3" url = {require('./textline3.svg')}/> 
-                    <texture resourceId = "textline4" url = {require('./textline4.svg')}/> 
+                    <texture resourceId = "textline1" url = {require('./textline1.png')}/> 
+                    <texture resourceId = "textline2" url = {require('./textline2.png')}/> 
+                    <texture resourceId = "textline3" url = {require('./textline3.png')}/> 
+                    <texture resourceId = "textline4" url = {require('./textline4.png')}/> 
+                    <texture resourceId = "prospects" url = {require('./prospects.png')}/> 
 
                 </resources>
                 <group 
@@ -332,8 +345,15 @@ export class SendbloomModel extends React.Component{
                 />
                    
                 <group ref = "window">
-                    <mesh name = "sendbloom" ref = "overlay" position = {new THREE.Vector3(0,0.01,0.08)}>
-                        <planeBufferGeometry width = {1.6} height = {0.85} segments = {1} />
+                    <mesh name = "sendbloom" ref = "prospects" position = {new THREE.Vector3(0,0,0.08)}>
+                        <planeBufferGeometry width = {1.6} height = {0.81} segments = {1} />
+                        <meshBasicMaterial opacity = {0} transparent >
+                            <textureResource resourceId = "prospects" />
+                        </meshBasicMaterial>
+                    </mesh>
+
+                    <mesh name = "sendbloom" ref = "overlay" position = {new THREE.Vector3(0,0.02,0.0825)}>
+                        <planeBufferGeometry width = {1.58} height = {0.85} segments = {1} />
                         <meshBasicMaterial ref = "overlayMtl" transparent opacity = {0}>
                              <textureResource resourceId = "shadow" />
                         </meshBasicMaterial>
