@@ -189,7 +189,11 @@ export class SendbloomModel extends React.Component{
         store.static = false
 
         this.refs.modal.visible = true
+        
         if(this.modalTween) this.modalTween.stop()
+        if(this.prospectsTween) this.prospectsTween.stop()
+        if(this.logoTween) this.logoTween.stop()
+
         this.prospectsTween = new TWEEN.Tween({opacity: 0})
             .to({opacity: 1}, 400)
             .onUpdate(function(){
@@ -239,10 +243,18 @@ export class SendbloomModel extends React.Component{
         const store = this.props.store
         const setModal = this.setModal
         const modal = this.refs.modal
+        const prospects = this.refs.prospects
         store.bodies.sendbloom.sleeping = false
         store.static = false
 
         if(this.modalTween) this.modalTween.stop()
+        if(this.prospectsTween) this.modalTween.stop()
+        this.prospectsTween = new TWEEN.Tween({opacity: 1})
+            .to({opacity: 0}, 400)
+            .onUpdate(function(){
+                prospects.material.opacity = this.opacity
+            })
+            .start()
         this.modalTween = new TWEEN.Tween({opacity: 1, scaleY: 1})
             .to({opacity: 0, scaleY: 0.01}, 250)
             .onUpdate(function(){
