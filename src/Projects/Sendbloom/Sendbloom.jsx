@@ -24,7 +24,9 @@ export class SendbloomModel extends React.Component{
         const loader = new THREE.JSONLoader()
         this.sblogo = loader.parse(require('./sb-logo.json'))
         this.sbmodal = loader.parse(require('./sb-modal.json'))
-        
+        this.aptecrows = loader.parse(require('./aptec-rows.json'))
+        this.aptecx = loader.parse(require('./aptec-xbutton.json'))
+        this.aptecslot = loader.parse(require('./aptec-xslot.json'))
     }
     makeLogoMesh = () => {
         this.makeMeshWithMtlIndices('sendbloom', 'logo', this.sblogo.geometry, [
@@ -41,25 +43,77 @@ export class SendbloomModel extends React.Component{
 
     }
     makeModalMesh = () => {
-        this.makeMeshWithMtlIndices('sendbloom', 'modal', this.sbmodal.geometry, [
-            {faces: [2,3], color: 0xfbfbfc},
-            {faces: [76,77], color: 0xfbfbfc},
-            {range: [68,73], color: 0xfbfbfc},
-            {range: [78,108], color: 0xededed},
-            {range: [115,129], color: 0xededed},
-            {range: [130,139], color: 0xededed}, //search bar
-            {faces: [38,39,50,51,58,59,64,65], color: 0xe1e3e5}, //bottom inside
-            // {faces: [109,110], color: 0xccd2d6}, 
-            {range: [40,43], color: 0xccd2d6}, //inside sides
-            {range: [46,49], color: 0xccd2d6},
-            {range: [54,57], color: 0xccd2d6},
-            {faces: [62,63,74,75,109,110,113,114], color: 0xccd2d6},
-            //insied x facing up
-            {faces: [4,5,10,11,14,15], color: 0xccd2d6},
-            {faces: [8,9,12,13,26,27,34,35], color: 0xccd2d6},
-            {range: [16,25], color: 0xb5bfc4},
-            //inside x facing down
+        this.makeMeshWithMtlIndices('sendbloom', 'modal', this.aptecrows.geometry, [
+            //front
+            {range: [42,61], color: 0xededed}, {range: [64,69], color: 0xededed},
+            //front inside
+            {range: [32,37], color: 0xfbfbfc}, {faces: [40,41], color: 0xfbfbfc},
+            //inside sides
+            {range: [4,7], color: 0xccd2d6}, {range: [10,13], color: 0xccd2d6},
+            {range: [18,21], color: 0xccd2d6}, {faces: [26,27,38,39], color: 0xccd2d6},
+            //top and bottom inside
+            {range: [14,17], color: 0xe1e3e5}, {range: [22,25], color: 0xe1e3e5},
+            {range: [28,31], color: 0xe1e3e5}, {faces: [2,3,8,9], color: 0xe1e3e5},
+            //sides, and back
+            {range: [70,73], color: 0xccd2d6}, {faces: [0,1], color: 0xededed},
+            //top and bottom
+            {faces: [74,75], color: 0xfbfbfc},  {faces: [62,63], color: 0xb5bfc4}
         ])
+        this.makeMeshWithMtlIndices('sendbloom', 'modal', this.aptecslot.geometry, [
+            //front inside
+            {range: [12,21], color: 0xccd2d6},
+            //face up
+            {faces: [0,1,6,7,10,11], color: 0xe1e3e5},
+            //face down
+            {faces: [2,3,4,5,8,9], color: 0xb5bfc4},{range: [22,33], color: 0xb5bfc4},
+            //outsides
+            {faces: [54,55], color: 0xfbfbfc}, {faces: [39,40], color: 0xccd2d6},
+            {faces: [52,53,58,59], color: 0xededed},
+            {range: [34,38], color: 0xededed}, {range: [41,51], color: 0xededed}
+
+
+        ])
+
+        this.makeBoxWithFaceMtl(this.refs.aptecxleft, [1.093,0.12,0.115], 
+            {front: 0xededed, left:0xccd2d6, bottom: 0xededed, right: 0xededed,
+                top: 0xfbfbfc, back: 0xededed})
+
+        this.makeBoxWithFaceMtl(this.refs.aptecxright, [0.25,0.12,0.115], 
+            {front: 0xff0000, left:0xccd2d6, bottom: 0xededed, right: 0xededed,
+                top: 0xfbfbfc, back: 0xededed})
+
+        this.makeBoxWithFaceMtl(this.refs.exittext1, [0.025,0.025,0.0175], 
+            {front: 0x39aef8, left:0x39aef8, bottom: 0x39aef8, right: 0x39aef8,
+                top: 0x39aef8, back: 0x39aef8})
+        this.makeBoxWithFaceMtl(this.refs.exittext2, [0.025,0.025,0.0175], 
+            {front: 0x39aef8, left:0x39aef8, bottom: 0x39aef8, right: 0x39aef8,
+                top: 0x39aef8, back: 0x39aef8})
+        this.makeBoxWithFaceMtl(this.refs.exittext3, [0.06,0.025,0.0175], 
+            {front: 0x39aef8, left:0x39aef8, bottom: 0x39aef8, right: 0x39aef8,
+                top: 0x39aef8, back: 0x39aef8})
+
+        this.refs.aptecxright.scale.set(0.001,1,1)
+        this.refs.aptecxright.visible = false
+
+        // this.makeMeshWithMtlIndices('sendbloom', 'modal', this.sbmodal.geometry, [
+        //     {faces: [2,3], color: 0xfbfbfc},
+        //     {faces: [76,77], color: 0xfbfbfc},
+        //     {range: [68,73], color: 0xfbfbfc},
+        //     {range: [78,108], color: 0xededed},
+        //     {range: [115,129], color: 0xededed},
+        //     {range: [130,139], color: 0xededed}, //search bar
+        //     {faces: [38,39,50,51,58,59,64,65], color: 0xe1e3e5}, //bottom inside
+        //     // {faces: [109,110], color: 0xccd2d6}, 
+        //     {range: [40,43], color: 0xccd2d6}, //inside sides
+        //     {range: [46,49], color: 0xccd2d6},
+        //     {range: [54,57], color: 0xccd2d6},
+        //     {faces: [62,63,74,75,109,110,113,114], color: 0xccd2d6},
+        //     //insied x facing up
+        //     {faces: [4,5,10,11,14,15], color: 0xccd2d6},
+        //     {faces: [8,9,12,13,26,27,34,35], color: 0xccd2d6},
+        //     {range: [16,25], color: 0xb5bfc4},
+        //     //inside x facing down
+        // ])
 
     }
 
@@ -170,6 +224,12 @@ export class SendbloomModel extends React.Component{
             [0.175, 0.09, 0.0175], 
             {front: 0x39aef8, left:0x3b8bb8, bottom: 0x3b8bb8, right: 0x3b8bb8,
                 top: 0x3b8bb8, back: 0x3b8bb8}
+        )                              
+        this.makeBoxWithFaceMtl(
+            this.refs.party, 
+            [1.1, 0.605, 0.11], 
+            {front: 0xededed, left:0xccd2d6, bottom: 0xccd2d6, right: 0xccd2d6,
+                top: 0xfbfbfc, back: 0xccd2d6}
         )          
           
 
@@ -378,6 +438,12 @@ export class SendbloomModel extends React.Component{
 
                 <group ref = "modal" position = {new THREE.Vector3(-0, 0.15, 0.85)} >
                     <group ref = "modalbutton" position = {new THREE.Vector3(0.425,0.175,0.05)} />
+                    <group ref = "aptecxleft" position = {new THREE.Vector3(-0.088,0.31,.015)} />
+                    <group ref = "aptecxright" position = {new THREE.Vector3(0.55,0.31,.015)}>
+                        <group ref = "exittext1" position = {new THREE.Vector3(-0.06,0,0.09)} />
+                        <group ref = "exittext2" position = {new THREE.Vector3(-0.02,0,0.09)} />
+                        <group ref = "exittext3" position = {new THREE.Vector3(0.036,0,0.09)} />
+                    </group>
                     <mesh name = "sendbloom" ref = "modalbuttontext" position = {new THREE.Vector3(0.395,0.175,0.059)} >
                         <planeBufferGeometry width = {0.057} height = {0.0175} segments = {1} />
                         <meshBasicMaterial color = {0xfbfbfc} />
@@ -388,7 +454,24 @@ export class SendbloomModel extends React.Component{
                     </mesh>
 
                     {textItems}
+
+                    <group ref = "party" position = {new THREE.Vector3(1.15,-0.05,.015)}>
+
+                        <mesh position = {new THREE.Vector3(0,0.075,0.0575)}>
+                            <planeBufferGeometry width = {0.175} height = {0.175} segments = {1} />
+                            <meshBasicMaterial color = {0xff0000} />
+                        </mesh>
+
+                        <mesh position = {new THREE.Vector3(0,-0.1,0.0575)}>
+                            <planeBufferGeometry width = {0.35} height = {0.125} segments = {1} />
+                            <meshBasicMaterial color = {0xff0000} />
+                        </mesh>
+
+                    </group>
+
                 </group>
+
+
 
 
 
