@@ -6,10 +6,10 @@
 	.st0{fill:#CDD5D6;}
 </style>
 <rect y="4.4" class="st0" width="4.2" height="7.2"/>
-<rect x="7.4" y="4.4" class="st0" width="26" height="7.2"/>
-<rect x="36.7" y="4.4" class="st0" width="15.7" height="7.2"/>
-<rect x="67.1" y="4.4" class="st0" width="28" height="7.2"/>
+<rect x="7.4" y="4.4" class="st0" width="22.8" height="7.2"/>
+<rect x="34.1" y="4.4" class="st0" width="13.8" height="7.2"/>
+<rect x="51.7" y="4.4" class="st0" width="7.3" height="7.2"/>
 <g>
-	<path class="st0" d="M253.2,6.5v3.1h-14.2V6.5H253.2 M256,3.7h-19.7v8.6H256V3.7L256,3.7z"/>
+	<path class="st0" d="M253.2,6.5v3.1H239V6.5H253.2 M256,3.7h-19.7v8.6H256V3.7L256,3.7z"/>
 </g>
 </svg>
