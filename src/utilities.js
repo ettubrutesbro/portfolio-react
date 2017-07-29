@@ -30,3 +30,43 @@ export function twn(property, start, end, duration, target, onComplete, delay, t
 
     return tween
 }
+
+export function makeColorMesh(name, groupref, geometry, faceColorArray, defaultOpacity){
+    const faces = geometry.faces
+    let colors = []
+    console.log('inserting ' + faces.length + '-face geometry into ' + groupref)
+    for (var i = 0; i<faces.length; i++){
+        //which range am i in? 
+        faces[i].materialIndex = i
+        let match = false
+        let it = 0
+        while(!match){ //provided lo-hi range to apply a color to
+            if(!faceColorArray[it]){ //error?
+                colors[i] = new THREE.MeshBasicMaterial({color: 0xff0000, opacity: defaultOpacity===0?0:1, transparent: true})
+                match = true
+                break
+            }
+            if(faceColorArray[it].range){
+                const lo = faceColorArray[it].range[0]
+                const hi = faceColorArray[it].range[1]
+                if(i >= lo && i <= hi){
+                    colors[i] = new THREE.MeshBasicMaterial({color: faceColorArray[it].color, transparent: true, opacity: defaultOpacity===0?0:1})
+                    match = true
+                    break
+                }
+                it++
+            }else{ //variable-length list of indices to apply color to `faces`
+                if(faceColorArray[it].faces.includes(i)){
+                    colors[i] = new THREE.MeshBasicMaterial({color: faceColorArray[it].color, transparent: true, opacity: defaultOpacity===0?0:1})
+                    match = true
+                    break
+                }
+                it++
+            }
+        }
+    }
+    //potentially needs to be separate, but integrated for now: addition into scene
+    let mesh = new THREE.Mesh(geometry, colors)
+    mesh.name = name
+    groupref.add(mesh)
+}

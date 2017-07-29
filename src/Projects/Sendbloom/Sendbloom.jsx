@@ -5,7 +5,7 @@ import * as THREE from 'three'
 import * as TWEEN from '@tweenjs/tween.js'
 
 import {rads} from '../../helpers.js'
-import { v3, twn } from '../../utilities.js'
+import { v3, twn, makeColorMesh } from '../../utilities.js'
 
 import {mapValues} from 'lodash'
 
@@ -31,7 +31,7 @@ export class SendbloomModel extends React.Component{
         this.aptecslot = loader.parse(require('./aptec-xslot.json'))
     }
     makeLogoMesh = () => {
-        this.makeMeshWithMtlIndices('sendbloom', 'logo', this.sblogo.geometry, [
+        makeColorMesh('sendbloom', this.refs.logo, this.sblogo.geometry, [
             {range: [0, 17], color: 0x16a8a8},
             {range: [18, 35], color: 0xef9900},
             {range: [36, 53], color: 0xdb543e},
@@ -45,7 +45,7 @@ export class SendbloomModel extends React.Component{
 
     }
     makeModalMesh = () => {
-        this.makeMeshWithMtlIndices('sendbloom', 'modal', this.aptecrows.geometry, [
+        makeColorMesh('sendbloom', this.refs.modal , this.aptecrows.geometry, [
             //front
             {range: [42,61], color: 0xededed}, {range: [64,69], color: 0xededed},
             //front inside
@@ -61,7 +61,7 @@ export class SendbloomModel extends React.Component{
             //top and bottom
             {faces: [74,75], color: 0xfbfbfc},  {faces: [62,63], color: 0xb5bfc4}
         ])
-        this.makeMeshWithMtlIndices('sendbloom', 'modal', this.aptecslot.geometry, [
+        makeColorMesh('sendbloom', this.refs.modal, this.aptecslot.geometry, [
             //front inside
             {range: [12,21], color: 0xccd2d6},
             //face up
@@ -97,49 +97,6 @@ export class SendbloomModel extends React.Component{
         this.refs.aptecxright.scale.set(0.001,1,1)
         this.refs.aptecxright.visible = false
     }
-
-
-    makeMeshWithMtlIndices = (name, groupref, geometry, faceColorArray, defaultOpacity) => {
-        const faces = geometry.faces
-        let colors = []
-        console.log('inserting ' + faces.length + '-face geometry into ' + groupref)
-        for (var i = 0; i<faces.length; i++){
-            //which range am i in? 
-            faces[i].materialIndex = i
-            let match = false
-            let it = 0
-            while(!match){ //provided lo-hi range to apply a color to
-                if(!faceColorArray[it]){ //error?
-                    colors[i] = new THREE.MeshBasicMaterial({color: 0xff0000, opacity: defaultOpacity===0?0:1, transparent: true})
-                    match = true
-                    break
-                }
-                if(faceColorArray[it].range){
-                    const lo = faceColorArray[it].range[0]
-                    const hi = faceColorArray[it].range[1]
-                    if(i >= lo && i <= hi){
-                        colors[i] = new THREE.MeshBasicMaterial({color: faceColorArray[it].color, transparent: true, opacity: defaultOpacity===0?0:1})
-                        match = true
-                        break
-                    }
-                    it++
-                }else{ //variable-length list of indices to apply color to `faces`
-                    if(faceColorArray[it].faces.includes(i)){
-                        colors[i] = new THREE.MeshBasicMaterial({color: faceColorArray[it].color, transparent: true, opacity: defaultOpacity===0?0:1})
-                        match = true
-                        break
-                    }
-                    it++
-                }
-            }
-        }
-        //potentially needs to be separate, but integrated for now: addition into scene
-        let mesh = new THREE.Mesh(geometry, colors)
-        mesh.name = name
-        this.refs[groupref].add(mesh)
-
-    }
-
 
     componentWillReceiveProps(newProps){
         if(this.props.mode !== newProps.mode){
