@@ -5,7 +5,7 @@ import * as THREE from 'three'
 import * as TWEEN from '@tweenjs/tween.js'
 
 import {rads} from '../../helpers.js'
-import { v3, twn, makeColorMesh } from '../../utilities.js'
+import { v3, twn, makeColorMesh, makeColorBox } from '../../utilities.js'
 
 import {mapValues} from 'lodash'
 
@@ -76,21 +76,21 @@ export class SendbloomModel extends React.Component{
 
         ])
 
-        this.makeBoxWithFaceMtl(this.refs.aptecxleft, [1.092,0.12,0.115], 
+        makeColorBox('sendbloom', this.refs.aptecxleft, [1.092,0.12,0.115], 
             {front: 0xededed, left:0xccd2d6, bottom: 0xededed, right: 0xededed,
                 top: 0xfbfbfc, back: 0xededed})
 
-        this.makeBoxWithFaceMtl(this.refs.aptecxright, [0.25,0.12,0.115], 
+        makeColorBox('sendbloom', this.refs.aptecxright, [0.25,0.12,0.115], 
             {front: 0xff0000, left:0xccd2d6, bottom: 0xededed, right: 0xededed,
                 top: 0xfbfbfc, back: 0xededed})
 
-        this.makeBoxWithFaceMtl(this.refs.exittext1, [0.025,0.025,0.0175], 
+        makeColorBox('sendbloom', this.refs.exittext1, [0.025,0.025,0.0175], 
             {front: 0x39aef8, left:0x39aef8, bottom: 0x39aef8, right: 0x39aef8,
                 top: 0x39aef8, back: 0x39aef8})
-        this.makeBoxWithFaceMtl(this.refs.exittext2, [0.025,0.025,0.0175], 
+        makeColorBox('sendbloom', this.refs.exittext2, [0.025,0.025,0.0175], 
             {front: 0x39aef8, left:0x39aef8, bottom: 0x39aef8, right: 0x39aef8,
                 top: 0x39aef8, back: 0x39aef8})
-        this.makeBoxWithFaceMtl(this.refs.exittext3, [0.06,0.025,0.0175], 
+        makeColorBox('sendbloom', this.refs.exittext3, [0.06,0.025,0.0175], 
             {front: 0x39aef8, left:0x39aef8, bottom: 0x39aef8, right: 0x39aef8,
                 top: 0x39aef8, back: 0x39aef8})
 
@@ -105,58 +105,24 @@ export class SendbloomModel extends React.Component{
             else if(newProps.mode === 'normal') this.restoreNormal()
         }
     }
-    makeBoxWithFaceMtl = (groupref, dims, colors, defaultOpacity) => {
-        let box = new THREE.BoxGeometry(dims[0],dims[1],dims[2])
-        colors = mapValues(colors, (c) => { 
-            return new THREE.MeshBasicMaterial({
-                color: c, opacity: defaultOpacity || 1, transparent: true
-            })
-        })
-        const mtls = [
-            colors.right, colors.right,
-            colors.left, colors.left,
-            colors.top, colors.top,
-            colors.bottom, colors.bottom,
-            colors.front, colors.front,
-            colors.back, colors.back
-        ]
-        for(var i = 0; i<box.faces.length; i++){
-            box.faces[i].materialIndex = i
-        }
-        box.sortFacesByMaterialIndex()
-
-        let mesh = new THREE.Mesh( box, mtls )
-        mesh.name = "sendbloom"
-        groupref.add( mesh )
-    }
-
-
 
     componentDidMount = () =>{
         this.makeLogoMesh()
         this.makeModalMesh()
-        this.makeBoxWithFaceMtl(
-            this.refs.window, 
-            [1.6, 0.8, 0.15], 
+        makeColorBox('sendbloom', this.refs.window, [1.6, 0.8, 0.15], 
             {front: 0xededed, left: 0xccd2d6, bottom: 0xccd2d6, right: 0xccd2d6,
                 top: 0x5e5e5e, back: 0xededed}
         )
-        this.makeBoxWithFaceMtl(
-            this.refs.navbar, 
-            [1.6, 0.2, 0.19], 
+        makeColorBox('sendbloom', this.refs.navbar, [1.6, 0.2, 0.19], 
             {front: 0x3c647c, left: 0x25485e, bottom: 0x25485e, right: 0x25485e,
                 top: 0x8397a7, back: 0x3c647c}
         )
                             
-        this.makeBoxWithFaceMtl(
-            this.refs.modalbutton, 
-            [0.175, 0.09, 0.0175], 
+        makeColorBox('sendbloom', this.refs.modalbutton, [0.175, 0.09, 0.0175], 
             {front: 0x39aef8, left:0x3b8bb8, bottom: 0x3b8bb8, right: 0x3b8bb8,
                 top: 0x3b8bb8, back: 0x3b8bb8}
         )                              
-        this.makeBoxWithFaceMtl(
-            this.refs.party, 
-            [1.1, 0.605, 0.11], 
+        makeColorBox('sendbloom', this.refs.party, [1.1, 0.605, 0.11], 
             {front: 0xededed, left:0xccd2d6, bottom: 0xccd2d6, right: 0xccd2d6,
                 top: 0xfbfbfc, back: 0xccd2d6}
         )          

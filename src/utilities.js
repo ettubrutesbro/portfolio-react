@@ -70,3 +70,15 @@ export function makeColorMesh(name, groupref, geometry, faceColorArray, defaultO
     mesh.name = name
     groupref.add(mesh)
 }
+
+export function makeColorBox(name, groupref, dims, colors, defaultOpacity){
+    let box = new THREE.BoxGeometry(dims[0],dims[1],dims[2])
+    makeColorMesh(name, groupref, box, [
+        {faces: [0,1], color: colors.right},
+        {faces: [2,3], color: colors.left},
+        {faces: [4,5], color: colors.top},
+        {faces: [6,7], color: colors.bottom},
+        {faces: [8,9], color: colors.front},
+        {faces: [10,11], color: colors.back},
+    ], defaultOpacity)
+}
