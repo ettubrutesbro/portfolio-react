@@ -45,6 +45,8 @@ export class SendbloomModel extends React.Component{
 
     }
     makeModalMesh = () => {
+        const actionblue = {front: 0x39aef8, left:0x3b8bb8, bottom: 0x3b8bb8, right: 0x3b8bb8,top: 0x66ccff, back: 0x3b8bb8}
+        const windowcolor = {front: 0xededed, left:0xccd2d6, bottom: 0xededed, right: 0xededed, top: 0xfbfbfc, back: 0xededed}
         makeColorMesh('sendbloom', this.refs.modal , this.aptecrows.geometry, [
             //front
             {range: [42,61], color: 0xededed}, {range: [64,69], color: 0xededed},
@@ -61,6 +63,8 @@ export class SendbloomModel extends React.Component{
             //top and bottom
             {faces: [74,75], color: 0xfbfbfc},  {faces: [62,63], color: 0xb5bfc4}
         ])
+        makeColorBox('sendbloom', this.refs.modalbutton, [0.175, 0.09, 0.0175], actionblue)   
+
         makeColorMesh('sendbloom', this.refs.modal, this.aptecslot.geometry, [
             //front inside
             {range: [12,21], color: 0xccd2d6},
@@ -72,27 +76,13 @@ export class SendbloomModel extends React.Component{
             {faces: [54,55], color: 0xfbfbfc}, {faces: [39,40], color: 0xccd2d6},
             {faces: [52,53,58,59], color: 0x5e5e5e},
             {range: [34,38], color: 0xededed}, {range: [41,51], color: 0xededed}
-
-
         ])
+        makeColorBox('sendbloom', this.refs.aptecxleft, [1.092,0.12,0.115], windowcolor)
+        makeColorBox('sendbloom', this.refs.aptecxright, [0.25,0.12,0.115], windowcolor)
 
-        makeColorBox('sendbloom', this.refs.aptecxleft, [1.092,0.12,0.115], 
-            {front: 0xededed, left:0xccd2d6, bottom: 0xededed, right: 0xededed,
-                top: 0xfbfbfc, back: 0xededed})
-
-        makeColorBox('sendbloom', this.refs.aptecxright, [0.25,0.12,0.115], 
-            {front: 0xff0000, left:0xccd2d6, bottom: 0xededed, right: 0xededed,
-                top: 0xfbfbfc, back: 0xededed})
-
-        makeColorBox('sendbloom', this.refs.exittext1, [0.025,0.025,0.0175], 
-            {front: 0x39aef8, left:0x39aef8, bottom: 0x39aef8, right: 0x39aef8,
-                top: 0x39aef8, back: 0x39aef8})
-        makeColorBox('sendbloom', this.refs.exittext2, [0.025,0.025,0.0175], 
-            {front: 0x39aef8, left:0x39aef8, bottom: 0x39aef8, right: 0x39aef8,
-                top: 0x39aef8, back: 0x39aef8})
-        makeColorBox('sendbloom', this.refs.exittext3, [0.06,0.025,0.0175], 
-            {front: 0x39aef8, left:0x39aef8, bottom: 0x39aef8, right: 0x39aef8,
-                top: 0x39aef8, back: 0x39aef8})
+        makeColorBox('sendbloom', this.refs.exittext1, [0.025,0.025,0.0175], actionblue)
+        makeColorBox('sendbloom', this.refs.exittext2, [0.025,0.025,0.0175], actionblue)
+        makeColorBox('sendbloom', this.refs.exittext3, [0.06,0.025,0.0175], actionblue)
 
         this.refs.aptecxright.scale.set(0.001,1,1)
         this.refs.aptecxright.visible = false
@@ -117,11 +107,7 @@ export class SendbloomModel extends React.Component{
             {front: 0x3c647c, left: 0x25485e, bottom: 0x25485e, right: 0x25485e,
                 top: 0x8397a7, back: 0x3c647c}
         )
-                            
-        makeColorBox('sendbloom', this.refs.modalbutton, [0.175, 0.09, 0.0175], 
-            {front: 0x39aef8, left:0x3b8bb8, bottom: 0x3b8bb8, right: 0x3b8bb8,
-                top: 0x3b8bb8, back: 0x3b8bb8}
-        )                              
+                                                       
         makeColorBox('sendbloom', this.refs.party, [1.1, 0.605, 0.11], 
             {front: 0xededed, left:0xccd2d6, bottom: 0xccd2d6, right: 0xccd2d6,
                 top: 0xfbfbfc, back: 0xccd2d6}
