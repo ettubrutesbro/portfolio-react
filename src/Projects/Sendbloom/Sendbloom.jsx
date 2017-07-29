@@ -103,7 +103,7 @@ export class SendbloomModel extends React.Component{
             {front: 0xededed, left: 0xccd2d6, bottom: 0xccd2d6, right: 0xccd2d6,
                 top: 0x5e5e5e, back: 0xededed}
         )
-        makeColorBox('sendbloom', this.refs.navbar, [1.6, 0.2, 0.19], 
+        makeColorBox('sendbloom', this.refs.navbar, [1.6, 0.2, 0.15], 
             {front: 0x3c647c, left: 0x25485e, bottom: 0x25485e, right: 0x25485e,
                 top: 0x8397a7, back: 0x3c647c}
         )
@@ -140,7 +140,7 @@ export class SendbloomModel extends React.Component{
         let fade = [{opacity: !unselect? 0 : 1}, {opacity: !unselect? 1 : 0}]
         let modalScale = [{x: modal.scale.x, y: modal.scale.y, z: modal.scale.z}, {x: 1, y: unselect? 0.01 : 1, z: 1}]
         let logoPositions = [{x: logoPos.x, y: logoPos.y, z: logoPos.z}, !unselect? {x: -0.675, y:-.005, z: -.485} : {x:0, y:0, z:0}]
-        let logoScales = [{x: logo.scale.x, y: logo.scale.y, z: logo.scale.z}, !unselect? {x: 0.26, y:0.9, z: 0.26} : {x:1,y:1,z:1}]
+        let logoScales = [{x: logo.scale.x, y: logo.scale.y, z: logo.scale.z}, !unselect? {x: 0.26, y:0.8, z: 0.26} : {x:1,y:1,z:1}]
 
         this.prospectsTween = twn('opacity', {opacity: prospects.material.opacity}, fade[1], 400, prospects.material, null, null)
         this.refs.modal.visible = true
