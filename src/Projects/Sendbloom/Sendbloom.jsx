@@ -22,12 +22,10 @@ export class SendbloomModel extends React.Component{
     constructor(props, context){
         super( props, context )
         this.loadModels()
-        // this.makeLogoMesh()
     }
     loadModels = () => {
         const loader = new THREE.JSONLoader()
         this.sblogo = loader.parse(require('./sb-logo.json'))
-        this.sbmodal = loader.parse(require('./sb-modal.json'))
         this.aptecrows = loader.parse(require('./aptec-rows.json'))
         this.aptecx = loader.parse(require('./aptec-xbutton.json'))
         this.aptecslot = loader.parse(require('./aptec-xslot.json'))
@@ -211,76 +209,51 @@ export class SendbloomModel extends React.Component{
         for(var i = 0; i<4; i++){ this.refs['navitem'+i].visible = false}
         this.refs.modal.visible = false
         this.refs.modal.scale.set(1,0.01,1)
-        this.refs.overlay.visible = false
 
     }
     @action
     onSelect = () => {
         const store = this.props.store
-        const setModal = this.setModal
-        const prospects = this.refs.prospects
         store.bodies.sendbloom.sleeping = false
         store.static = false
 
-        this.refs.modal.visible = true
+        const modal = this.refs.modal
+        const logo = this.refs.logo.children[0]
+        const logoPos = logo.position
+        const prospects = this.refs.prospects
         
-        if(this.modalTween) this.modalTween.stop()
+        if(this.modalScaleTween) this.modalScaleTween.stop()
+        if(this.modalOpacityTween) this.modalOpacityTween.stop()
         if(this.prospectsTween) this.prospectsTween.stop()
+        if(this.logoPosTween) this.logoPosTween.stop()
+        if(this.logoScaleTween) this.logoScaleTween.stop()
 
-        // this.prospectsTween = new TWEEN.Tween({opacity: 0})
-        //     .to({opacity: 1}, 400)
-        //     .onUpdate(function(){
-        //         prospects.material.opacity = this.opacity
-        //     })
-        //     .start()
+        const direction = 'in' || 'out' 
+        let fade = [{opacity: 0}, {opacity: 1}]
+        let scale = [{x: 1, y: 0.01, z: 1}, {x:1,y:1,z:1}]
+        let logoPositions = [{x: logoPos.x, y: logoPos.y, z: logoPos.z}, {x: -0.675, y:-.005, z: -.485}]
+        let logoScales = [{x: logo.scale.x, y: logo.scale.y, z: logo.scale.z}, {x: 0.26, y:0.9, z: 0.26}]
+        if(direction === 'out'){
+            fade = fade.reverse()
+            scale = scale.reverse()
+            logoPositions = logoPositions.reverse()
+            logoScales = logoScales.reverse()
+        }
+
 
         this.prospectsTween = twn('opacity',{opacity:0},{opacity:1},400,prospects.material,null,null)
-
-        this.modalTween = new TWEEN.Tween({z: 0, opacity: 0, scaleY: 0.01})
-            .to({opacity: 1, scaleY: 1}, 400)
-            .onUpdate(function(){
-                setModal(this.opacity, this.scaleY)
-            })
-            .onComplete(function(){
-                store.bodies.sendbloom.sleeping = true
-            })
-            .delay(300)
-            .start()
+        this.refs.modal.visible = true
+        this.modalScaleTween = twn('scale',{x:1,y:0.01,z:1},{x:1,y:1,z:1},400,modal.scale,null,300)
+        this.modalOpacityTween = twn('opacity',{opacity:0},{opacity:1},400,modal,null,300, true)
+        this.logoPosTween = twn('position',{x: logoPos.x, y: logoPos.y, z: logoPos.z}, {x: -0.675, y:-.005, z: -.485}, 250, logo.position, null, 150)
+        this.logoScaleTween = twn('scale',{x: logo.scale.x, y: logo.scale.y, z: logo.scale.z}, {x: 0.26, y:0.9, z: 0.26}, 250, logo.scale, null, 150)
         for(var i = 0; i<4; i++){
             const navitem = this.refs['navitem'+i]
             navitem.visible = true
             const delay = i>=2? (i-1)*175 : i*175
             if(this.navItemTween[i]) this.navItemTween[i].stop()
-            this.navItemTween[i] = new TWEEN.Tween({opacity: 0})
-                .to({opacity: 1}, 250)
-                .onUpdate(function(){
-                    navitem.material.opacity = this.opacity
-                })
-                .delay(300 + delay)
-                .start()
+            this.navItemTween[i] = twn('opacity', {opacity:0}, {opacity: 1}, 250, navitem.material,null,300+delay)
         }
-        this.refs.overlay.visible = true
-
-        const logo = this.refs.logo.children[0]
-        const logoPos = logo.position
-        if(this.logoPosTween) this.logoPosTween.stop()
-        if(this.logoScaleTween) this.logoScaleTween.stop()
-
-        this.logoPosTween = twn('position',{x: logoPos.x, y: logoPos.y, z: logoPos.z}, {x: -0.675, y:-.005, z: -.485}, 250, logo.position, null, 150)
-        this.logoScaleTween = twn('scale',{x: logo.scale.x, y: logo.scale.y, z: logo.scale.z}, {x: 0.26, y:0.9, z: 0.26}, 250, logo.scale, null, 150)
-
-        // this.logoTween = new TWEEN.Tween({
-        //     x: logo.position.x, y: logo.position.y, z: logo.position.z,
-        //     scale: logo.scale.x
-        // })
-        //     .to({x: -0.675, y: -0.005, z: -0.485, scale: 0.26}, 250)
-        //     .onUpdate(function(){
-        //         logo.position.set(this.x, this.y, this.z)
-        //         logo.scale.set(this.scale, 0.9, this.scale)
-        //     })
-        //     .delay(150)
-        //     .start()
-
     }
     @action
     restoreNormal = () => {
@@ -335,22 +308,6 @@ export class SendbloomModel extends React.Component{
         }
 
     }
-    // @action
-    setModal = ( o, scaleY) => {
-        const modal = this.refs.modal
-        //direct updates (not react or mobx)
-        modal.scale.set(1, scaleY, 1)
-
-        modal.traverse((child)=>{
-            if(child.material) child.material.opacity = o 
-        })
-
-        const shadow = this.refs.overlay 
-        // const shadowMtl = this.refs
-        shadow.scale.set(1, scaleY, 1)
-        shadow.material.opacity = o 
-
-    }
 
     onExpand = () => {
 
@@ -360,10 +317,10 @@ export class SendbloomModel extends React.Component{
         const navItemPositions = [0, 0.2, 0.2925, .5525]
         const navItems = [0.15, 0.04, 0.095, 0.22].map((width,i)=>{
             return(
-                <mesh ref = {'navitem'+i} 
+                <mesh key = {'navitem'+i} ref = {'navitem'+i} 
                     position = {v3(-.475 + navItemPositions[i], 0, 0.125)}
                 >
-                    <planeBufferGeometry width = {width} height = {0.035} segments = {1} />
+                    <planeBufferGeometry width = {width} height = {0.035} />
                     <meshBasicMaterial color = {0xededed} transparent opacity = {0}/>
                 </mesh>
             )
@@ -371,10 +328,10 @@ export class SendbloomModel extends React.Component{
         const textItems = [0.168,0.027,-0.115,-0.257].map((yPos,i)=>{
             return (
                 <mesh 
-                    ref = {'textitem'+i}
+                    key = {'aptectext'+i} ref = {'textitem'+i}
                     position = {v3(-0.02,yPos,0.0375)}
                 >
-                    <planeBufferGeometry width = {0.95} height = {0.05} segments = {1} />
+                    <planeBufferGeometry width = {0.95} height = {0.05} />
                     <meshBasicMaterial color = {0xfbfbfc} >
                         <textureResource resourceId = {'textline'+(i+1)} />
                     </meshBasicMaterial>
@@ -402,25 +359,24 @@ export class SendbloomModel extends React.Component{
                    
                 <group ref = "window">
                     <mesh name = "sendbloom" ref = "prospects" position = {v3(0,0,0.08)}>
-                        <planeBufferGeometry width = {1.6} height = {0.81} segments = {1} />
+                        <planeBufferGeometry width = {1.6} height = {0.81} />
                         <meshBasicMaterial opacity = {0} transparent >
                             <textureResource resourceId = "prospects" />
                         </meshBasicMaterial>
                     </mesh>
-
-                    <mesh name = "sendbloom" ref = "overlay" position = {v3(0,0.02,0.0825)}>
-                        <planeBufferGeometry width = {1.58} height = {0.85} segments = {1} />
-                        <meshBasicMaterial ref = "overlayMtl" transparent opacity = {0}>
-                             <textureResource resourceId = "shadow" />
-                        </meshBasicMaterial>
-                    </mesh>
-      
                 </group>
+
                 <group ref = "navbar" position = {v3(0,.5,0)}>
                     {navItems}
                 </group>
 
                 <group ref = "modal" position = {v3(-0, 0.15, 0.85)} >
+                    <mesh name = "sendbloom" ref = "modalshadow" position = {v3(0,-0.14,-.7575)}>
+                        <planeBufferGeometry width = {1.58} height = {0.83} />
+                        <meshBasicMaterial transparent opacity = {0}>
+                             <textureResource resourceId = "shadow" />
+                        </meshBasicMaterial>
+                    </mesh>
                     <group ref = "modalbutton" position = {v3(0.425,0.175,0.05)} />
                     <group ref = "aptecxleft" position = {v3(-0.089,0.3125,.01625)} />
                     <group ref = "aptecxright" position = {v3(0.55,0.3125,.01625)}>
@@ -429,11 +385,11 @@ export class SendbloomModel extends React.Component{
                         <group ref = "exittext3" position = {v3(0.036,0,0.09)} />
                     </group>
                     <mesh name = "sendbloom" ref = "modalbuttontext" position = {v3(0.395,0.175,0.059)} >
-                        <planeBufferGeometry width = {0.057} height = {0.0175} segments = {1} />
+                        <planeBufferGeometry width = {0.057} height = {0.0175} />
                         <meshBasicMaterial color = {0xfbfbfc} />
                     </mesh>                   
                     <mesh name = "sendbloom" ref = "modalbuttontext" position = {v3(0.455,0.175,0.059)} >
-                        <planeBufferGeometry width = {0.02} height = {0.0175} segments = {1} />
+                        <planeBufferGeometry width = {0.02} height = {0.0175} />
                         <meshBasicMaterial color = {0xfbfbfc} />
                     </mesh>
 
@@ -442,12 +398,12 @@ export class SendbloomModel extends React.Component{
                     <group ref = "party" position = {v3(1.15,-0.05,.015)}>
 
                         <mesh position = {v3(0,0.075,0.0575)}>
-                            <planeBufferGeometry width = {0.175} height = {0.175} segments = {1} />
+                            <planeBufferGeometry width = {0.175} height = {0.175} />
                             <meshBasicMaterial color = {0xff0000} />
                         </mesh>
 
                         <mesh position = {v3(0,-0.1,0.0575)}>
-                            <planeBufferGeometry width = {0.35} height = {0.125} segments = {1} />
+                            <planeBufferGeometry width = {0.35} height = {0.125} />
                             <meshBasicMaterial color = {0xff0000} />
                         </mesh>
 
