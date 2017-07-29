@@ -110,7 +110,7 @@ export class SendbloomModel extends React.Component{
             let it = 0
             while(!match){ //provided lo-hi range to apply a color to
                 if(!faceColorArray[it]){ //error?
-                    colors[i] = new THREE.MeshBasicMaterial({color: 0xff0000, opacity: defaultOpacity===0?0:1})
+                    colors[i] = new THREE.MeshBasicMaterial({color: 0xff0000, opacity: defaultOpacity===0?0:1, transparent: true})
                     match = true
                     break
                 }
@@ -212,7 +212,7 @@ export class SendbloomModel extends React.Component{
 
     }
     @action
-    onSelect = () => {
+    onSelect = (unselect) => {
         const store = this.props.store
         store.bodies.sendbloom.sleeping = false
         store.static = false
@@ -228,86 +228,27 @@ export class SendbloomModel extends React.Component{
         if(this.logoPosTween) this.logoPosTween.stop()
         if(this.logoScaleTween) this.logoScaleTween.stop()
 
-        const direction = 'in' || 'out' 
-        let fade = [{opacity: 0}, {opacity: 1}]
-        let scale = [{x: 1, y: 0.01, z: 1}, {x:1,y:1,z:1}]
-        let logoPositions = [{x: logoPos.x, y: logoPos.y, z: logoPos.z}, {x: -0.675, y:-.005, z: -.485}]
-        let logoScales = [{x: logo.scale.x, y: logo.scale.y, z: logo.scale.z}, {x: 0.26, y:0.9, z: 0.26}]
-        if(direction === 'out'){
-            fade = fade.reverse()
-            scale = scale.reverse()
-            logoPositions = logoPositions.reverse()
-            logoScales = logoScales.reverse()
-        }
+        let fade = [{opacity: !unselect? 0 : 1}, {opacity: !unselect? 1 : 0}]
+        let modalScale = [{x: modal.scale.x, y: modal.scale.y, z: modal.scale.z}, {x: 1, y: unselect? 0.01 : 1, z: 1}]
+        let logoPositions = [{x: logoPos.x, y: logoPos.y, z: logoPos.z}, !unselect? {x: -0.675, y:-.005, z: -.485} : {x:0, y:0, z:0}]
+        let logoScales = [{x: logo.scale.x, y: logo.scale.y, z: logo.scale.z}, !unselect? {x: 0.26, y:0.9, z: 0.26} : {x:1,y:1,z:1}]
 
-
-        this.prospectsTween = twn('opacity',{opacity:0},{opacity:1},400,prospects.material,null,null)
+        this.prospectsTween = twn('opacity', {opacity: prospects.material.opacity}, fade[1], 400, prospects.material, null, null)
         this.refs.modal.visible = true
-        this.modalScaleTween = twn('scale',{x:1,y:0.01,z:1},{x:1,y:1,z:1},400,modal.scale,null,300)
-        this.modalOpacityTween = twn('opacity',{opacity:0},{opacity:1},400,modal,null,300, true)
-        this.logoPosTween = twn('position',{x: logoPos.x, y: logoPos.y, z: logoPos.z}, {x: -0.675, y:-.005, z: -.485}, 250, logo.position, null, 150)
-        this.logoScaleTween = twn('scale',{x: logo.scale.x, y: logo.scale.y, z: logo.scale.z}, {x: 0.26, y:0.9, z: 0.26}, 250, logo.scale, null, 150)
+        this.modalScaleTween = twn('scale', modalScale[0], modalScale[1], 400, modal.scale, null, !unselect? 300:0)
+        this.modalOpacityTween = twn('opacity', fade[0], fade[1], 400, modal, unselect?()=>{modal.visible=false} : null, !unselect? 300:0, true)
+        this.logoPosTween = twn('position', logoPositions[0], logoPositions[1], 250, logo.position, null, !unselect? 150:0)
+        this.logoScaleTween = twn('scale', logoScales[0], logoScales[1], 250, logo.scale, null, !unselect? 150:0)
         for(var i = 0; i<4; i++){
             const navitem = this.refs['navitem'+i]
             navitem.visible = true
             const delay = i>=2? (i-1)*175 : i*175
             if(this.navItemTween[i]) this.navItemTween[i].stop()
-            this.navItemTween[i] = twn('opacity', {opacity:0}, {opacity: 1}, 250, navitem.material,null,300+delay)
+            this.navItemTween[i] = twn('opacity', fade[0], fade[1], 250, navitem.material, unselect? ()=>{navitem.visible=false} : null ,!unselect? 300+delay:0)
         }
     }
-    @action
-    restoreNormal = () => {
-        const store = this.props.store
-        const setModal = this.setModal
-        const modal = this.refs.modal
-        const prospects = this.refs.prospects
-        store.bodies.sendbloom.sleeping = false
-        store.static = false
-
-        if(this.modalTween) this.modalTween.stop()
-        if(this.prospectsTween) this.modalTween.stop()
-        this.prospectsTween = new TWEEN.Tween({opacity: 1})
-            .to({opacity: 0}, 400)
-            .onUpdate(function(){
-                prospects.material.opacity = this.opacity
-            })
-            .start()
-        this.modalTween = new TWEEN.Tween({opacity: 1, scaleY: 1})
-            .to({opacity: 0, scaleY: 0.01}, 250)
-            .onUpdate(function(){
-                setModal(this.opacity, this.scaleY)
-            })
-            .onComplete(function(){
-                modal.visible = false
-                store.bodies.sendbloom.sleeping = true
-            })
-            .start()
-        const logo = this.refs.logo.children[0]
-        this.logoTween = new TWEEN.Tween({
-            x: logo.position.x, y: logo.position.y, z: logo.position.z,
-            scale: logo.scale.x
-        })
-            .to({x: 0, y: 0, z: 0, scale: 1}, 350)
-            .onUpdate(function(){
-                logo.position.set(this.x, this.y, this.z)
-                logo.scale.set(this.scale, this.scale, this.scale)
-            })
-            .start()
-        for(var i = 0; i<4; i++){
-            const navitem = this.refs['navitem'+i]
-            if(this.navItemTween[i]) this.navItemTween[i].stop()
-            this.navItemTween[i] = new TWEEN.Tween({opacity: 1})
-                .to({opacity: 0}, 250)
-                .onUpdate(function(){
-                    navitem.material.opacity = this.opacity
-                })
-                .onComplete(function(){
-                    navitem.visible = false
-                })
-                .start()
-        }
-
-    }
+    restoreNormal = () => this.onSelect(true)
+    
 
     onExpand = () => {
 
@@ -414,7 +355,6 @@ export class SendbloomModel extends React.Component{
                 {/*
                     BIG TODO:
                     condensing code:: 
-                    find an intelligent way to wrap tweens so I don't see a million lines of em
                     consider making smaller components which contain the post-select
                         animating elements - aptec(1/2), sidebar, and bottom bar
                     update TWEEN and see if there's use for groups / etc
