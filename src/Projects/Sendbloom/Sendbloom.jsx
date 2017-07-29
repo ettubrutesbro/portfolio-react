@@ -3,8 +3,12 @@ import {observable, action, autorun} from 'mobx'
 import {observer} from 'mobx-react'
 import * as THREE from 'three'
 import * as TWEEN from '@tweenjs/tween.js'
+
 import {rads} from '../../helpers.js'
+import { v3, twn } from '../../utilities.js'
+
 import {mapValues} from 'lodash'
+
 
 // @observer
 export class SendbloomModel extends React.Component{
@@ -68,13 +72,13 @@ export class SendbloomModel extends React.Component{
             {faces: [2,3,4,5,8,9], color: 0xb5bfc4},{range: [22,33], color: 0xb5bfc4},
             //outsides
             {faces: [54,55], color: 0xfbfbfc}, {faces: [39,40], color: 0xccd2d6},
-            {faces: [52,53,58,59], color: 0xededed},
+            {faces: [52,53,58,59], color: 0x5e5e5e},
             {range: [34,38], color: 0xededed}, {range: [41,51], color: 0xededed}
 
 
         ])
 
-        this.makeBoxWithFaceMtl(this.refs.aptecxleft, [1.093,0.12,0.115], 
+        this.makeBoxWithFaceMtl(this.refs.aptecxleft, [1.092,0.12,0.115], 
             {front: 0xededed, left:0xccd2d6, bottom: 0xededed, right: 0xededed,
                 top: 0xfbfbfc, back: 0xededed})
 
@@ -94,40 +98,10 @@ export class SendbloomModel extends React.Component{
 
         this.refs.aptecxright.scale.set(0.001,1,1)
         this.refs.aptecxright.visible = false
-
-        // this.makeMeshWithMtlIndices('sendbloom', 'modal', this.sbmodal.geometry, [
-        //     {faces: [2,3], color: 0xfbfbfc},
-        //     {faces: [76,77], color: 0xfbfbfc},
-        //     {range: [68,73], color: 0xfbfbfc},
-        //     {range: [78,108], color: 0xededed},
-        //     {range: [115,129], color: 0xededed},
-        //     {range: [130,139], color: 0xededed}, //search bar
-        //     {faces: [38,39,50,51,58,59,64,65], color: 0xe1e3e5}, //bottom inside
-        //     // {faces: [109,110], color: 0xccd2d6}, 
-        //     {range: [40,43], color: 0xccd2d6}, //inside sides
-        //     {range: [46,49], color: 0xccd2d6},
-        //     {range: [54,57], color: 0xccd2d6},
-        //     {faces: [62,63,74,75,109,110,113,114], color: 0xccd2d6},
-        //     //insied x facing up
-        //     {faces: [4,5,10,11,14,15], color: 0xccd2d6},
-        //     {faces: [8,9,12,13,26,27,34,35], color: 0xccd2d6},
-        //     {range: [16,25], color: 0xb5bfc4},
-        //     //inside x facing down
-        // ])
-
     }
 
 
     makeMeshWithMtlIndices = (name, groupref, geometry, faceColorArray, defaultOpacity) => {
-        //eventually, this is probably gonna be a utility function for multiple PresentationModels
-        //given a geometry and sets of ranges
-        /*
-        geometry , [
-            {faces: [0,53], color: 0x16a8a8},
-            {faces: [54,75], color: 0xff0000},
-            ...etc.
-        ]
-        */
         const faces = geometry.faces
         let colors = []
         console.log('inserting ' + faces.length + '-face geometry into ' + groupref)
@@ -252,14 +226,16 @@ export class SendbloomModel extends React.Component{
         
         if(this.modalTween) this.modalTween.stop()
         if(this.prospectsTween) this.prospectsTween.stop()
-        if(this.logoTween) this.logoTween.stop()
 
-        this.prospectsTween = new TWEEN.Tween({opacity: 0})
-            .to({opacity: 1}, 400)
-            .onUpdate(function(){
-                prospects.material.opacity = this.opacity
-            })
-            .start()
+        // this.prospectsTween = new TWEEN.Tween({opacity: 0})
+        //     .to({opacity: 1}, 400)
+        //     .onUpdate(function(){
+        //         prospects.material.opacity = this.opacity
+        //     })
+        //     .start()
+
+        this.prospectsTween = twn('opacity',{opacity:0},{opacity:1},400,prospects.material,null,null)
+
         this.modalTween = new TWEEN.Tween({z: 0, opacity: 0, scaleY: 0.01})
             .to({opacity: 1, scaleY: 1}, 400)
             .onUpdate(function(){
@@ -284,18 +260,26 @@ export class SendbloomModel extends React.Component{
                 .start()
         }
         this.refs.overlay.visible = true
+
         const logo = this.refs.logo.children[0]
-        this.logoTween = new TWEEN.Tween({
-            x: logo.position.x, y: logo.position.y, z: logo.position.z,
-            scale: logo.scale.x
-        })
-            .to({x: -0.675, y: -0.005, z: -0.485, scale: 0.26}, 250)
-            .onUpdate(function(){
-                logo.position.set(this.x, this.y, this.z)
-                logo.scale.set(this.scale, 0.9, this.scale)
-            })
-            .delay(150)
-            .start()
+        const logoPos = logo.position
+        if(this.logoPosTween) this.logoPosTween.stop()
+        if(this.logoScaleTween) this.logoScaleTween.stop()
+
+        this.logoPosTween = twn('position',{x: logoPos.x, y: logoPos.y, z: logoPos.z}, {x: -0.675, y:-.005, z: -.485}, 250, logo.position, null, 150)
+        this.logoScaleTween = twn('scale',{x: logo.scale.x, y: logo.scale.y, z: logo.scale.z}, {x: 0.26, y:0.9, z: 0.26}, 250, logo.scale, null, 150)
+
+        // this.logoTween = new TWEEN.Tween({
+        //     x: logo.position.x, y: logo.position.y, z: logo.position.z,
+        //     scale: logo.scale.x
+        // })
+        //     .to({x: -0.675, y: -0.005, z: -0.485, scale: 0.26}, 250)
+        //     .onUpdate(function(){
+        //         logo.position.set(this.x, this.y, this.z)
+        //         logo.scale.set(this.scale, 0.9, this.scale)
+        //     })
+        //     .delay(150)
+        //     .start()
 
     }
     @action
@@ -377,7 +361,7 @@ export class SendbloomModel extends React.Component{
         const navItems = [0.15, 0.04, 0.095, 0.22].map((width,i)=>{
             return(
                 <mesh ref = {'navitem'+i} 
-                    position = {new THREE.Vector3(-.475 + navItemPositions[i], 0, 0.125)}
+                    position = {v3(-.475 + navItemPositions[i], 0, 0.125)}
                 >
                     <planeBufferGeometry width = {width} height = {0.035} segments = {1} />
                     <meshBasicMaterial color = {0xededed} transparent opacity = {0}/>
@@ -388,7 +372,7 @@ export class SendbloomModel extends React.Component{
             return (
                 <mesh 
                     ref = {'textitem'+i}
-                    position = {new THREE.Vector3(-0.02,yPos,0.0375)}
+                    position = {v3(-0.02,yPos,0.0375)}
                 >
                     <planeBufferGeometry width = {0.95} height = {0.05} segments = {1} />
                     <meshBasicMaterial color = {0xfbfbfc} >
@@ -399,7 +383,7 @@ export class SendbloomModel extends React.Component{
         })
 
         return(
-            <group ref = "group" position = {new THREE.Vector3(0,-0.05,0)} >
+            <group ref = "group" position = {v3(0,-0.05,0)} >
                 <resources>
                     <texture resourceId = "shadow" url = {require('./shadow.png')}/> 
                     <texture resourceId = "textline1" url = {require('./textline1.png')}/> 
@@ -412,19 +396,19 @@ export class SendbloomModel extends React.Component{
                 <group 
                     ref = "logo"
                     rotation = {new THREE.Euler(rads(90),0,0)}
-                    scale = {new THREE.Vector3(1,2.25,1)}
-                    position = {new THREE.Vector3(0, 0.02, 0)}
+                    scale = {v3(1,2.25,1)}
+                    position = {v3(0, 0.02, 0)}
                 />
                    
                 <group ref = "window">
-                    <mesh name = "sendbloom" ref = "prospects" position = {new THREE.Vector3(0,0,0.08)}>
+                    <mesh name = "sendbloom" ref = "prospects" position = {v3(0,0,0.08)}>
                         <planeBufferGeometry width = {1.6} height = {0.81} segments = {1} />
                         <meshBasicMaterial opacity = {0} transparent >
                             <textureResource resourceId = "prospects" />
                         </meshBasicMaterial>
                     </mesh>
 
-                    <mesh name = "sendbloom" ref = "overlay" position = {new THREE.Vector3(0,0.02,0.0825)}>
+                    <mesh name = "sendbloom" ref = "overlay" position = {v3(0,0.02,0.0825)}>
                         <planeBufferGeometry width = {1.58} height = {0.85} segments = {1} />
                         <meshBasicMaterial ref = "overlayMtl" transparent opacity = {0}>
                              <textureResource resourceId = "shadow" />
@@ -432,37 +416,37 @@ export class SendbloomModel extends React.Component{
                     </mesh>
       
                 </group>
-                <group ref = "navbar" position = {new THREE.Vector3(0,.5,0)}>
+                <group ref = "navbar" position = {v3(0,.5,0)}>
                     {navItems}
                 </group>
 
-                <group ref = "modal" position = {new THREE.Vector3(-0, 0.15, 0.85)} >
-                    <group ref = "modalbutton" position = {new THREE.Vector3(0.425,0.175,0.05)} />
-                    <group ref = "aptecxleft" position = {new THREE.Vector3(-0.088,0.31,.015)} />
-                    <group ref = "aptecxright" position = {new THREE.Vector3(0.55,0.31,.015)}>
-                        <group ref = "exittext1" position = {new THREE.Vector3(-0.06,0,0.09)} />
-                        <group ref = "exittext2" position = {new THREE.Vector3(-0.02,0,0.09)} />
-                        <group ref = "exittext3" position = {new THREE.Vector3(0.036,0,0.09)} />
+                <group ref = "modal" position = {v3(-0, 0.15, 0.85)} >
+                    <group ref = "modalbutton" position = {v3(0.425,0.175,0.05)} />
+                    <group ref = "aptecxleft" position = {v3(-0.089,0.3125,.01625)} />
+                    <group ref = "aptecxright" position = {v3(0.55,0.3125,.01625)}>
+                        <group ref = "exittext1" position = {v3(-0.06,0,0.09)} />
+                        <group ref = "exittext2" position = {v3(-0.02,0,0.09)} />
+                        <group ref = "exittext3" position = {v3(0.036,0,0.09)} />
                     </group>
-                    <mesh name = "sendbloom" ref = "modalbuttontext" position = {new THREE.Vector3(0.395,0.175,0.059)} >
+                    <mesh name = "sendbloom" ref = "modalbuttontext" position = {v3(0.395,0.175,0.059)} >
                         <planeBufferGeometry width = {0.057} height = {0.0175} segments = {1} />
                         <meshBasicMaterial color = {0xfbfbfc} />
                     </mesh>                   
-                    <mesh name = "sendbloom" ref = "modalbuttontext" position = {new THREE.Vector3(0.455,0.175,0.059)} >
+                    <mesh name = "sendbloom" ref = "modalbuttontext" position = {v3(0.455,0.175,0.059)} >
                         <planeBufferGeometry width = {0.02} height = {0.0175} segments = {1} />
                         <meshBasicMaterial color = {0xfbfbfc} />
                     </mesh>
 
                     {textItems}
 
-                    <group ref = "party" position = {new THREE.Vector3(1.15,-0.05,.015)}>
+                    <group ref = "party" position = {v3(1.15,-0.05,.015)}>
 
-                        <mesh position = {new THREE.Vector3(0,0.075,0.0575)}>
+                        <mesh position = {v3(0,0.075,0.0575)}>
                             <planeBufferGeometry width = {0.175} height = {0.175} segments = {1} />
                             <meshBasicMaterial color = {0xff0000} />
                         </mesh>
 
-                        <mesh position = {new THREE.Vector3(0,-0.1,0.0575)}>
+                        <mesh position = {v3(0,-0.1,0.0575)}>
                             <planeBufferGeometry width = {0.35} height = {0.125} segments = {1} />
                             <meshBasicMaterial color = {0xff0000} />
                         </mesh>
@@ -471,6 +455,19 @@ export class SendbloomModel extends React.Component{
 
                 </group>
 
+                {/*
+                    BIG TODO:
+                    condensing code:: 
+                    find an intelligent way to wrap tweens so I don't see a million lines of em
+                    consider making smaller components which contain the post-select
+                        animating elements - aptec(1/2), sidebar, and bottom bar
+                    update TWEEN and see if there's use for groups / etc
+                    there's definitely use for chaining in here...
+                    take boxWithFaceMtl and makeMeshWith... and make them utility functions
+                        colorBox & colorMeshWithoutUV?
+
+
+                */}
 
 
 
