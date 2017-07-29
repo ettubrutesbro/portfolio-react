@@ -282,9 +282,6 @@ export class SendbloomModel extends React.Component{
                         animating elements - aptec(1/2), sidebar, and bottom bar
                     update TWEEN and see if there's use for groups / etc
                     there's definitely use for chaining in here...
-                    take boxWithFaceMtl and makeMeshWith... and make them utility functions
-                        colorBox & colorMeshWithoutUV?
-
 
                 */}
 
