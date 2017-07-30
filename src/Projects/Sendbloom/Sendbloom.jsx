@@ -1,5 +1,5 @@
 import React from 'react'
-import { action} from 'mobx'
+import { action } from 'mobx'
 // import {observer} from 'mobx-react'
 import * as THREE from 'three'
 import * as TWEEN from '@tweenjs/tween.js'
@@ -139,6 +139,7 @@ export class SendbloomModel extends React.Component{
         this.modalOpacityTween = twn('opacity', fade[0], fade[1], 400, modal, unselect?()=>{modal.visible=false} : null, !unselect? 300:0, true)
         this.logoPosTween = twn('position', logoPositions[0], logoPositions[1], 250, logo.position, null, !unselect? 150:0)
         this.logoScaleTween = twn('scale', logoScales[0], logoScales[1], 250, logo.scale, null, !unselect? 150:0)
+        this.navItemTween = []
         for(var i = 0; i<4; i++){
             const navitem = this.refs['navitem'+i]
             navitem.visible = true
