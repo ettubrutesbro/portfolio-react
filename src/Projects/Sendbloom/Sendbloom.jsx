@@ -1,6 +1,6 @@
 import React from 'react'
-import {observable, action, autorun} from 'mobx'
-import {observer} from 'mobx-react'
+import { action} from 'mobx'
+// import {observer} from 'mobx-react'
 import * as THREE from 'three'
 import * as TWEEN from '@tweenjs/tween.js'
 
@@ -12,12 +12,6 @@ import {mapValues} from 'lodash'
 
 // @observer
 export class SendbloomModel extends React.Component{
-
-    @observable modalTween = null
-    @observable overlayTween = null
-    @observable navItemTween = [null, null, null, null]
-
-    @observable navItemPositions = [0, 0, 0.0925, .3525]
 
     constructor(props, context){
         super( props, context )
@@ -165,7 +159,7 @@ export class SendbloomModel extends React.Component{
         const navItems = [0.15, 0.04, 0.095, 0.22].map((width,i)=>{
             return(
                 <mesh key = {'navitem'+i} ref = {'navitem'+i} 
-                    position = {v3(-.475 + navItemPositions[i], 0, 0.125)}
+                    position = {v3(-.475 + navItemPositions[i], 0, 0.09)}
                 >
                     <planeBufferGeometry width = {width} height = {0.035} />
                     <meshBasicMaterial color = {0xededed} transparent opacity = {0}/>
