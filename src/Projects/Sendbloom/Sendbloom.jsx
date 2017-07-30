@@ -112,13 +112,10 @@ export class SendbloomModel extends React.Component{
             {front: 0xededed, left:0xccd2d6, bottom: 0xccd2d6, right: 0xccd2d6,
                 top: 0xfbfbfc, back: 0xccd2d6}
         )          
-          
-
-
         for(var i = 0; i<4; i++){ this.refs['navitem'+i].visible = false}
         this.refs.modal.visible = false
+        this.refs.party.visible = false
         this.refs.modal.scale.set(1,0.01,1)
-
     }
     @action
     onSelect = (unselect) => {
@@ -268,13 +265,24 @@ export class SendbloomModel extends React.Component{
                         animating elements - aptec(1/2), sidebar, and bottom bar
                     update TWEEN and see if there's use for groups / etc
                     there's definitely use for chaining in here...
-
                 */}
 
 
 
 
             </group>
+        )
+    }
+}
+
+export class SendbloomInfo extends React.Component{
+    render(){
+        return(
+            <div>
+                When I started working at Sendbloom ____ ago, I was looking for a short-term job (we'd agreed on 3 months) wherein I could make some money while finishing my portfolio on the side. 
+I didn't envision myself thriving creatively working on enterprise sales automation software either, but I've since been surprised by my extended tenure here; helping define a fast-growing product's direction, working closely with engineers/customer success, and implementing my own designs on the web has been fun and really instructive. 
+            </div>
+
         )
     }
 }

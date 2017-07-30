@@ -201,7 +201,6 @@ window.world=physics
                 console.log('all are asleep, stopping constant renders')
                 physics.static = true
             }
-
             TWEEN.update()
         }
     }

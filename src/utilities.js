@@ -6,7 +6,6 @@ export function v3(x,y,z){
 }
 
 export function twn(property, start, end, duration, target, onComplete, delay, traverseOpacity){
-
     const tween = new TWEEN.Tween(start)
         .to(end, duration)
         .onUpdate(function(){
