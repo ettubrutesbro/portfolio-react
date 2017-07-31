@@ -25,7 +25,7 @@ export function twn(property, start, end, duration, target, onComplete, delay, t
         if(onComplete) tween.onComplete(onComplete)
         if(delay) tween.delay(delay)
 
-        // tween.start()
+        tween.start()
 
     return tween
 }
