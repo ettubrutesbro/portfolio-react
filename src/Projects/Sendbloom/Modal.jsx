@@ -1,8 +1,7 @@
 import React from 'react'
 import * as THREE from 'three'
-import * as TWEEN from '@tweenjs/tween.js'
 
-import {v3, twn} from '../../utilities.js'
+import {v3, twn, makeColorBox, makeColorMesh} from '../../utilities.js'
 
 export default class Modal extends React.Component{
     constructor(props,context){
@@ -66,9 +65,9 @@ export default class Modal extends React.Component{
     
     }
     onSelect = (unselect) => { //copy of onSelect
-        const store = this.props.store
-        store.bodies.sendbloom.sleeping = false
-        store.static = false
+        // const store = this.props.store
+        // store.bodies.sendbloom.sleeping = false
+        // store.static = false
 
         const modal = this.refs.modal
         // const logo = this.refs.logo.children[0]
@@ -103,9 +102,29 @@ export default class Modal extends React.Component{
     }
 
     render(){
+        const textItems = [0.168,0.027,-0.115,-0.257].map((yPos,i)=>{
+            return (
+                <mesh 
+                    key = {'aptectext'+i} ref = {'textitem'+i}
+                    position = {v3(-0.02,yPos,0.0375)}
+                >
+                    <planeBufferGeometry width = {0.95} height = {0.05} />
+                    <meshBasicMaterial color = {0xfbfbfc} >
+                        <textureResource resourceId = {'textline'+(i+1)} />
+                    </meshBasicMaterial>
+                </mesh>
+            )
+        })
 
         return(
               <group ref = "modal" position = {v3(-0, 0.15, 0.85)} >
+                <resources>
+                    <texture resourceId = "shadow" url = {require('./shadow.png')}/> 
+                    <texture resourceId = "textline1" url = {require('./textline1.png')}/> 
+                    <texture resourceId = "textline2" url = {require('./textline2.png')}/> 
+                    <texture resourceId = "textline3" url = {require('./textline3.png')}/> 
+                    <texture resourceId = "textline4" url = {require('./textline4.png')}/> 
+                </resources>
                     <mesh name = "sendbloom" ref = "modalshadow" position = {v3(0,-0.14,-.7575)}>
                         <planeBufferGeometry width = {1.58} height = {0.83} />
                         <meshBasicMaterial transparent opacity = {0}>

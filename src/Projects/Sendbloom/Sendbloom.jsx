@@ -9,6 +9,8 @@ import { v3, twn, makeColorMesh, makeColorBox } from '../../utilities.js'
 
 import {mapValues} from 'lodash'
 
+import Modal from './Modal'
+
 
 // @observer
 export class SendbloomModel extends React.Component{
@@ -20,9 +22,6 @@ export class SendbloomModel extends React.Component{
     loadModels = () => {
         const loader = new THREE.JSONLoader()
         this.sblogo = loader.parse(require('./sb-logo.json'))
-        this.aptecrows = loader.parse(require('./aptec-rows.json'))
-        this.aptecx = loader.parse(require('./aptec-xbutton.json'))
-        this.aptecslot = loader.parse(require('./aptec-xslot.json'))
     }
     makeLogoMesh = () => {
         makeColorMesh('sendbloom', this.refs.logo, this.sblogo.geometry, [
@@ -59,7 +58,7 @@ export class SendbloomModel extends React.Component{
                 top: 0x8397a7, back: 0x3c647c}
         )
                                                        
-        for(var i = 0; i<4; i++){ this.refs['navitem'+i].visible = false}
+        // for(var i = 0; i<4; i++){ this.refs['navitem'+i].visible = false}
         // this.refs.modal.visible = false
         // this.refs.party.visible = false
         // this.refs.modal.scale.set(1,0.01,1)
@@ -69,6 +68,7 @@ export class SendbloomModel extends React.Component{
         // navitem, prospects, and logo animate 
         const logo = this.refs.logo.children[0]
         const prospects = this.refs.prospects
+        const nav = this.refs.navitems
 
         const logoPositions = [
             {x: logo.position.x, y: logo.position.y, z: logo.position.z}, 
@@ -79,15 +79,16 @@ export class SendbloomModel extends React.Component{
             !unselect? {x: 0.26, y:0.8, z: 0.26} : {x:1,y:1,z:1}
         ]
         const fade = [{opacity: !unselect? 0 : 1}, {opacity: !unselect? 1 : 0}]
-        
+        const navPos = [{x: nav.position.x, y: nav.position.y, z: nav.position.z} , !unselect? {x: .115, y: 0, z: 0} : {x: 0, y: 0, z: 0}]
 
+        this.navitemTween = twn('position', navPos[0], navPos[1], 300, this.refs.navitems.position, null, !unselect? 150:0)
         this.prospectsTween = twn('opacity', {opacity: prospects.material.opacity}, fade[1], 400, prospects.material, null, null)
         this.logoPosTween = twn('position', logoPositions[0], logoPositions[1], 250, logo.position, null, !unselect? 150:0)
         this.logoScaleTween = twn('scale', logoScales[0], logoScales[1], 250, logo.scale, null, !unselect? 150:0)
        
-
         // begin animation loop for subcomponents
         console.log('begin animation loop')
+            this.refs.aptec.onSelect(unselect)
 
     }
     restoreNormal = () => this.onSelect(true)
@@ -102,37 +103,19 @@ export class SendbloomModel extends React.Component{
         const navItems = [0.15, 0.04, 0.095, 0.22].map((width,i)=>{
             return(
                 <mesh key = {'navitem'+i} ref = {'navitem'+i} 
-                    position = {v3(-.475 + navItemPositions[i], 0, 0.09)}
+                    position = {v3(navItemPositions[i], 0, 0)}
                 >
                     <planeBufferGeometry width = {width} height = {0.035} />
-                    <meshBasicMaterial color = {0xededed} transparent opacity = {0}/>
+                    <meshBasicMaterial color = {0xededed} transparent opacity = {1}/>
                 </mesh>
             )
         })
-        const textItems = [0.168,0.027,-0.115,-0.257].map((yPos,i)=>{
-            return (
-                <mesh 
-                    key = {'aptectext'+i} ref = {'textitem'+i}
-                    position = {v3(-0.02,yPos,0.0375)}
-                >
-                    <planeBufferGeometry width = {0.95} height = {0.05} />
-                    <meshBasicMaterial color = {0xfbfbfc} >
-                        <textureResource resourceId = {'textline'+(i+1)} />
-                    </meshBasicMaterial>
-                </mesh>
-            )
-        })
+        
 
         return(
             <group ref = "group" position = {v3(0,-0.05,0)} >
                 <resources>
-                    <texture resourceId = "shadow" url = {require('./shadow.png')}/> 
-                    <texture resourceId = "textline1" url = {require('./textline1.png')}/> 
-                    <texture resourceId = "textline2" url = {require('./textline2.png')}/> 
-                    <texture resourceId = "textline3" url = {require('./textline3.png')}/> 
-                    <texture resourceId = "textline4" url = {require('./textline4.png')}/> 
                     <texture resourceId = "prospects" url = {require('./prospects.png')}/> 
-
                 </resources>
                 <group 
                     ref = "logo"
@@ -151,10 +134,14 @@ export class SendbloomModel extends React.Component{
                 </group>
 
                 <group ref = "navbar" position = {v3(0,.5,0)}>
-                    {navItems}
+                    <group position = {v3(-.6,0,0.09)}>
+                        <group ref = "navitems">
+                            {navItems}
+                        </group>
+                    </group>
                 </group>
 
-              
+              <Modal ref = "aptec" />
 
                 {/*
                     BIG TODO:
