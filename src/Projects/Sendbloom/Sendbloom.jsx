@@ -1,5 +1,5 @@
 import React from 'react'
-import { action } from 'mobx'
+import { action, observable } from 'mobx'
 // import {observer} from 'mobx-react'
 import * as THREE from 'three'
 import * as TWEEN from '@tweenjs/tween.js'
@@ -14,6 +14,7 @@ import Modal from './Modal'
 
 // @observer
 export class SendbloomModel extends React.Component{
+    @observable activeelement = null
 
     constructor(props, context){
         super( props, context )
@@ -45,7 +46,6 @@ export class SendbloomModel extends React.Component{
             else if(newProps.mode === 'normal') this.restoreNormal()
         }
     }
-
     componentDidMount = () =>{
         this.makeLogoMesh()
         // this.makeModalMesh()
@@ -57,11 +57,6 @@ export class SendbloomModel extends React.Component{
             {front: 0x3c647c, left: 0x25485e, bottom: 0x25485e, right: 0x25485e,
                 top: 0x8397a7, back: 0x3c647c}
         )
-                                                       
-        // for(var i = 0; i<4; i++){ this.refs['navitem'+i].visible = false}
-        // this.refs.modal.visible = false
-        // this.refs.party.visible = false
-        // this.refs.modal.scale.set(1,0.01,1)
     }
     @action
     onSelect = (unselect) => {
@@ -90,7 +85,20 @@ export class SendbloomModel extends React.Component{
         console.log('begin animation loop')
             this.refs.aptec.onSelect(unselect)
 
+        if(!unselect){
+
+        }
+
+        if(unselect){
+            //find activeelement and deactivate it
+        }
+
     }
+
+    cycleOpenAnimations = () => {
+        console.log(this.activeelement + ' out')
+    }
+
     restoreNormal = () => this.onSelect(true)
     
 
@@ -141,19 +149,7 @@ export class SendbloomModel extends React.Component{
                     </group>
                 </group>
 
-              <Modal ref = "aptec" />
-
-                {/*
-                    BIG TODO:
-                    condensing code:: 
-                    consider making smaller components which contain the post-select
-                        animating elements - aptec(1/2), sidebar, and bottom bar
-                    update TWEEN and see if there's use for groups / etc
-                    there's definitely use for chaining in here...
-                */}
-
-
-
+              <Modal ref = "aptec" store = {this.props.store} />
 
             </group>
         )
