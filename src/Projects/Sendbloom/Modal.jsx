@@ -93,9 +93,9 @@ export default class Aptec extends React.Component{
         if(this.modalOpacityTween) this.modalOpacityTween.stop()
 
         this.modalPositionTween = twn('position', listPos[0], listPos[1], 400, this.refs.aptecbody.position, null, null)
-        this.modalOpacityTween = twn('opacity', {opacity: 1}, {opacity: 0}, 4000, this.refs.aptecbody, ()=>{this.refs.aptecbody.visible=false}, null, true)
+        this.modalOpacityTween = twn('opacity', {opacity: 1}, {opacity: 0}, 400, this.refs.aptecbody, ()=>{this.refs.aptecbody.visible=false}, null, true)
         this.refs.party.visible = true
-        this.partyOpacityTween = twn('opacity', {opacity: 0}, {opacity: 1}, 4000, this.refs.party, null, null, true)
+        this.partyOpacityTween = twn('opacity', {opacity: 0}, {opacity: 1}, 400, this.refs.party, null, null, true)
         this.partyTween = twn('position', partyPos[0], partyPos[1], 400, this.refs.partymodal.position, null, null)
 
     }
