@@ -12,8 +12,9 @@ export function twn(property, start, end, duration, target, onComplete, delay, t
             if(property==='position' || property==='scale' || property==='rotation') target.set(this.x,this.y,this.z)
             else if(traverseOpacity){
                 target.traverse((child) => {
-                    if(child.material){ 
-                        child.material.opacity = this.opacity 
+                    if(child.material){
+                        if(Array.isArray(child.material)){ child.material.forEach((child)=>{child.opacity = this.opacity})} 
+                        else child.material.opacity = this.opacity 
                     }
                 })
             }

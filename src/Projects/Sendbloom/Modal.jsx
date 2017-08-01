@@ -3,7 +3,7 @@ import * as THREE from 'three'
 
 import {v3, twn, makeColorBox, makeColorMesh} from '../../utilities.js'
 
-export default class Modal extends React.Component{
+export default class Aptec extends React.Component{
     constructor(props,context){
         super(props, context)
         this.loadModels()
@@ -17,7 +17,7 @@ export default class Modal extends React.Component{
     componentDidMount = () => { //copy of makeModalMesh
         const actionblue = {front: 0x39aef8, left:0x3b8bb8, bottom: 0x3b8bb8, right: 0x3b8bb8,top: 0x66ccff, back: 0x3b8bb8}
         const windowcolor = {front: 0xededed, left:0xccd2d6, bottom: 0xededed, right: 0xededed, top: 0xfbfbfc, back: 0xededed}
-        makeColorMesh('sendbloom', this.refs.aptecbody , this.aptecrows.geometry, [
+        makeColorMesh('sendbloom', this.refs.body , this.aptecrows.geometry, [
             //front
             {range: [42,61], color: 0xededed}, {range: [64,69], color: 0xededed},
             //front inside
@@ -32,8 +32,8 @@ export default class Modal extends React.Component{
             {range: [70,73], color: 0xccd2d6}, {faces: [0,1], color: 0xededed},
             //top and bottom
             {faces: [74,75], color: 0xfbfbfc},  {faces: [62,63], color: 0xb5bfc4}
-        ])
-        makeColorBox('sendbloom', this.refs.modalbutton, [0.175, 0.09, 0.0175], actionblue)   
+        ], 0)
+        makeColorBox('sendbloom', this.refs.modalbutton, [0.175, 0.09, 0.0175], actionblue, 0)   
 
         makeColorMesh('sendbloom', this.refs.aptecslot, this.aptecslot.geometry, [
             //front inside
@@ -46,11 +46,11 @@ export default class Modal extends React.Component{
             {faces: [54,55], color: 0xfbfbfc}, {faces: [39,40], color: 0xccd2d6},
             {faces: [52,53,58,59], color: 0x5e5e5e},
             {range: [34,38], color: 0xededed}, {range: [41,51], color: 0xededed}
-        ])
-        makeColorBox('sendbloom', this.refs.aptecxleft, [1.092,0.12,0.115], windowcolor)
-        makeColorBox('sendbloom', this.refs.aptecxright, [0.25,0.12,0.115], windowcolor)
+        ], 0)
+        makeColorBox('sendbloom', this.refs.aptecxleft, [1.092,0.12,0.115], windowcolor, 0)
+        makeColorBox('sendbloom', this.refs.aptecxright, [0.25,0.12,0.115], windowcolor, 0)
 
-        makeColorBox('sendbloom', this.refs.partymodal, [1.1, 0.605, 0.11], windowcolor)          
+        makeColorBox('sendbloom', this.refs.partymodal, [1.1, 0.605, 0.11], windowcolor, 0)          
 
         makeColorBox('sendbloom', this.refs.exittext1, [0.025,0.025,0.0175], actionblue)
         makeColorBox('sendbloom', this.refs.exittext2, [0.025,0.025,0.0175], actionblue)
@@ -90,9 +90,12 @@ export default class Modal extends React.Component{
         const listPos = [{x:0, y:0, z:0}, {x: -1.1, y: 0, z: 0}]
         const partyPos = [{x: 0, y:-0, z:.0}, {x: -1, y: 0, z:0}]
 
-        this.aptecTween = twn('position', listPos[0], listPos[1], 400, this.refs.aptecbody.position, null, null)
-        this.aptecOpacityTween = twn('opacity', {opacity: 1}, {opacity: 0}, 400, this.refs.aptecbody, ()=>{this.refs.aptecbody.visible=false}, null, true)
+        if(this.modalOpacityTween) this.modalOpacityTween.stop()
+
+        this.modalPositionTween = twn('position', listPos[0], listPos[1], 400, this.refs.aptecbody.position, null, null)
+        this.modalOpacityTween = twn('opacity', {opacity: 1}, {opacity: 0}, 4000, this.refs.aptecbody, ()=>{this.refs.aptecbody.visible=false}, null, true)
         this.refs.party.visible = true
+        this.partyOpacityTween = twn('opacity', {opacity: 0}, {opacity: 1}, 4000, this.refs.party, null, null, true)
         this.partyTween = twn('position', partyPos[0], partyPos[1], 400, this.refs.partymodal.position, null, null)
 
     }
@@ -105,7 +108,7 @@ export default class Modal extends React.Component{
                     position = {v3(-0.02,yPos,0.0375)}
                 >
                     <planeBufferGeometry width = {0.95} height = {0.05} />
-                    <meshBasicMaterial color = {0xfbfbfc} >
+                    <meshBasicMaterial color = {0xfbfbfc} transparent opacity = {0}>
                         <textureResource resourceId = {'textline'+(i+1)} />
                     </meshBasicMaterial>
                 </mesh>
@@ -128,15 +131,16 @@ export default class Modal extends React.Component{
                         </meshBasicMaterial>
                     </mesh>
                     <group ref = "aptecbody">
+                        <group ref = "body" />
                         <group ref = "modalbutton" position = {v3(0.425,0.175,0.05)} />
                         {textItems}
                         <mesh name = "sendbloom" ref = "modalbuttontext" position = {v3(0.395,0.175,0.059)} >
                             <planeBufferGeometry width = {0.057} height = {0.0175} />
-                            <meshBasicMaterial color = {0xfbfbfc} />
+                            <meshBasicMaterial color = {0xfbfbfc} transparent/>
                         </mesh>                   
                         <mesh name = "sendbloom" ref = "modalbuttontext" position = {v3(0.455,0.175,0.059)} >
                             <planeBufferGeometry width = {0.02} height = {0.0175} />
-                            <meshBasicMaterial color = {0xfbfbfc} />
+                            <meshBasicMaterial color = {0xfbfbfc} transparent/>
                         </mesh>
                         </group>
                     <group ref = "aptecxleft" position = {v3(-0.089,0.3125,.01625)} />

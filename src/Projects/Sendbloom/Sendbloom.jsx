@@ -9,7 +9,7 @@ import { v3, twn, makeColorMesh, makeColorBox } from '../../utilities.js'
 
 import {mapValues} from 'lodash'
 
-import Modal from './Modal'
+import Aptec from './Modal'
 
 
 // @observer
@@ -149,7 +149,7 @@ export class SendbloomModel extends React.Component{
                     </group>
                 </group>
 
-              <Modal ref = "aptec" store = {this.props.store} />
+              <Aptec ref = "aptec" store = {this.props.store} />
 
             </group>
         )
