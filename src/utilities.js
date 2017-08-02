@@ -9,7 +9,7 @@ export function twn(property, start, end, duration, target, onComplete, delay, t
     const tween = new TWEEN.Tween(start)
         .to(end, duration)
         .onUpdate(function(){
-            if(property==='position' || property==='scale' || property==='rotation') target.set(this.x,this.y,this.z)
+            if(property==='position' || property==='scale' || property==='rotation') target.set(this.x || target.x, this.y || target.y, this.z || target.z)
             else if(traverseOpacity){
                 target.traverse((child) => {
                     if(child.material){

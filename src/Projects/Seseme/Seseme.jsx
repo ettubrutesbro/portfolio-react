@@ -6,6 +6,8 @@ import * as TWEEN from '@tweenjs/tween.js'
 
 import styles from './Seseme.css'
 
+import {v3} from '../../utilities.js'
+
 @observer
 export class SesemeModel extends React.Component{
     @observable mode = this.props.mode
@@ -92,7 +94,7 @@ export class SesemeModel extends React.Component{
         const pillarPositions = []
 
         return (
-            <group ref = "group">
+            <group ref = "group" position = {v3(0,0.1,0)}>
                 <resources>
                     {this.pillar &&
                         <geometry 

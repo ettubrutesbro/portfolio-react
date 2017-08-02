@@ -16,8 +16,8 @@ const Projects = [
         // debug: true,
         physicsModel: {
             types: ['box'],
-            sizes: [1.6,1,0.375],
-            positions: [0,0.1,0],
+            sizes: [1.6,1,0.35],
+            positions: [0,0,0],
             debugColor: 0xff0000
         },
         selected: {
@@ -42,9 +42,10 @@ const Projects = [
     {
         name: 'seseme',
         displayTitle: 'SESEME',
+        // debug: true,
         physicsModel: {
             types: ['box'],
-            sizes: [.9,2.5,.9],
+            sizes: [.95,2.5,.95],
             positions: [0,0,0],
             debugColor: 0xff0000
         },
