@@ -160,10 +160,9 @@ export class SendbloomInfo extends React.Component{
     render(){
         return(
             <div>
-                When I started working at Sendbloom ____ ago, I was looking for a short-term job (we'd agreed on 3 months) wherein I could make some money while finishing my portfolio on the side. 
-I didn't envision myself thriving creatively working on enterprise sales automation software either, but I've since been surprised by my extended tenure here; helping define a fast-growing product's direction, working closely with engineers/customer success, and implementing my own designs on the web has been fun and really instructive. 
-            </div>
-
+                When I started working at Sendbloom ____ ago, I was looking for a short-term job to make some money while I finished my portfolio at nights. I didn't believe I'd thrive
+                 working on enterprise sales software, but I've been pleased by my growth as a designer/developer in my tenure, which has long exceeded the initially-agreed-upon 3 months. 
+                </div>
         )
     }
 }

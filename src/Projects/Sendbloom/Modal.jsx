@@ -144,8 +144,8 @@ export default class Aptec extends React.Component{
             xButton.position.set(0,0,-0.05)
             exittext.position.set(0,0,0)
             this.bodyTweens = [
-                twn('opacity', {opacity: 0}, {opacity: 1}, 150, list, {onStart: ()=>{list.visible=true}, traverseOpacity: true}),
-                twn('opacity', {opacity: 1}, {opacity: 0}, 150, partyobj, {onComplete: ()=>{partyobj.visible=false}, traverseOpacity: true}),
+                twn('opacity', {opacity: 0}, {opacity: 1}, 10, list, {onStart: ()=>{list.visible=true}, traverseOpacity: true}),
+                twn('opacity', {opacity: 1}, {opacity: 0}, 10, partyobj, {onComplete: ()=>{partyobj.visible=false}, traverseOpacity: true, onComplete: () => {store.bodies.sendbloom.allowSleep = true}}),
             ]
 
         }
