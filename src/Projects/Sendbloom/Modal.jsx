@@ -32,8 +32,8 @@ export default class Aptec extends React.Component{
             {range: [70,73], color: 0xccd2d6}, {faces: [0,1], color: 0xededed},
             //top and bottom
             {faces: [74,75], color: 0xfbfbfc},  {faces: [62,63], color: 0xb5bfc4}
-        ], 0)
-        makeColorBox('sendbloom', this.refs.modalbutton, [0.175, 0.09, 0.0175], actionblue, 0)   
+        ])
+        makeColorBox('sendbloom', this.refs.modalbutton, [0.175, 0.09, 0.0175], actionblue)   
 
         makeColorMesh('sendbloom', this.refs.aptecslot, this.aptecslot.geometry, [
             //front inside
@@ -44,29 +44,32 @@ export default class Aptec extends React.Component{
             {faces: [2,3,4,5,8,9], color: 0xb5bfc4},{range: [22,33], color: 0xb5bfc4},
             //outsides
             {faces: [54,55], color: 0xfbfbfc}, {faces: [39,40], color: 0xccd2d6},
-            {faces: [52,53,58,59], color: 0x5e5e5e},
+            {faces: [52,53,58,59], color: 0xededed},
             {range: [34,38], color: 0xededed}, {range: [41,51], color: 0xededed}
-        ], 0)
-
-        makeColorMesh('sendbloom', this.refs.aptecx, this.aptecx.geometry, [
-            {range: [0,100], color: 0x39aef8}
         ])
 
-        makeColorBox('sendbloom', this.refs.aptecxleft, [1.0918,0.12,0.115], windowcolor, 0)
-        makeColorBox('sendbloom', this.refs.aptecxright, [0.22,0.12,0.115], windowcolor, 0)
-        makeColorBox('sendbloom', this.refs.partymodal, [1.195, 0.605, 0.11], windowcolor, 0)          
+        makeColorMesh('sendbloom', this.refs.aptecx, this.aptecx.geometry, [
+            {range: [0,9], color: 0x39aef8},
+            {range: [16,21], color: 0x66ccff}, //light at top
+            {faces: [12,13,26,27], color: 0x66ccff},
+            {faces: [22,23], color: 0xa9dbef},
+            {range: [28,33], color: 0x3b8bb8},
+            {faces: [10,11,14,15,24,25], color: 0x3b8bb8},
+        ])
 
-        makeColorBox('sendbloom', this.refs.exittext2, [0.025,0.025,0.015], actionblue)
-        makeColorBox('sendbloom', this.refs.exittext3, [0.072,0.025,0.015], actionblue)
+        makeColorBox('sendbloom', this.refs.aptecxleft, [1.0918,0.12,0.114], windowcolor)
+        makeColorBox('sendbloom', this.refs.aptecxright, [0.22,0.12,0.114], windowcolor)
+        makeColorBox('sendbloom', this.refs.partymodal, [1.195, 0.605, 0.11], windowcolor)          
 
+        makeColorBox('sendbloom', this.refs.exittext2, [0.025,0.0225,0.015], actionblue)
+        makeColorBox('sendbloom', this.refs.exittext3, [0.072,0.0225,0.015], actionblue)
 
+        this.refs.aptecx.position.set(0,0,-0.05)
         this.refs.aptecxright.scale.set(0.001,1,1)
         this.refs.aptecxright.visible = false
         this.refs.modal.visible = false
         this.refs.party.visible = false
         this.refs.modal.scale.set(1,0.01,1)
-
-
     
     }
     onSelect = (unselect) => { //copy of onSelect
@@ -77,40 +80,75 @@ export default class Aptec extends React.Component{
         const modal = this.refs.modal
         
         if(this.modalScaleTween) this.modalScaleTween.stop()
-        if(this.modalOpacityTween) this.modalOpacityTween.stop()
 
-        let fade = [{opacity: !unselect? 0 : 1}, {opacity: !unselect? 1 : 0}]
         let modalScale = [{x: modal.scale.x, y: modal.scale.y, z: modal.scale.z}, {x: 1, y: unselect? 0.01 : 1, z: 1}]
 
+        const reset = unselect? () => { modal.visible = false; this.switchBody(true) } : null
+
         this.refs.modal.visible = true
-        this.modalScaleTween = twn('scale', modalScale[0], modalScale[1], 400, modal.scale, null, !unselect? 300:0)
-        this.modalOpacityTween = twn('opacity', fade[0], fade[1], 400, modal, unselect?()=>{modal.visible=false} : null, !unselect? 300:0, true)
-
-        setTimeout(this.party, 3500)
-
+        this.modalScaleTween = twn('scale', modalScale[0], modalScale[1], 400, modal.scale, {delay: !unselect? 300: 0, onComplete: reset})
     }
 
-    party = () => {
+
+    switchBody = (reset) => {
         const store = this.props.store
+        store.bodies.sendbloom.allowSleep = false
         store.bodies.sendbloom.sleeping = false
+        // store.bodies.sendbloom.isKinematic = true
         store.static = false
-        const listPos = [{x:0}, {x: -1.3}]
-        const partyPos = [{x: 0}, {x: -1.187}]
 
-        this.aptecPositionTween = twn('position', listPos[0], listPos[1], 500, this.refs.aptecbody.position, null, null)
-        this.aptecOpacityTween = twn('opacity', {opacity: 1}, {opacity: 0}, 500, this.refs.aptecbody, ()=>{this.refs.aptecbody.visible=false}, null, true)
-        this.refs.party.visible = true
-        this.partyOpacityTween = twn('opacity', {opacity: 0}, {opacity: 1}, 500, this.refs.party, null, null, true)
-        this.partyTween = twn('position', partyPos[0], partyPos[1], 500, this.refs.partymodal.position, null, null)
+        const list = this.refs.aptecbody
+        const partyobj = this.refs.party
+        const partymodal = this.refs.partymodal
+        const topleft = this.refs.aptecxleft.children[0]
+        const topright = this.refs.aptecxright
+        const xSlot = this.refs.aptecslot
+        const xButton = this.refs.aptecx
+        const exittext = this.refs.exittext
 
-        twn('position', {x:0}, {x: -0.11}, 250, this.refs.aptecxleft.children[0].position, null, 200)
-        twn('position', {x:0}, {x: -0.1075}, 250, this.refs.aptecxright.position, null, 200)
-        twn('position', {x:0}, {x: -0.2}, 250, this.refs.aptecslot.position, null, 200)
-        twn('position', {z:0}, {z: 0.03}, 250, this.refs.aptecx.position, null, 200)
-        this.refs.aptecxright.visible = true
-        twn('scale', {x:1}, {x: 0.8}, 250, this.refs.aptecxleft.children[0].scale, null, 200)
-        twn('scale', {x:0.01}, {x: 1}, 250, this.refs.aptecxright.scale, null, 200)
-        
+
+
+
+        if(this.bodyTweens){
+            this.bodyTweens.forEach((tween)=>{tween.stop()})
+        }
+
+        if(!reset){
+            const listPos = [{x: list.position.x}, {x: -1.3 }]
+            const partyPos = [{x: partymodal.position.x}, {x: -1.187 }]
+            this.bodyTweens = [
+                //move / fade aptecbody
+                twn('position', listPos[0], listPos[1], 450, list.position),
+                twn('opacity', {opacity: 1}, {opacity: 0}, 425, list, {onComplete: ()=>{list.visible=false}, traverseOpacity: true}),
+                //move / fade party
+                twn('opacity', {opacity: 0}, {opacity: 1}, 425, partyobj, {onStart: ()=>{partyobj.visible=true}, traverseOpacity: true}),
+                twn('position', partyPos[0], partyPos[1], 425, partymodal.position ),
+                //slot and button movements
+                twn('position', {x:topleft.position.x}, {x: -0.11}, 225, topleft.position, {delay: 300, onComplete: ()=>{store.bodies.sendbloom.allowSleep = true}}),
+                twn('position', {x:topright.position.x}, {x: -0.1075}, 225, topright.position, {delay: 300, onStart: ()=>{topright.visible=true}}),
+                twn('position', {x:xSlot.position.x}, {x: -0.2}, 225, xSlot.position, {delay: 300}),
+                twn('scale', {x:topleft.scale.x}, {x: 0.8}, 225, topleft.scale, {delay: 300}),
+                twn('scale', {x:topright.scale.x}, {x: 1}, 225, topright.scale, {delay: 300}),
+                twn('position', {z:xButton.position.z}, {z: 0.03}, 250, xButton.position, {delay: 430}),
+                twn('position', {z:exittext.position.z}, {z: 0.07}, 250, exittext.position, {delay: 430})
+            ]
+        }
+        else{
+            list.position.set(0,0,0)
+            partymodal.position.set(0,0,0)
+            topleft.position.set(0,0,0)
+            topright.position.set(0,0,0)
+            xSlot.position.set(0,0,0)
+            topleft.scale.set(1,1,1)
+            topright.scale.set(0.001,1,1)
+            xButton.position.set(0,0,-0.05)
+            exittext.position.set(0,0,0)
+            this.bodyTweens = [
+                twn('opacity', {opacity: 0}, {opacity: 1}, 150, list, {onStart: ()=>{list.visible=true}, traverseOpacity: true}),
+                twn('opacity', {opacity: 1}, {opacity: 0}, 150, partyobj, {onComplete: ()=>{partyobj.visible=false}, traverseOpacity: true}),
+            ]
+
+        }
     }
 
     render(){
@@ -121,7 +159,7 @@ export default class Aptec extends React.Component{
                     position = {v3(-0.02,yPos,0.0375)}
                 >
                     <planeBufferGeometry width = {0.95} height = {0.05} />
-                    <meshBasicMaterial color = {0xfbfbfc} transparent opacity = {0}>
+                    <meshBasicMaterial color = {0xfbfbfc} transparent>
                         <textureResource resourceId = {'textline'+(i+1)} />
                     </meshBasicMaterial>
                 </mesh>
@@ -140,7 +178,7 @@ export default class Aptec extends React.Component{
                 </resources>
                     <mesh name = "sendbloom" ref = "modalshadow" position = {v3(0,-0.14,-.7575)}>
                         <planeBufferGeometry width = {1.58} height = {0.8} />
-                        <meshBasicMaterial transparent opacity = {0}>
+                        <meshBasicMaterial transparent >
                              <textureResource resourceId = "shadow" />
                         </meshBasicMaterial>
                     </mesh>
@@ -157,15 +195,15 @@ export default class Aptec extends React.Component{
                             <meshBasicMaterial color = {0xfbfbfc} transparent/>
                         </mesh>
                         </group>
-                    <group ref = "aptecxleft" position = {v3(-0.089,0.3125,.01625)} />
+                    <group ref = "aptecxleft" position = {v3(-0.089,0.3125,.0165)} />
                     <group ref = "aptecslot">
                         <group ref = "aptecx" />
                     </group>
-                    <group position = {v3(0.55,0.3125,.01625)}>
+                    <group position = {v3(0.555,0.3125,.0165)}>
                         <group ref = "aptecxright">
                             <group ref = "exittext">
-                                <group ref = "exittext2" position = {v3(-0.0875,-0.01,0.07)} />
-                                <group ref = "exittext3" position = {v3(-0.015,-0.01,0.07)} />
+                                <group ref = "exittext2" position = {v3(-0.0875,-0.01,0)} />
+                                <group ref = "exittext3" position = {v3(-0.015,-0.01,0)} />
                             </group>
                         </group>
                     </group>
@@ -173,15 +211,15 @@ export default class Aptec extends React.Component{
 
                     <group ref = "party" position = {v3(1.15,-0.05,.015)}>
                         <group ref = "partymodal">
-                        <mesh position = {v3(0,0.075,0.0575)}>
-                            <planeBufferGeometry width = {0.225} height = {0.225} />
+                        <mesh position = {v3(0,0.08,0.0575)}>
+                            <planeBufferGeometry width = {0.215} height = {0.215} />
                             <meshBasicMaterial transparent>
                                 <textureResource resourceId = "party" />
                             </meshBasicMaterial>
                         </mesh>
 
-                        <mesh position = {v3(0,-0.1,0.0575)}>
-                            <planeBufferGeometry width = {0.35} height = {0.025} />
+                        <mesh position = {v3(0,-0.075,0.0575)}>
+                            <planeBufferGeometry width = {0.35} height = {0.05} />
                             <meshBasicMaterial color = {0x5e5e5e} />
                         </mesh>
                         </group>

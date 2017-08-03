@@ -5,26 +5,34 @@ export function v3(x,y,z){
     return new THREE.Vector3(x,y,z)
 }
 
-export function twn(property, start, end, duration, target, onComplete, delay, traverseOpacity){
+export function twn(property, start, end, duration, target, options){
     const tween = new TWEEN.Tween(start)
         .to(end, duration)
         .onUpdate(function(){
-            if(property==='position' || property==='scale' || property==='rotation') target.set(this.x || target.x, this.y || target.y, this.z || target.z)
-            else if(traverseOpacity){
-                target.traverse((child) => {
-                    if(child.material){
-                        if(Array.isArray(child.material)){ child.material.forEach((child)=>{child.opacity = this.opacity})} 
-                        else child.material.opacity = this.opacity 
-                    }
-                })
+            if(options){ 
+                if(options.onUpdate) options.onUpdate()
+                if(options.traverseOpacity){
+                    target.traverse((child) => {
+                        if(child.material){
+                            if(Array.isArray(child.material)){ child.material.forEach((child)=>{child.opacity = this.opacity})} 
+                            else child.material.opacity = this.opacity 
+                        }
+                    })
+                }
             }
+            if(property==='position' || property==='scale' || property==='rotation') target.set(this.x || target.x, this.y || target.y, this.z || target.z)
+
             else{ //opacity etc.
                 const allProps = Object.keys(this)
                 allProps.forEach((prop) => target[prop] = this[prop])
             }
         })
-        if(onComplete) tween.onComplete(onComplete)
-        if(delay) tween.delay(delay)
+        if(options){
+            if(options.onStart) tween.onStart(options.onStart)
+            if(options.onComplete) tween.onComplete(options.onComplete)
+            if(options.delay) tween.delay(options.delay)
+        }
+
 
         tween.start()
 

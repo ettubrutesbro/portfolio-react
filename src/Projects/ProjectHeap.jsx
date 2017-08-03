@@ -186,19 +186,22 @@ window.world=physics
                         //TODO: 
                         //eliminates need for physical basement,
                         //but may need adjustment depending on perspective / forces
-                        console.log(name, 'is below threshold')
+                        // console.log(name)
                         physics.bodies[name].sleeping=true
                     }
                 }
                 if(physics.bodies[name].sleeping){ 
+                    console.log(name)
                     numberOfSleepingBodies++
+                    console.log(numberOfSleepingBodies + '/' + projects.length + ' asleep')
                 }
                 
                 
             }
 
             if(numberOfSleepingBodies === projects.length){
-                console.log('all are asleep, stopping constant renders')
+                console.log(physics.bodies.sendbloom.sleeping)
+                console.log('all are asleep, pausing render')
                 physics.static = true
             }
             TWEEN.update()
