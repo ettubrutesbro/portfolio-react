@@ -87,6 +87,9 @@ export default class Aptec extends React.Component{
 
         this.refs.modal.visible = true
         this.modalScaleTween = twn('scale', modalScale[0], modalScale[1], 400, modal.scale, {delay: !unselect? 300: 0, onComplete: reset})
+        
+        this.timedSwitch = setTimeout(this.switchBody, 3500)
+
     }
 
 

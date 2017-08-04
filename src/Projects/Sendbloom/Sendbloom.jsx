@@ -71,7 +71,7 @@ export class SendbloomModel extends React.Component{
         ]
         const logoScales = [
             {x: logo.scale.x, y: logo.scale.y, z: logo.scale.z}, 
-            !unselect? {x: 0.26, y:0.8, z: 0.26} : {x:1,y:1,z:1}
+            !unselect? {x: 0.26, y:0.775, z: 0.26} : {x:1,y:1,z:1}
         ]
         const fade = [{opacity: !unselect? 0 : 1}, {opacity: !unselect? 1 : 0}]
         const navPos = [{x: nav.position.x, y: nav.position.y, z: nav.position.z} , !unselect? {x: .115, y: 0, z: 0} : {x: 0, y: 0, z: 0}]
