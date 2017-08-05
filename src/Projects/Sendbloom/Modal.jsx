@@ -71,6 +71,7 @@ export default class Aptec extends React.Component{
         this.refs.party.visible = false
         this.refs.modal.scale.set(1,0.01,1)
         this.refs.modalshadow.material.opacity = 0
+        this.refs.modalshadow.visible = false
     
     }
     onSelect = (unselect) => { //copy of onSelect
@@ -79,20 +80,34 @@ export default class Aptec extends React.Component{
         // store.static = false
 
         const modal = this.refs.modal
-        const shadow = this.refs.modalshadow.material
+        const shadow = this.refs.modalshadow
         
         if(this.modalScaleTween) this.modalScaleTween.stop()
 
         let modalScale = [{x: modal.scale.x, y: modal.scale.y, z: modal.scale.z}, {x: 1, y: unselect? 0.01 : 1, z: 1}]
 
         const reset = unselect? () => { modal.visible = false; this.switchBody(true) } : null
+        const switchBody = this.switchBody
 
         this.refs.modal.visible = true
-        this.modalScaleTween = twn('scale', modalScale[0], modalScale[1], 400, modal.scale, {delay: !unselect? 300: 0, onComplete: reset})
-        twn('opacity', {opacity: shadow.opacity}, {opacity: unselect? 0: 1}, 400, shadow, {delay: !unselect?100:0})
+        if(this.selectTweens){
+            this.selectTweens.forEach((tween)=> tween.stop())
+            //TODO: this is stopping the tweens i want from switchBody(disappear)
+        }
+        this.selectTweens = [
+            twn('scale', modalScale[0], modalScale[1], 
+                400, modal.scale, 
+                {delay: !unselect? 300: 0, onComplete: reset}
+            ),
+            twn('opacity', {opacity: shadow.material.opacity}, 
+                {opacity: unselect? 0: 1}, 400, shadow.material, 
+                {delay: !unselect?100:0, onStart: !unselect?()=>{shadow.visible=true}:null,
+                onComplete: unselect?()=>{shadow.visible=false} : null }
+            )
+        ]
 
-        this.timedSwitch = setTimeout(this.switchBody, 3500)
-
+        if(!unselect) this.timedSwitch = setTimeout(this.switchBody, 3500)
+        else if(this.timedSwitch) clearTimeout(this.timedSwitch)
     }
 
 
@@ -100,7 +115,6 @@ export default class Aptec extends React.Component{
         const store = this.props.store
         store.bodies.sendbloom.allowSleep = false
         store.bodies.sendbloom.sleeping = false
-        // store.bodies.sendbloom.isKinematic = true
         store.static = false
 
         const list = this.refs.aptecbody
@@ -217,14 +231,14 @@ export default class Aptec extends React.Component{
 
                     <group ref = "party" position = {v3(1.15,-0.05,.015)}>
                         <group ref = "partymodal">
-                        <mesh position = {v3(0,0.125,0.0575)}>
+                        <mesh position = {v3(0,0.125,0.058)}>
                             <planeBufferGeometry width = {0.215} height = {0.215} />
                             <meshBasicMaterial transparent>
                                 <textureResource resourceId = "party" />
                             </meshBasicMaterial>
                         </mesh>
 
-                        <mesh position = {v3(0,-0.075,0.0575)}>
+                        <mesh position = {v3(0,-0.075,0.058)}>
                             <planeBufferGeometry width = {0.35} height = {0.08} />
                             <meshBasicMaterial color = {0x5e5e5e} />
                         </mesh>

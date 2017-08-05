@@ -28,6 +28,7 @@ export function twn(property, start, end, duration, target, options){
             }
         })
         if(options){
+            // if(options.chain) tween.chain(options.chain)
             if(options.onStart) tween.onStart(options.onStart)
             if(options.onComplete) tween.onComplete(options.onComplete)
             if(options.delay) tween.delay(options.delay)
