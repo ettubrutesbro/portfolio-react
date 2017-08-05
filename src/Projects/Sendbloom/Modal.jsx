@@ -61,8 +61,8 @@ export default class Aptec extends React.Component{
         makeColorBox('sendbloom', this.refs.aptecxright, [0.22,0.12,0.114], windowcolor)
         makeColorBox('sendbloom', this.refs.partymodal, [1.195, 0.605, 0.11], windowcolor)          
 
-        makeColorBox('sendbloom', this.refs.exittext2, [0.025,0.0225,0.015], actionblue)
-        makeColorBox('sendbloom', this.refs.exittext3, [0.072,0.0225,0.015], actionblue)
+        makeColorBox('sendbloom', this.refs.exittext2, [0.025,0.0215,0.015], actionblue)
+        makeColorBox('sendbloom', this.refs.exittext3, [0.072,0.0215,0.015], actionblue)
 
         this.refs.aptecx.position.set(0,0,-0.05)
         this.refs.aptecxright.scale.set(0.001,1,1)
@@ -144,13 +144,13 @@ export default class Aptec extends React.Component{
                 twn('opacity', {opacity: 0}, {opacity: 1}, 425, partyobj, {onStart: ()=>{partyobj.visible=true}, traverseOpacity: true}),
                 twn('position', partyPos[0], partyPos[1], 425, partymodal.position ),
                 //slot and button movements
-                twn('position', {x:topleft.position.x}, {x: -0.11}, 225, topleft.position, {delay: 300, onComplete: ()=>{store.bodies.sendbloom.allowSleep = true}}),
-                twn('position', {x:topright.position.x}, {x: -0.1075}, 225, topright.position, {delay: 300, onStart: ()=>{topright.visible=true}}),
-                twn('position', {x:xSlot.position.x}, {x: -0.2}, 225, xSlot.position, {delay: 300}),
-                twn('scale', {x:topleft.scale.x}, {x: 0.8}, 225, topleft.scale, {delay: 300}),
-                twn('scale', {x:topright.scale.x}, {x: 1}, 225, topright.scale, {delay: 300}),
-                twn('position', {z:xButton.position.z}, {z: 0.03}, 250, xButton.position, {delay: 430}),
-                twn('position', {z:exittext.position.z}, {z: 0.07}, 250, exittext.position, {delay: 430})
+                twn('position', {x:topleft.position.x}, {x: -0.11}, 225, topleft.position, {delay: 375, onComplete: ()=>{store.bodies.sendbloom.allowSleep = true}}),
+                twn('position', {x:topright.position.x}, {x: -0.1075}, 225, topright.position, {delay: 375, onStart: ()=>{topright.visible=true}}),
+                twn('position', {x:xSlot.position.x}, {x: -0.2}, 225, xSlot.position, {delay: 375}),
+                twn('scale', {x:topleft.scale.x}, {x: 0.8}, 225, topleft.scale, {delay: 375}),
+                twn('scale', {x:topright.scale.x}, {x: 1}, 225, topright.scale, {delay: 375}),
+                twn('position', {z:xButton.position.z}, {z: 0.03}, 250, xButton.position, {delay: 525}),
+                twn('position', {z:exittext.position.z}, {z: 0.06}, 250, exittext.position, {delay: 525})
             ]
         }
         else{
@@ -195,6 +195,7 @@ export default class Aptec extends React.Component{
                     <texture resourceId = "textline3" url = {require('./textline3.png')}/> 
                     <texture resourceId = "textline4" url = {require('./textline4.png')}/> 
                     <texture resourceId = "party" url = {require('./party.png')}/> 
+                    <texture resourceId = "partytext" url = {require('./partytext.png')}/> 
                 </resources>
                     <mesh name = "sendbloom" ref = "modalshadow" position = {v3(0,-0.14,-.7575)}>
                         <planeBufferGeometry width = {1.58} height = {0.8} />
@@ -232,15 +233,18 @@ export default class Aptec extends React.Component{
                     <group ref = "party" position = {v3(1.15,-0.05,.015)}>
                         <group ref = "partymodal">
                         <mesh position = {v3(0,0.125,0.058)}>
-                            <planeBufferGeometry width = {0.215} height = {0.215} />
+                            <planeBufferGeometry width = {0.2} height = {0.2} />
                             <meshBasicMaterial transparent>
                                 <textureResource resourceId = "party" />
                             </meshBasicMaterial>
                         </mesh>
 
-                        <mesh position = {v3(0,-0.075,0.058)}>
-                            <planeBufferGeometry width = {0.35} height = {0.08} />
-                            <meshBasicMaterial color = {0x5e5e5e} />
+                        <mesh position = {v3(0,-0.07,0.06)}>
+                            <planeBufferGeometry width = {0.45} height = {0.12} />
+                            <meshBasicMaterial  transparent>
+                                <textureResource resourceId = "partytext" />
+                            </meshBasicMaterial>
+
                         </mesh>
                         </group>
 
