@@ -70,6 +70,7 @@ export default class Aptec extends React.Component{
         this.refs.modal.visible = false
         this.refs.party.visible = false
         this.refs.modal.scale.set(1,0.01,1)
+        this.refs.modalshadow.material.opacity = 0
     
     }
     onSelect = (unselect) => { //copy of onSelect
@@ -78,6 +79,7 @@ export default class Aptec extends React.Component{
         // store.static = false
 
         const modal = this.refs.modal
+        const shadow = this.refs.modalshadow.material
         
         if(this.modalScaleTween) this.modalScaleTween.stop()
 
@@ -87,7 +89,8 @@ export default class Aptec extends React.Component{
 
         this.refs.modal.visible = true
         this.modalScaleTween = twn('scale', modalScale[0], modalScale[1], 400, modal.scale, {delay: !unselect? 300: 0, onComplete: reset})
-        
+        twn('opacity', {opacity: shadow.opacity}, {opacity: unselect? 0: 1}, 400, shadow, {delay: !unselect?100:0})
+
         this.timedSwitch = setTimeout(this.switchBody, 3500)
 
     }
@@ -214,7 +217,7 @@ export default class Aptec extends React.Component{
 
                     <group ref = "party" position = {v3(1.15,-0.05,.015)}>
                         <group ref = "partymodal">
-                        <mesh position = {v3(0,0.08,0.0575)}>
+                        <mesh position = {v3(0,0.125,0.0575)}>
                             <planeBufferGeometry width = {0.215} height = {0.215} />
                             <meshBasicMaterial transparent>
                                 <textureResource resourceId = "party" />
@@ -222,7 +225,7 @@ export default class Aptec extends React.Component{
                         </mesh>
 
                         <mesh position = {v3(0,-0.075,0.0575)}>
-                            <planeBufferGeometry width = {0.35} height = {0.05} />
+                            <planeBufferGeometry width = {0.35} height = {0.08} />
                             <meshBasicMaterial color = {0x5e5e5e} />
                         </mesh>
                         </group>

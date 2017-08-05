@@ -505,7 +505,7 @@ window.world=physics
             >
                 <module ref="mouseInput" descriptor={MouseInput} />
                 <scene ref="scene">
-                {/*
+                {
                     <perspectiveCamera 
                         name="camera"
                         ref="camera"
@@ -516,19 +516,8 @@ window.world=physics
                         position={this.cameraPosition}
                         quaternion={this.cameraQuaternion}
                     />
-                */}
-                <orthographicCamera
-                    name = "camera"
-                    ref = "camera"
-                    left =  {sizeConstant / -2}
-                    right = {sizeConstant / 2} 
-                    top = {orthographicAspectHeight / 2}
-                    bottom = {orthographicAspectHeight / -2}
-                    near = {0.001} 
-                    far = {100}
-                    position = {this.cameraPosition}
-                    quaternion = {this.cameraQuaternion}
-                />
+                }
+                
 
                 {debug.amblight &&
                     <ambientLight color={0xffffff} />
