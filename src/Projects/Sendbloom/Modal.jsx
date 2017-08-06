@@ -3,7 +3,7 @@ import * as THREE from 'three'
 
 import {v3, twn, makeColorBox, makeColorMesh} from '../../utilities.js'
 
-export default class Aptec extends React.Component{
+export default class Modal extends React.Component{
     constructor(props,context){
         super(props, context)
         this.loadModels()
@@ -72,9 +72,20 @@ export default class Aptec extends React.Component{
         this.refs.modal.scale.set(1,0.01,1)
         this.refs.modalshadow.material.opacity = 0
         this.refs.modalshadow.visible = false
+
+        //bottom bar
+        makeColorBox('sendbloom', this.refs.bottombar, [1.6, 0.1, 0.06], windowcolor)
+        this.refs.bottombar.position.set(0,-0.35,0.105)
+
+        //sidebar
+        makeColorBox('sendbloom', this.refs.sidebar, [0.35, 0.925, 0.075], windowcolor)
+        this.refs.sidebar.position.set(-0.55,0,0.325)
     
+        //popover
+        makeColorBox('popover', this.refs.popover, [0.375, 0.35, 0.04], windowcolor)
+        this.refs.popover.position.set(0.45,0.175, 0.2)
     }
-    onSelect = (unselect) => { //copy of onSelect
+    onSelect = (unselect, cycle) => { //copy of onSelect
         // const store = this.props.store
         // store.bodies.sendbloom.sleeping = false
         // store.static = false
@@ -106,10 +117,9 @@ export default class Aptec extends React.Component{
             )
         ]
 
-        if(!unselect) this.timedSwitch = setTimeout(this.switchBody, 3500)
+        if(!unselect) this.timedSwitch = setTimeout(this.switchBody, 3700) //3s idle
         else if(this.timedSwitch) clearTimeout(this.timedSwitch)
     }
-
 
     switchBody = (reset) => {
         const store = this.props.store
@@ -126,9 +136,6 @@ export default class Aptec extends React.Component{
         const xButton = this.refs.aptecx
         const exittext = this.refs.exittext
 
-
-
-
         if(this.bodyTweens){
             this.bodyTweens.forEach((tween)=>{tween.stop()})
         }
@@ -138,20 +145,23 @@ export default class Aptec extends React.Component{
             const partyPos = [{x: partymodal.position.x}, {x: -1.187 }]
             this.bodyTweens = [
                 //move / fade aptecbody
-                twn('position', listPos[0], listPos[1], 450, list.position),
+                twn('position', listPos[0], listPos[1], 425, list.position),
                 twn('opacity', {opacity: 1}, {opacity: 0}, 425, list, {onComplete: ()=>{list.visible=false}, traverseOpacity: true}),
                 //move / fade party
                 twn('opacity', {opacity: 0}, {opacity: 1}, 425, partyobj, {onStart: ()=>{partyobj.visible=true}, traverseOpacity: true}),
                 twn('position', partyPos[0], partyPos[1], 425, partymodal.position ),
                 //slot and button movements
-                twn('position', {x:topleft.position.x}, {x: -0.11}, 225, topleft.position, {delay: 375, onComplete: ()=>{store.bodies.sendbloom.allowSleep = true}}),
-                twn('position', {x:topright.position.x}, {x: -0.1075}, 225, topright.position, {delay: 375, onStart: ()=>{topright.visible=true}}),
-                twn('position', {x:xSlot.position.x}, {x: -0.2}, 225, xSlot.position, {delay: 375}),
-                twn('scale', {x:topleft.scale.x}, {x: 0.8}, 225, topleft.scale, {delay: 375}),
-                twn('scale', {x:topright.scale.x}, {x: 1}, 225, topright.scale, {delay: 375}),
-                twn('position', {z:xButton.position.z}, {z: 0.03}, 250, xButton.position, {delay: 525}),
-                twn('position', {z:exittext.position.z}, {z: 0.06}, 250, exittext.position, {delay: 525})
+                twn('position', {x:topleft.position.x}, {x: -0.11}, 225, topleft.position, {delay: 450, onComplete: ()=>{store.bodies.sendbloom.allowSleep = true}}),
+                twn('position', {x:topright.position.x}, {x: -0.1075}, 225, topright.position, {delay: 450, onStart: ()=>{topright.visible=true}}),
+                twn('position', {x:xSlot.position.x}, {x: -0.2}, 225, xSlot.position, {delay: 450}),
+                twn('scale', {x:topleft.scale.x}, {x: 0.8}, 225, topleft.scale, {delay: 450}),
+                twn('scale', {x:topright.scale.x}, {x: 1}, 225, topright.scale, {delay: 450}),
+                twn('position', {z:xButton.position.z}, {z: 0.03}, 250, xButton.position, {delay: 650}),
+                twn('position', {z:exittext.position.z}, {z: 0.06}, 250, exittext.position, 
+                    {delay: 650, onComplete: ()=>{setTimeout(this.cycleOut, 2000)}}
+                )
             ]
+            // this.timedCycle = setTimeout(this.)
         }
         else{
             list.position.set(0,0,0)
@@ -171,6 +181,20 @@ export default class Aptec extends React.Component{
         }
     }
 
+    cycleOut = () =>{
+        //onSelect(true) is for modal contents going away altogether (sendbloom deselected)
+            //it reverses the "mount" animation for the modal
+        //cycleOut is for modal going away to make room for bottom bar / another augment
+            //it goes up or in some direction without scaling
+        //probably behooves me to combine these methods...but later. 
+
+        // this.onSelect(true)
+        // this.props.onCycle()
+
+        
+        
+    }
+
     render(){
         const textItems = [0.168,0.027,-0.115,-0.257].map((yPos,i)=>{
             return (
@@ -187,7 +211,7 @@ export default class Aptec extends React.Component{
         })
 
         return(
-              <group ref = "modal" position = {v3(-0, 0.15, 0.85)} >
+            <group ref = "elements">
                 <resources>
                     <texture resourceId = "shadow" url = {require('./shadow.png')}/> 
                     <texture resourceId = "textline1" url = {require('./textline1.png')}/> 
@@ -197,60 +221,78 @@ export default class Aptec extends React.Component{
                     <texture resourceId = "party" url = {require('./party.png')}/> 
                     <texture resourceId = "partytext" url = {require('./partytext.png')}/> 
                 </resources>
+                <group ref = "bottombar">
+
+                </group>
+
+                <group ref = "sidebar">
+
+                </group>
+
+                <group ref = "popover">
+
+                </group>
+
+              <group ref = "modal" position = {v3(-0, 0.15, 0.85)} >
+                
                     <mesh name = "sendbloom" ref = "modalshadow" position = {v3(0,-0.14,-.7575)}>
                         <planeBufferGeometry width = {1.58} height = {0.8} />
                         <meshBasicMaterial transparent >
                              <textureResource resourceId = "shadow" />
                         </meshBasicMaterial>
                     </mesh>
-                    <group ref = "aptecbody">
-                        <group ref = "body" />
-                        <group ref = "modalbutton" position = {v3(0.425,0.175,0.05)} />
-                        {textItems}
-                        <mesh name = "sendbloom" ref = "modalbuttontext" position = {v3(0.395,0.175,0.059)} >
-                            <planeBufferGeometry width = {0.057} height = {0.0175} />
-                            <meshBasicMaterial color = {0xfbfbfc} transparent/>
-                        </mesh>                   
-                        <mesh name = "sendbloom" ref = "modalbuttontext" position = {v3(0.455,0.175,0.059)} >
-                            <planeBufferGeometry width = {0.02} height = {0.0175} />
-                            <meshBasicMaterial color = {0xfbfbfc} transparent/>
-                        </mesh>
+
+
+                    <group ref = "nonshadowcontents">
+                        <group ref = "aptecbody">
+                            <group ref = "body" />
+                            <group ref = "modalbutton" position = {v3(0.425,0.175,0.05)} />
+                            {textItems}
+                            <mesh name = "sendbloom" ref = "modalbuttontext" position = {v3(0.395,0.175,0.059)} >
+                                <planeBufferGeometry width = {0.057} height = {0.0175} />
+                                <meshBasicMaterial color = {0xfbfbfc} transparent/>
+                            </mesh>                   
+                            <mesh name = "sendbloom" ref = "modalbuttontext" position = {v3(0.455,0.175,0.059)} >
+                                <planeBufferGeometry width = {0.02} height = {0.0175} />
+                                <meshBasicMaterial color = {0xfbfbfc} transparent/>
+                            </mesh>
                         </group>
-                    <group ref = "aptecxleft" position = {v3(-0.089,0.3125,.0165)} />
-                    <group ref = "aptecslot">
-                        <group ref = "aptecx" />
-                    </group>
-                    <group position = {v3(0.555,0.3125,.0165)}>
-                        <group ref = "aptecxright">
-                            <group ref = "exittext">
-                                <group ref = "exittext2" position = {v3(-0.0875,-0.01,0)} />
-                                <group ref = "exittext3" position = {v3(-0.015,-0.01,0)} />
+                        <group ref = "aptecxleft" position = {v3(-0.089,0.3125,.0165)} />
+                        <group ref = "aptecslot">
+                            <group ref = "aptecx" />
+                        </group>
+                        <group position = {v3(0.555,0.3125,.0165)}>
+                            <group ref = "aptecxright">
+                                <group ref = "exittext">
+                                    <group ref = "exittext2" position = {v3(-0.0875,-0.01,0)} />
+                                    <group ref = "exittext3" position = {v3(-0.015,-0.01,0)} />
+                                </group>
                             </group>
                         </group>
-                    </group>
 
 
-                    <group ref = "party" position = {v3(1.15,-0.05,.015)}>
-                        <group ref = "partymodal">
-                        <mesh position = {v3(0,0.125,0.058)}>
-                            <planeBufferGeometry width = {0.2} height = {0.2} />
-                            <meshBasicMaterial transparent>
-                                <textureResource resourceId = "party" />
-                            </meshBasicMaterial>
-                        </mesh>
+                        <group ref = "party" position = {v3(1.15,-0.05,.015)}>
+                            <group ref = "partymodal">
+                            <mesh position = {v3(0,0.125,0.058)}>
+                                <planeBufferGeometry width = {0.23} height = {0.23} />
+                                <meshBasicMaterial transparent>
+                                    <textureResource resourceId = "party" />
+                                </meshBasicMaterial>
+                            </mesh>
 
-                        <mesh position = {v3(0,-0.07,0.06)}>
-                            <planeBufferGeometry width = {0.45} height = {0.12} />
-                            <meshBasicMaterial  transparent>
-                                <textureResource resourceId = "partytext" />
-                            </meshBasicMaterial>
+                            <mesh position = {v3(0,-0.085,0.06)}>
+                                <planeBufferGeometry width = {0.45} height = {0.12} />
+                                <meshBasicMaterial transparent>
+                                    <textureResource resourceId = "partytext" />
+                                </meshBasicMaterial>
 
-                        </mesh>
+                            </mesh>
+                            </group>
+
                         </group>
-
                     </group>
-
                 </group>
+            </group>
         )
     }
 

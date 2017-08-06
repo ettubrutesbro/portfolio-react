@@ -9,7 +9,7 @@ import { v3, twn, makeColorMesh, makeColorBox } from '../../utilities.js'
 
 import {mapValues} from 'lodash'
 
-import Aptec from './Modal'
+import Modal from './Modal'
 
 
 // @observer
@@ -95,8 +95,14 @@ export class SendbloomModel extends React.Component{
 
     }
 
-    cycleOpenAnimations = () => {
-        console.log(this.activeelement + ' out')
+    cycleAugments = () => {
+        console.log('cycling augmented elements')
+        const store = this.props.store
+        store.bodies.sendbloom.allowSleep = false
+        store.bodies.sendbloom.sleeping = false
+        store.static = false
+
+        // twn('position', {y:0}, {y:0.4}, 400, this.refs.augments.position, {onComplete: ()=>{store.bodies.sendbloom.allowSleep = true}})
     }
 
     restoreNormal = () => this.onSelect(true)
@@ -149,8 +155,14 @@ export class SendbloomModel extends React.Component{
                     </group>
                 </group>
 
-              <Aptec ref = "aptec" store = {this.props.store} />
+                <group ref = "augments">
+                    <Modal 
+                        ref = "aptec" 
+                        store = {this.props.store} 
+                        cycle = {this.cycleAugments}
+                    />
 
+                </group>
             </group>
         )
     }

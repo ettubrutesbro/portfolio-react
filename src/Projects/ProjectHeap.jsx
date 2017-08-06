@@ -501,7 +501,7 @@ window.world=physics
                 onAnimate={this.animate}
                 forceManualRender={physics.static}
                 onManualRenderTriggerCreated={this.createManualRenderTrigger}
-                // antialias
+                antialias
             >
                 <module ref="mouseInput" descriptor={MouseInput} />
                 <scene ref="scene">
