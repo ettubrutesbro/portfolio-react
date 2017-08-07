@@ -72,18 +72,11 @@ export default class Modal extends React.Component{
         this.refs.modal.scale.set(1,0.01,1)
         this.refs.modalshadow.material.opacity = 0
         this.refs.modalshadow.visible = false
-
-        //bottom bar
-        makeColorBox('sendbloom', this.refs.bottombar, [1.6, 0.1, 0.06], windowcolor)
-        this.refs.bottombar.position.set(0,-0.35,0.105)
-
+        
         //sidebar
-        makeColorBox('sendbloom', this.refs.sidebar, [0.35, 0.925, 0.075], windowcolor)
-        this.refs.sidebar.position.set(-0.55,0,0.325)
-    
+
         //popover
-        makeColorBox('popover', this.refs.popover, [0.375, 0.35, 0.04], windowcolor)
-        this.refs.popover.position.set(0.45,0.175, 0.2)
+
     }
     onSelect = (unselect, cycle) => { //copy of onSelect
         // const store = this.props.store
@@ -221,9 +214,7 @@ export default class Modal extends React.Component{
                     <texture resourceId = "party" url = {require('./party.png')}/> 
                     <texture resourceId = "partytext" url = {require('./partytext.png')}/> 
                 </resources>
-                <group ref = "bottombar">
 
-                </group>
 
                 <group ref = "sidebar">
 

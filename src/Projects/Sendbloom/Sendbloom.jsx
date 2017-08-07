@@ -10,11 +10,15 @@ import { v3, twn, makeColorMesh, makeColorBox } from '../../utilities.js'
 import {mapValues} from 'lodash'
 
 import Modal from './Modal'
+import BottomBar from './BottomBar'
+import Sidebar from './Sidebar'
+import Popover from './Popover'
 
 
 // @observer
 export class SendbloomModel extends React.Component{
     @observable activeelement = null
+    @observable animationLoop = null
 
     constructor(props, context){
         super( props, context )
@@ -83,26 +87,27 @@ export class SendbloomModel extends React.Component{
        
         // begin animation loop for subcomponents
         console.log('begin animation loop')
-            this.refs.aptec.onSelect(unselect)
+            this.refs.modal.onSelect(unselect)
+
 
         if(!unselect){
-
-        }
-
+            this.activeelement = 1
+            this.animationLoop = setInterval(this.cycle, 3000)
+        } 
         if(unselect){
-            //find activeelement and deactivate it
+            this.activeelement = null
+            console.log('clearing loop')
+            clearInterval(this.animationLoop)
         }
 
     }
 
-    cycleAugments = () => {
-        console.log('cycling augmented elements')
-        const store = this.props.store
-        store.bodies.sendbloom.allowSleep = false
-        store.bodies.sendbloom.sleeping = false
-        store.static = false
-
-        // twn('position', {y:0}, {y:0.4}, 400, this.refs.augments.position, {onComplete: ()=>{store.bodies.sendbloom.allowSleep = true}})
+    @action
+    cycle = () => {
+        const elements = ['modal', 'bottombar', 'sidebar', 'popover']
+        if(this.activeelement < 4) this.activeelement++
+        else this.activeelement = 1
+        console.log('new active element is ' +elements[this.activeelement-1] +'('+ this.activeelement+')')
     }
 
     restoreNormal = () => this.onSelect(true)
@@ -155,14 +160,17 @@ export class SendbloomModel extends React.Component{
                     </group>
                 </group>
 
-                <group ref = "augments">
                     <Modal 
-                        ref = "aptec" 
+                        ref = "modal" 
                         store = {this.props.store} 
                         cycle = {this.cycleAugments}
                     />
+                    <BottomBar
+                        ref = "bottombar"
+                    />
+                    <Sidebar />
+                    <Popover />
 
-                </group>
             </group>
         )
     }
