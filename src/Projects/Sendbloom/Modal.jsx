@@ -72,16 +72,13 @@ export default class Modal extends React.Component{
         this.refs.modal.scale.set(1,0.01,1)
         this.refs.modalshadow.material.opacity = 0
         this.refs.modalshadow.visible = false
-        
-        //sidebar
-
-        //popover
 
     }
-    onSelect = (unselect, cycle) => { //copy of onSelect
-        // const store = this.props.store
-        // store.bodies.sendbloom.sleeping = false
-        // store.static = false
+    mount = (unselect) => { 
+        const store = this.props.store
+        store.bodies.sendbloom.allowSleep = false
+        store.bodies.sendbloom.sleeping = false
+        store.static = false
 
         const modal = this.refs.modal
         const shadow = this.refs.modalshadow
@@ -100,18 +97,30 @@ export default class Modal extends React.Component{
         }
         this.selectTweens = [
             twn('scale', modalScale[0], modalScale[1], 
-                400, modal.scale, 
-                {delay: !unselect? 300: 0, onComplete: reset}
+                550, modal.scale, 
+                {onComplete: reset}
             ),
             twn('opacity', {opacity: shadow.material.opacity}, 
-                {opacity: unselect? 0: 1}, 400, shadow.material, 
-                {delay: !unselect?100:0, onStart: !unselect?()=>{shadow.visible=true}:null,
+                {opacity: unselect? 0: 1}, 450, shadow.material, 
+                {onStart: !unselect?()=>{shadow.visible=true}:null,
                 onComplete: unselect?()=>{shadow.visible=false} : null }
             )
         ]
 
-        if(!unselect) this.timedSwitch = setTimeout(this.switchBody, 3700) //3s idle
+        if(!unselect) this.timedSwitch = setTimeout(this.switchBody, 1450)
         else if(this.timedSwitch) clearTimeout(this.timedSwitch)
+    }
+
+    unmount = () => {this.mount(true)}
+
+    cycleOut = () => {
+        const shadow = this.refs.modalshadow
+        const content = this.refs.nonshadowcontents
+        this.cycleOutTweens = [
+            twn('position', {y: content.position.y}, {y: 0.4}, 300, content.position),
+            twn('opacity', {opacity:1}, {opacity: 0}, 250, content, {traverseOpacity: true}),
+            twn('opacity', {opacity:1}, {opacity: 0}, 250, shadow.material),
+        ]
     }
 
     switchBody = (reset) => {
@@ -151,7 +160,7 @@ export default class Modal extends React.Component{
                 twn('scale', {x:topright.scale.x}, {x: 1}, 225, topright.scale, {delay: 450}),
                 twn('position', {z:xButton.position.z}, {z: 0.03}, 250, xButton.position, {delay: 650}),
                 twn('position', {z:exittext.position.z}, {z: 0.06}, 250, exittext.position, 
-                    {delay: 650, onComplete: ()=>{setTimeout(this.cycleOut, 2000)}}
+                    {delay: 650}
                 )
             ]
             // this.timedCycle = setTimeout(this.)
@@ -174,19 +183,6 @@ export default class Modal extends React.Component{
         }
     }
 
-    cycleOut = () =>{
-        //onSelect(true) is for modal contents going away altogether (sendbloom deselected)
-            //it reverses the "mount" animation for the modal
-        //cycleOut is for modal going away to make room for bottom bar / another augment
-            //it goes up or in some direction without scaling
-        //probably behooves me to combine these methods...but later. 
-
-        // this.onSelect(true)
-        // this.props.onCycle()
-
-        
-        
-    }
 
     render(){
         const textItems = [0.168,0.027,-0.115,-0.257].map((yPos,i)=>{
@@ -214,15 +210,6 @@ export default class Modal extends React.Component{
                     <texture resourceId = "party" url = {require('./party.png')}/> 
                     <texture resourceId = "partytext" url = {require('./partytext.png')}/> 
                 </resources>
-
-
-                <group ref = "sidebar">
-
-                </group>
-
-                <group ref = "popover">
-
-                </group>
 
               <group ref = "modal" position = {v3(-0, 0.15, 0.85)} >
                 
@@ -264,7 +251,7 @@ export default class Modal extends React.Component{
 
                         <group ref = "party" position = {v3(1.15,-0.05,.015)}>
                             <group ref = "partymodal">
-                            <mesh position = {v3(0,0.125,0.058)}>
+                            <mesh position = {v3(0,0.125,0.06)}>
                                 <planeBufferGeometry width = {0.23} height = {0.23} />
                                 <meshBasicMaterial transparent>
                                     <textureResource resourceId = "party" />

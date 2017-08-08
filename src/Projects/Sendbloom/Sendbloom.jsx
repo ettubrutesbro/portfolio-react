@@ -86,15 +86,16 @@ export class SendbloomModel extends React.Component{
         this.logoScaleTween = twn('scale', logoScales[0], logoScales[1], 250, logo.scale, null, !unselect? 150:0)
        
         // begin animation loop for subcomponents
-        console.log('begin animation loop')
-            this.refs.modal.onSelect(unselect)
+            // this.refs.modal.onSelect(unselect)
 
 
         if(!unselect){
             this.activeelement = 1
             this.animationLoop = setInterval(this.cycle, 3000)
+            this.refs.modal.mount()
         } 
         if(unselect){
+
             this.activeelement = null
             console.log('clearing loop')
             clearInterval(this.animationLoop)
@@ -105,9 +106,12 @@ export class SendbloomModel extends React.Component{
     @action
     cycle = () => {
         const elements = ['modal', 'bottombar', 'sidebar', 'popover']
+        this.refs[elements[this.activeelement-1]].cycleOut()
         if(this.activeelement < 4) this.activeelement++
         else this.activeelement = 1
         console.log('new active element is ' +elements[this.activeelement-1] +'('+ this.activeelement+')')
+        this.refs[elements[this.activeelement-1]].mount()
+
     }
 
     restoreNormal = () => this.onSelect(true)
@@ -118,6 +122,7 @@ export class SendbloomModel extends React.Component{
     }
 
     render(){
+        const store = this.props.store
         const navItemPositions = [0, 0.2, 0.2925, .5525]
         const navItems = [0.15, 0.04, 0.095, 0.22].map((width,i)=>{
             return(
@@ -160,16 +165,10 @@ export class SendbloomModel extends React.Component{
                     </group>
                 </group>
 
-                    <Modal 
-                        ref = "modal" 
-                        store = {this.props.store} 
-                        cycle = {this.cycleAugments}
-                    />
-                    <BottomBar
-                        ref = "bottombar"
-                    />
-                    <Sidebar />
-                    <Popover />
+                    <Modal ref = "modal" store = {store} />
+                    <BottomBar ref = "bottombar" store = {store} />
+                    <Sidebar ref = "sidebar" store = {store} />
+                    <Popover ref = "popover"  store = {store} />
 
             </group>
         )
