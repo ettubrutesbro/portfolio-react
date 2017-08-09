@@ -81,11 +81,14 @@ export class SendbloomModel extends React.Component{
         ]
         const fade = [{opacity: !unselect? 0 : 1}, {opacity: !unselect? 1 : 0}]
         const navPos = [{x: nav.position.x, y: nav.position.y, z: nav.position.z} , !unselect? {x: .115, y: 0, z: 0} : {x: 0, y: 0, z: 0}]
-
-        this.navitemTween = twn('position', navPos[0], navPos[1], 300, this.refs.navitems.position, null, !unselect? 150:0)
-        this.prospectsTween = twn('opacity', {opacity: prospects.material.opacity}, fade[1], 400, prospects.material, null, null)
-        this.logoPosTween = twn('position', logoPositions[0], logoPositions[1], 250, logo.position, null, !unselect? 150:0)
-        this.logoScaleTween = twn('scale', logoScales[0], logoScales[1], 250, logo.scale, null, !unselect? 150:0)
+        this.selectTweens = [
+            twn('position', navPos[0], navPos[1], 300, this.refs.navitems.position),
+            twn('opacity', {opacity: prospects.material.opacity}, fade[1], 400, prospects.material, {
+                onStart: ()=>{prospects.visible = true}
+            }),
+            twn('position', logoPositions[0], logoPositions[1], 250, logo.position),
+            twn('scale', logoScales[0], logoScales[1], 250, logo.scale,)
+        ]
        
         // begin animation loop for subcomponents
             // this.refs.modal.onSelect(unselect)
@@ -184,8 +187,8 @@ export class SendbloomInfo extends React.Component{
     render(){
         return(
             <div className = {styles.blurb}>
-                When I started working at Sendbloom ____ ago, I was looking for a short-term job to make some money at while finishing my portfolio at night. I didn't think I'd thrive
-                 doing enterprise sales software UX, but I've been having fun growing as a designer and developer in my tenure. 
+                When I met the people of Sendbloom ____ ago, I was just looking for a short-term job; a source of income while I built furniture in my backyard and worked on my portfolio.
+                 I really didn't think I'd thrive doing enterprise sales software UX, but I've been surprised since I started -- this has been my longest tenure at any tech company, and I've been enjoying great growth as a designer and developer. 
             </div>
         )
     }
