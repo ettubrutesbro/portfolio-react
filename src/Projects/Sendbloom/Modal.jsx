@@ -57,13 +57,18 @@ export default class Modal extends React.Component{
             {faces: [10,11,14,15,24,25], color: 0x3b8bb8},
         ])
 
-        makeColorBox('sendbloom', this.refs.aptecxleft, [1.0918,0.12,0.114], windowcolor)
-        makeColorBox('sendbloom', this.refs.aptecxright, [0.22,0.12,0.114], windowcolor)
+        makeColorBox('sendbloom', this.refs.aptecxleft, [1.0918,0.123,0.114], windowcolor)
+        makeColorBox('sendbloom', this.refs.aptecxright, [0.23,0.123,0.114], windowcolor)
         makeColorBox('sendbloom', this.refs.partymodal, [1.195, 0.605, 0.11], windowcolor)          
 
         makeColorBox('sendbloom', this.refs.exittext2, [0.025,0.0215,0.015], actionblue)
         makeColorBox('sendbloom', this.refs.exittext3, [0.072,0.0215,0.015], actionblue)
 
+        this.reset()
+
+    }
+
+    reset = () =>{
         this.refs.aptecx.position.set(0,0,-0.05)
         this.refs.aptecxright.scale.set(0.001,1,1)
         this.refs.aptecxright.visible = false
@@ -72,9 +77,15 @@ export default class Modal extends React.Component{
         this.refs.modal.scale.set(1,0.01,1)
         this.refs.modalshadow.material.opacity = 0
         this.refs.modalshadow.visible = false
+        this.refs.nonshadowcontents.position.set(0,0,0)
+        this.refs.nonshadowcontents.scale.set(1,1,1)
 
+        this.refs.aptecbody.visible = true
     }
+
     mount = (unselect) => { 
+        this.reset()
+
         const store = this.props.store
         store.bodies.sendbloom.allowSleep = false
         store.bodies.sendbloom.sleeping = false
@@ -93,7 +104,6 @@ export default class Modal extends React.Component{
         this.refs.modal.visible = true
         if(this.selectTweens){
             this.selectTweens.forEach((tween)=> tween.stop())
-            //TODO: this is stopping the tweens i want from switchBody(disappear)
         }
         this.selectTweens = [
             twn('scale', modalScale[0], modalScale[1], 
@@ -107,18 +117,37 @@ export default class Modal extends React.Component{
             )
         ]
 
-        if(!unselect) this.timedSwitch = setTimeout(this.switchBody, 1450)
+        if(!unselect) this.timedSwitch = setTimeout(this.switchBody, 1350)
         else if(this.timedSwitch) clearTimeout(this.timedSwitch)
     }
 
-    unmount = () => {this.mount(true)}
+    unmountSendbloom = () => {this.mount(true)}
+
+
+    cycleIn(){
+        this.mount()
+        // const store = this.props.store
+        // const content = this.refs.nonshadowcontents
+        // store.bodies.sendbloom.allowSleep = false
+        // store.bodies.sendbloom.sleeping = false
+        // store.static = false
+
+        // content.visible = true
+        // this.cycleTweens = [
+        //     twn('position',{y:0})
+        // ]
+    }
 
     cycleOut = () => {
         const shadow = this.refs.modalshadow
         const content = this.refs.nonshadowcontents
-        this.cycleOutTweens = [
-            twn('position', {y: content.position.y}, {y: 0.4}, 300, content.position),
-            twn('opacity', {opacity:1}, {opacity: 0}, 250, content, {traverseOpacity: true}),
+        const modal = this.refs.modal
+        this.cycleTweens = [
+            twn('position', {y: 0}, {y: 0.42}, 300, content.position),
+            twn('scale', {y: content.scale.y}, {y: 0.001}, 350, content.scale, {onComplete: ()=>{
+                modal.visible = false
+                this.switchBody(true)
+            }}),
             twn('opacity', {opacity:1}, {opacity: 0}, 250, shadow.material),
         ]
     }
@@ -143,19 +172,20 @@ export default class Modal extends React.Component{
         }
 
         if(!reset){
-            const listPos = [{x: list.position.x}, {x: -1.3 }]
-            const partyPos = [{x: partymodal.position.x}, {x: -1.187 }]
+            console.log(list.position.x, partymodal.position.x)
+            const listPos = []
+            const partyPos = []
             this.bodyTweens = [
                 //move / fade aptecbody
-                twn('position', listPos[0], listPos[1], 425, list.position),
+                twn('position', {x: 0}, {x: -1.3 }, 425, list.position),
                 twn('opacity', {opacity: 1}, {opacity: 0}, 425, list, {onComplete: ()=>{list.visible=false}, traverseOpacity: true}),
                 //move / fade party
                 twn('opacity', {opacity: 0}, {opacity: 1}, 425, partyobj, {onStart: ()=>{partyobj.visible=true}, traverseOpacity: true}),
-                twn('position', partyPos[0], partyPos[1], 425, partymodal.position ),
+                twn('position', {x:0}, {x: -1.187 }, 425, partymodal.position ),
                 //slot and button movements
                 twn('position', {x:topleft.position.x}, {x: -0.11}, 225, topleft.position, {delay: 450, onComplete: ()=>{store.bodies.sendbloom.allowSleep = true}}),
-                twn('position', {x:topright.position.x}, {x: -0.1075}, 225, topright.position, {delay: 450, onStart: ()=>{topright.visible=true}}),
-                twn('position', {x:xSlot.position.x}, {x: -0.2}, 225, xSlot.position, {delay: 450}),
+                twn('position', {x:topright.position.x}, {x: -0.1125}, 225, topright.position, {delay: 450, onStart: ()=>{topright.visible=true}}),
+                twn('position', {x:xSlot.position.x}, {x: -0.19}, 225, xSlot.position, {delay: 450}),
                 twn('scale', {x:topleft.scale.x}, {x: 0.8}, 225, topleft.scale, {delay: 450}),
                 twn('scale', {x:topright.scale.x}, {x: 1}, 225, topright.scale, {delay: 450}),
                 twn('position', {z:xButton.position.z}, {z: 0.03}, 250, xButton.position, {delay: 650}),
@@ -166,6 +196,8 @@ export default class Modal extends React.Component{
             // this.timedCycle = setTimeout(this.)
         }
         else{
+
+            console.log('resettage')
             list.position.set(0,0,0)
             partymodal.position.set(0,0,0)
             topleft.position.set(0,0,0)
@@ -235,11 +267,11 @@ export default class Modal extends React.Component{
                                 <meshBasicMaterial color = {0xfbfbfc} transparent/>
                             </mesh>
                         </group>
-                        <group ref = "aptecxleft" position = {v3(-0.089,0.3125,.0165)} />
+                        <group ref = "aptecxleft" position = {v3(-0.089,0.31,.0165)} />
                         <group ref = "aptecslot">
                             <group ref = "aptecx" />
                         </group>
-                        <group position = {v3(0.555,0.3125,.0165)}>
+                        <group position = {v3(0.555,0.31,.0165)}>
                             <group ref = "aptecxright">
                                 <group ref = "exittext">
                                     <group ref = "exittext2" position = {v3(-0.0875,-0.01,0)} />

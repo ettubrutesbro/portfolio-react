@@ -191,9 +191,9 @@ window.world=physics
                     }
                 }
                 if(physics.bodies[name].sleeping){ 
-                    console.log(name)
+                    // console.log(name)
                     numberOfSleepingBodies++
-                    console.log(numberOfSleepingBodies + '/' + projects.length + ' asleep')
+                    // console.log(numberOfSleepingBodies + '/' + projects.length + ' asleep')
                 }
                 
                 

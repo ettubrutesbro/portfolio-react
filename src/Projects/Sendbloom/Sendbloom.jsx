@@ -61,6 +61,8 @@ export class SendbloomModel extends React.Component{
             {front: 0x3c647c, left: 0x25485e, bottom: 0x25485e, right: 0x25485e,
                 top: 0x8397a7, back: 0x3c647c}
         )
+
+        this.refs.prospects.visible = false
     }
     @action
     onSelect = (unselect) => {
@@ -95,9 +97,9 @@ export class SendbloomModel extends React.Component{
             this.refs.modal.mount()
         } 
         if(unselect){
-
+            const elements = ['modal', 'bottombar', 'sidebar', 'popover']
+            this.refs[elements[this.activeelement-1]].sendbloomUnmount()
             this.activeelement = null
-            console.log('clearing loop')
             clearInterval(this.animationLoop)
         }
 
@@ -110,7 +112,7 @@ export class SendbloomModel extends React.Component{
         if(this.activeelement < 4) this.activeelement++
         else this.activeelement = 1
         console.log('new active element is ' +elements[this.activeelement-1] +'('+ this.activeelement+')')
-        this.refs[elements[this.activeelement-1]].mount()
+        this.refs[elements[this.activeelement-1]].cycleIn()
 
     }
 
@@ -149,8 +151,8 @@ export class SendbloomModel extends React.Component{
                 />
                    
                 <group ref = "window">
-                    <mesh name = "sendbloom" ref = "prospects" position = {v3(0,0,0.08)}>
-                        <planeBufferGeometry width = {1.6} height = {0.81} />
+                    <mesh name = "sendbloom" ref = "prospects" position = {v3(0,0.01,0.08)}>
+                        <planeBufferGeometry width = {1.575} height = {0.8} />
                         <meshBasicMaterial opacity = {0} transparent >
                             <textureResource resourceId = "prospects" />
                         </meshBasicMaterial>
@@ -175,13 +177,16 @@ export class SendbloomModel extends React.Component{
     }
 }
 
+
+import styles from './Sendbloom.css'
+
 export class SendbloomInfo extends React.Component{
     render(){
         return(
-            <div>
-                When I started working at Sendbloom ____ ago, I was looking for a short-term job to make some money while I finished my portfolio at nights. I didn't believe I'd thrive
-                 working on enterprise sales software, but I've been pleased by my growth as a designer/developer in my tenure, which has long exceeded the initially-agreed-upon 3 months. 
-                </div>
+            <div className = {styles.blurb}>
+                When I started working at Sendbloom ____ ago, I was looking for a short-term job to make some money at while finishing my portfolio at night. I didn't think I'd thrive
+                 doing enterprise sales software UX, but I've been having fun growing as a designer and developer in my tenure. 
+            </div>
         )
     }
 }

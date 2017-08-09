@@ -51,7 +51,8 @@ export function makeColorMesh(name, groupref, geometry, faceColorArray, defaultO
         let it = 0
         while(!match){ //provided lo-hi range to apply a color to
             if(!faceColorArray[it]){ //error?
-                colors[i] = new THREE.MeshBasicMaterial({color: 0xff0000, opacity: defaultOpacity===0?0:1, transparent: true})
+                colors[i] = new THREE.MeshNormalMaterial({opacity: defaultOpacity===0?0:1, transparent: true})
+                // colors[i] = new THREE.MeshBasicMaterial({color: 0xff0000, opacity: defaultOpacity===0?0:1, transparent: true})
                 match = true
                 break
             }
@@ -90,4 +91,14 @@ export function makeColorBox(name, groupref, dims, colors, defaultOpacity){
         {faces: [8,9], color: colors.front},
         {faces: [10,11], color: colors.back},
     ], defaultOpacity)
+}
+
+export function stopAllTweens(tweenArray){
+    if(!tweenArray) return
+    if(!Array.isArray(tweenArray)) return
+    else{
+        tweenArray.forEach((tween)=>{
+            tween.stop()
+        })    
+    }
 }
