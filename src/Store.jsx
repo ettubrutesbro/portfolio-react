@@ -33,7 +33,7 @@ class Debug{
     @observable spotlight = true
     @observable runWorld = true
     @observable physicsMeshes = true
-    @observable fps = true
+    @observable fps = false
 }
 
 class ThreePhysicsStore{

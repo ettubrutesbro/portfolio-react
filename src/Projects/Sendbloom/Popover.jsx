@@ -7,13 +7,20 @@ export default class Popover extends React.Component{
     componentDidMount(){
         const windowcolor = {front: 0xededed, left:0xccd2d6, bottom: 0xededed, right: 0xededed, top: 0xfbfbfc, back: 0xededed}
         
-        makeColorBox('popover', this.refs.popover, [0.375, 0.35, 0.04], windowcolor)
+        makeColorBox('popover', this.refs.popover, [0.6, 0.3, 0.04], windowcolor)
+        
+        
+    }
+
+    reset(){
         this.refs.popover.scale.set(0.001,0.001, 0.25)
-        this.refs.popover.position.set(0.45,0.175, 0.2)
+        this.refs.popover.position.set(0.15,0.175, 0.2)
         this.refs.popover.visible = false
     }
 
     cycleIn(){
+        this.reset()
+
         const store = this.props.store
         const popover = this.refs.popover
         store.bodies.sendbloom.allowSleep = false
@@ -23,11 +30,26 @@ export default class Popover extends React.Component{
         this.refs.popover.visible = true
 
         this.popoverTweens = [
-            twn('position', {x:.63, y:.35, z:0.2}, {x:.45,y:.175,z:0.2}, 250, popover.position),
-            twn('scale', {x: 0.001, y: 0.001, z:0.25}, {x:1,y:1,z:1}, 250, popover.scale)
+            twn('position', {x:.63, y:.35, z:0.2}, {x:.45,y:.175,z:0.2}, 200, popover.position),
+            twn('scale', {x: 0.001, y: 0.001, z:0.25}, {x:1,y:1,z:1}, 200, popover.scale)
         ]
 
+        //TODO: these get interrupted, wyd?
+        setTimeout(()=>{
+            this.transformTweens = [
+                twn('position', {x:.45}, {x:.6}, 200, popover.position),
+                twn('scale', {x: 1}, {x:.5}, 200, popover.scale)
+            ]
+        }, 1000)
+        setTimeout(()=>{
+            this.transformTweens = [
+                twn('position', {x:.6, y:.175}, {x:.525, y: .025}, 250, popover.position),
+                twn('scale', {x: .5, y: 1}, {x:.75, y: 2}, 250, popover.scale)
+            ]
+        }, 1800)
+
     }
+
     cycleOut(){
         const store = this.props.store
         store.bodies.sendbloom.allowSleep = false

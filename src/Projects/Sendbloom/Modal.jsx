@@ -143,7 +143,7 @@ export default class Modal extends React.Component{
         const content = this.refs.nonshadowcontents
         const modal = this.refs.modal
         this.cycleTweens = [
-            twn('position', {y: 0}, {y: 0.42}, 300, content.position),
+            twn('position', {y: 0}, {y: 0.325}, 300, content.position),
             twn('scale', {y: content.scale.y}, {y: 0.001}, 350, content.scale, {onComplete: ()=>{
                 modal.visible = false
                 this.switchBody(true)

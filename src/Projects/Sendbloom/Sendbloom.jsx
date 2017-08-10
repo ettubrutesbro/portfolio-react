@@ -51,6 +51,7 @@ export class SendbloomModel extends React.Component{
         }
     }
     componentDidMount = () =>{
+        
         this.makeLogoMesh()
         // this.makeModalMesh()
         makeColorBox('sendbloom', this.refs.window, [1.6, 0.8, 0.15], 
@@ -61,8 +62,19 @@ export class SendbloomModel extends React.Component{
             {front: 0x3c647c, left: 0x25485e, bottom: 0x25485e, right: 0x25485e,
                 top: 0x8397a7, back: 0x3c647c}
         )
+        makeColorBox('sendbloom', this.refs.pointer, [.05,.05,.05], {
+            front: 0xff0000, left: 0xff0000, bottom: 0xff0000, right: 0xff0000,
+            top: 0xff0000, back: 0xff0000
+        })
+
+        // this.refs.pointer.position.set(0.39,0.29,0.95) //modal1
+        // this.refs.pointer.position.set(0.42, 0.425, 0.95) //modal2
+        // this.refs.pointer.position.set(-0.57, 0.075, 0.1) //bottombar1
+        // this.refs.pointer.position.set(0.65, -0.37, 0.2) //bottombar2?(button)
+        // this.refs.pointer.position.set(.5, -0.2, 0.22) //bottombar2(textfield)
 
         this.refs.prospects.visible = false
+
     }
     @action
     onSelect = (unselect) => {
@@ -101,7 +113,7 @@ export class SendbloomModel extends React.Component{
         } 
         if(unselect){
             const elements = ['modal', 'bottombar', 'sidebar', 'popover']
-            this.refs[elements[this.activeelement-1]].sendbloomUnmount()
+            this.refs[elements[this.activeelement-1]].cycleOut()
             this.activeelement = null
             clearInterval(this.animationLoop)
         }
@@ -116,6 +128,7 @@ export class SendbloomModel extends React.Component{
         else this.activeelement = 1
         console.log('new active element is ' +elements[this.activeelement-1] +'('+ this.activeelement+')')
         this.refs[elements[this.activeelement-1]].cycleIn()
+        //pointer animation
 
     }
 
@@ -174,6 +187,8 @@ export class SendbloomModel extends React.Component{
                     <BottomBar ref = "bottombar" store = {store} />
                     <Sidebar ref = "sidebar" store = {store} />
                     <Popover ref = "popover"  store = {store} />
+
+                <group ref = "pointer" />
 
             </group>
         )
