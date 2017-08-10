@@ -35,13 +35,13 @@ export default class Popover extends React.Component{
         ]
 
         //TODO: these get interrupted, wyd?
-        setTimeout(()=>{
+        this.timedTransform = setTimeout(()=>{
             this.transformTweens = [
                 twn('position', {x:.45}, {x:.6}, 200, popover.position),
                 twn('scale', {x: 1}, {x:.5}, 200, popover.scale)
             ]
         }, 1000)
-        setTimeout(()=>{
+        this.timedTransform2 = setTimeout(()=>{
             this.transformTweens = [
                 twn('position', {x:.6, y:.175}, {x:.525, y: .025}, 250, popover.position),
                 twn('scale', {x: .5, y: 1}, {x:.75, y: 2}, 250, popover.scale)
@@ -52,10 +52,21 @@ export default class Popover extends React.Component{
 
     cycleOut(){
         const store = this.props.store
+        const popover = this.refs.popover
         store.bodies.sendbloom.allowSleep = false
         store.bodies.sendbloom.sleeping = false
         store.static = false
-        this.refs.popover.visible = false
+        // this.refs.popover.visible = false
+
+        if(this.timedTransform) clearTimeout(this.timedTransform)
+        if(this.timedTransform2) clearTimeout(this.timedTransform2)
+        //TODO: what about stoppping transformTweens set inside of the timeouts???
+
+        this.popoverTweens = [
+            twn('position', {x:popover.position.x, y:popover.position.y, z:popover.position.z}, {x:.63, y:.35, z:0.2},  300, popover.position),
+            twn('scale', {x:popover.scale.x, y:popover.scale.y, z: popover.scale.z}, {x: 0.001, y: 0.001, z:0.25}, 300, popover.scale)
+        ]
+
     }
 
     render(){

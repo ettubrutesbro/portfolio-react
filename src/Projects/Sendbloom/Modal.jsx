@@ -81,6 +81,9 @@ export default class Modal extends React.Component{
         this.refs.nonshadowcontents.scale.set(1,1,1)
 
         this.refs.aptecbody.visible = true
+
+
+        this.refs.exittext.position.set(0.015,0,0)
     }
 
     mount = (unselect) => { 
@@ -206,7 +209,7 @@ export default class Modal extends React.Component{
             topleft.scale.set(1,1,1)
             topright.scale.set(0.001,1,1)
             xButton.position.set(0,0,-0.05)
-            exittext.position.set(0,0,0)
+            exittext.position.set(0.015,0,0)
             this.bodyTweens = [
                 twn('opacity', {opacity: 0}, {opacity: 1}, 10, list, {onStart: ()=>{list.visible=true}, traverseOpacity: true}),
                 twn('opacity', {opacity: 1}, {opacity: 0}, 10, partyobj, {onComplete: ()=>{partyobj.visible=false}, traverseOpacity: true, onComplete: () => {store.bodies.sendbloom.allowSleep = true}}),
