@@ -62,10 +62,7 @@ export class SendbloomModel extends React.Component{
             {front: 0x3c647c, left: 0x25485e, bottom: 0x25485e, right: 0x25485e,
                 top: 0x8397a7, back: 0x3c647c}
         )
-        makeColorBox('sendbloom', this.refs.pointer, [.05,.05,.05], {
-            front: 0xff0000, left: 0xff0000, bottom: 0xff0000, right: 0xff0000,
-            top: 0xff0000, back: 0xff0000
-        })
+
 
         // this.refs.pointer.position.set(0.39,0.29,0.95) //modal1
         // this.refs.pointer.position.set(0.42, 0.425, 0.95) //modal2
@@ -188,7 +185,6 @@ export class SendbloomModel extends React.Component{
                     <Sidebar ref = "sidebar" store = {store} />
                     <Popover ref = "popover"  store = {store} />
 
-                <group ref = "pointer" />
 
             </group>
         )

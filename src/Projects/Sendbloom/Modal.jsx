@@ -116,7 +116,7 @@ export default class Modal extends React.Component{
             twn('opacity', {opacity: shadow.material.opacity}, 
                 {opacity: unselect? 0: 1}, 450, shadow.material, 
                 {onStart: !unselect?()=>{shadow.visible=true}:null,
-                onComplete: unselect?()=>{shadow.visible=false} : null }
+                onComplete: unselect?()=>{shadow.visible=false; store.bodies.sendbloom.allowSleep = true} : ()=>{store.bodies.sendbloom.allowSleep = true} }
             )
         ]
 
@@ -212,7 +212,7 @@ export default class Modal extends React.Component{
             exittext.position.set(0.015,0,0)
             this.bodyTweens = [
                 twn('opacity', {opacity: 0}, {opacity: 1}, 10, list, {onStart: ()=>{list.visible=true}, traverseOpacity: true}),
-                twn('opacity', {opacity: 1}, {opacity: 0}, 10, partyobj, {onComplete: ()=>{partyobj.visible=false}, traverseOpacity: true, onComplete: () => {store.bodies.sendbloom.allowSleep = true}}),
+                twn('opacity', {opacity: 1}, {opacity: 0}, 10, partyobj, {onComplete: ()=>{partyobj.visible=false}, traverseOpacity: true}),
             ]
 
         }
@@ -261,11 +261,11 @@ export default class Modal extends React.Component{
                             <group ref = "body" />
                             <group ref = "modalbutton" position = {v3(0.425,0.175,0.05)} />
                             {textItems}
-                            <mesh name = "sendbloom" ref = "modalbuttontext" position = {v3(0.395,0.175,0.059)} >
+                            <mesh name = "sendbloom" ref = "modalbuttontext" position = {v3(0.395,0.175,0.062)} >
                                 <planeBufferGeometry width = {0.057} height = {0.0175} />
                                 <meshBasicMaterial color = {0xfbfbfc} transparent/>
                             </mesh>                   
-                            <mesh name = "sendbloom" ref = "modalbuttontext" position = {v3(0.455,0.175,0.059)} >
+                            <mesh name = "sendbloom" ref = "modalbuttontext" position = {v3(0.455,0.175,0.062)} >
                                 <planeBufferGeometry width = {0.02} height = {0.0175} />
                                 <meshBasicMaterial color = {0xfbfbfc} transparent/>
                             </mesh>

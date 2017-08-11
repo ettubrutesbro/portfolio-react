@@ -102,3 +102,7 @@ export function stopAllTweens(tweenArray){
         })    
     }
 }
+
+
+export const rads = (degs) => {return degs*(Math.PI/180) }
+export const degs = (rads) => { return rads*(180/Math.PI) }

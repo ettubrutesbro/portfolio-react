@@ -1,7 +1,7 @@
 import React from 'react'
 import * as THREE from 'three'
 
-import {v3, twn, makeColorBox, makeColorMesh} from '../../utilities.js'
+import {v3, twn, makeColorBox, makeColorMesh, rads} from '../../utilities.js'
 
 export default class BottomBar extends React.Component{
     constructor(props, context){
@@ -17,9 +17,12 @@ export default class BottomBar extends React.Component{
         
         this.reset()
         makeColorBox('sendbloom', this.refs.button, [0.3, 0.06, 0.05], actionblue)
+        makeColorBox('sendbloom', this.refs.pointer, [0.05, 0.05, 0.05], actionblue, 0)
         makeColorMesh('sendbloom', this.refs.message, this.dialog.geometry, [
 
         ], 0)
+        const cyl = new THREE.CylinderGeometry(0.03,0.03,0.1,10)
+        makeColorMesh('sendbloom', this.refs.selectcylinder1, cyl, [])
 
     }
 
@@ -39,6 +42,15 @@ export default class BottomBar extends React.Component{
         this.refs.button.visible = true
         this.refs.message.scale.set(1,0.001,1)
         this.refs.message.visible = false
+
+        // this.refs.pointer.position.set(-0.57, 0.075, 0.1) //bottombar1
+        this.refs.pointer.position.set(-.65, .25, 0.01)
+        this.refs.pointer.visible = false
+
+        this.refs.selectcylinder1.position.set(-.57,.25,0.01)
+        // this.refs.pointer.position.set(.5, -0.2, 0.22) //bottombar2(textfield)
+        // this.refs.pointer.position.set(0.5, .2, 0.13)
+
         // const store = this.props.store
         // store.bodies.sendbloom.allowSleep = true
     }
@@ -51,6 +63,7 @@ export default class BottomBar extends React.Component{
         const bottombar = this.refs.bottombar
         const button = this.refs.button
         const message = this.refs.message
+        const pointer = this.refs.pointer
         store.bodies.sendbloom.allowSleep = false
         store.bodies.sendbloom.sleeping = false
         store.static = false
@@ -60,6 +73,12 @@ export default class BottomBar extends React.Component{
             twn('position', {y: -0.4}, {y: -0.35}, 250, bottombar.position),
             twn('opacity', {opacity: 0}, {opacity: 1}, 250, bottombar, {traverseOpacity: true}),
             twn('scale', {y: 0.001}, {y: 1}, 250, bottombar.scale),
+            //pointer moves from prospect check to textfield
+            twn('position', {x:-.65,y:.25},{x:-.57, y:.4075}, 175, pointer.position, {delay: 425, onStart: ()=>{
+                pointer.visible = true
+            }}),
+            twn('position', {x:-.57, y:.4075,z:.01}, {x:.5,y:.2,z:.13}, 300, pointer.position, {delay: 1000}),
+
             //bottom and speech bubble thing come out
             twn('position',{z:0.01},{z:0.055},250,button.position,{delay:350}),
             twn('position',{y:0.07},{y:0.12},250,message.position,{delay:500, onStart: ()=>{
@@ -83,9 +102,9 @@ export default class BottomBar extends React.Component{
             twn('position', {z:0.055},{z:0.01},175,button.position, {delay: 50, onComplete: () => {button.visible = false}}),
             twn('position', {y:0.12},{y:0.07},175,message.position, {onComplete: () => {message.visible = false}}),
             twn('scale', {y: 1}, {y: 0.001}, 175, message.scale),
-            twn('position', {x: bottombar.position.x}, {x: 0.8}, 400, bottombar.position, {delay: 175}),
+            twn('position', {x: bottombar.position.x}, {x: 0.8}, 400, bottombar.position, {delay: 150}),
             twn('opacity', {opacity: 1}, {opacity: 0}, 250, bottombar, {traverseOpacity: true, delay: 200}),
-            twn('scale', {x: 1}, {x: 0.0001}, 400, bottombar.scale, {delay: 175, onComplete: ()=>{
+            twn('scale', {x: 1}, {x: 0.0001}, 400, bottombar.scale, {delay: 150, onComplete: ()=>{
                 bottombar.visible = false
             }}),
         ]
@@ -96,9 +115,12 @@ export default class BottomBar extends React.Component{
     render(){
         return(
             <group ref = "bottombar">
-
                 <group ref = "button" />
                 <group ref = "message" />
+                <group ref = "pointer" />
+
+                <group ref = "selectcylinder1" rotation = {new THREE.Euler(rads(90),0,0)}/>
+                <group ref = "selectcylinder2" />
             </group>
 
         )
