@@ -115,6 +115,14 @@ export default class BottomBar extends React.Component{
     render(){
         return(
             <group ref = "bottombar">
+                <mesh ref = "shadow"
+                    position = {v3(0,0.15,0.00)}
+                >
+                    <planeBufferGeometry 
+                        width = {1.6} height = {0.2} 
+                    />
+                    <meshBasicMaterial color = {0x000000} transparent />
+                </mesh>
                 <group ref = "button" />
                 <group ref = "message" />
                 <group ref = "pointer" />
