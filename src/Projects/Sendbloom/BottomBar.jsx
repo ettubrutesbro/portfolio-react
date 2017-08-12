@@ -21,7 +21,7 @@ export default class BottomBar extends React.Component{
         makeColorMesh('sendbloom', this.refs.message, this.dialog.geometry, [
 
         ], 0)
-        const cyl = new THREE.CylinderGeometry(0.03,0.03,0.1,10)
+        const cyl = new THREE.CylinderGeometry(0.03,0.03,0.02,10)
         makeColorMesh('sendbloom', this.refs.selectcylinder1, cyl, [])
 
     }
@@ -47,7 +47,7 @@ export default class BottomBar extends React.Component{
         this.refs.pointer.position.set(-.65, .25, 0.01)
         this.refs.pointer.visible = false
 
-        this.refs.selectcylinder1.position.set(-.57,.25,0.01)
+        this.refs.selectcylinder1.position.set(-.58,.25,-0.01)
         // this.refs.pointer.position.set(.5, -0.2, 0.22) //bottombar2(textfield)
         // this.refs.pointer.position.set(0.5, .2, 0.13)
 
@@ -116,7 +116,7 @@ export default class BottomBar extends React.Component{
         return(
             <group ref = "bottombar">
                 <mesh ref = "shadow"
-                    position = {v3(0,0.15,0.00)}
+                    position = {v3(-0.005,0.15,0.00)}
                 >
                     <planeBufferGeometry 
                         width = {1.6} height = {0.2} 
