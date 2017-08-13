@@ -1,6 +1,6 @@
 import React from 'react'
-import {findDOMNode} from 'react-dom'
-import {action, observable} from 'mobx'
+import { findDOMNode } from 'react-dom'
+import { action, observable } from 'mobx'
 // import {observer} from 'mobx-react'
 
 // import p2 from 'p2'
@@ -9,23 +9,24 @@ import ProjectHeap from './ProjectHeap/ProjectHeap'
 import styles from './Work.css'
 
 export default class Work extends React.Component {
-    componentDidMount(){
-       this.setWorkTop(findDOMNode(this.refs.section).offsetTop)
-    }
-    @action setWorkTop(value){
-        this.props.store.worktop = value
-    }
-    render(){
-      return(
-          <section ref = "section" className = {styles.work}>
-            <h2 className = {styles.titleblock} >My Work 2011-2017</h2>
-            <Test />
-          </section>
-        )
-      }
+  componentDidMount() {
+    this.setWorkTop(findDOMNode(this.refs.section).offsetTop)
+  }
+  @action
+  setWorkTop(value) {
+    this.props.store.worktop = value
+  }
+  render() {
+    return (
+      <section ref="section" className={styles.work}>
+        <h2 className={styles.titleblock}>My Work 2011-2017</h2>
+        <Test />
+      </section>
+    )
+  }
 }
 
-class Test extends React.Component{
+class Test extends React.Component {
   //p2.js or matter.js for physics
   //react-konva, react-pixi or react-canvas for rendering
 
@@ -44,20 +45,16 @@ class Test extends React.Component{
   // @observable timeStep = 1/60
 
   // drawbox(){
-    
+
   // }
 
-  componentDidMount(){
+  componentDidMount() {
     // this.circlebody.addShape(this.circleshape)
     // this.world.addBody(this.circlebody)
     // this.world.addBody(this.ground)
     // console.log(this.circlebody)
   }
-  render(){
-    return(
-      <div />
-    )
+  render() {
+    return <div />
   }
-
-
 }
