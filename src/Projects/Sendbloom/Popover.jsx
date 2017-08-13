@@ -1,9 +1,16 @@
 import React from 'react'
 import * as THREE from 'three'
 
+import {observable, action } from 'mobx'
+import {observer} from 'mobx-react'
+
 import { v3, twn, makeColorBox } from '../../utilities.js'
 
+@observer
 export default class Popover extends React.Component {
+
+  @observable shadowPos = {x: 0.15, y: 0.175, z: 0.2}
+
   componentDidMount() {
     const windowcolor = {
       front: 0xededed,
@@ -21,9 +28,11 @@ export default class Popover extends React.Component {
     this.refs.popover.scale.set(0.001, 0.001, 0.25)
     this.refs.popover.position.set(0.15, 0.175, 0.2)
     this.refs.popover.visible = false
+    // this.refs.shadow.children[0].position.set(0.15, 0.175, 0.11)
+    
 
-    this.refs.popovershadow.material.opacity = 0
-    console.log(this.refs.popovershadow.material.opacity)
+    // this.refs.popovershadow.material.opacity = 0
+    // console.log(this.refs.popovershadow.material.opacity)
   }
 
   cycleIn() {
@@ -51,18 +60,40 @@ export default class Popover extends React.Component {
         { x: 1, y: 1, z: 1 },
         200,
         popover.scale
-      ),
+      ),    
+      // twn(
+      //   'position',
+      //   { x: 0.63, y: 0.35, z: 0.2 },
+      //   { x: 0.45, y: 0.175, z: 0.2 },
+      //   200,
+      //   this.refs.shadow.children[0].position
+      // ),
+      // twn(
+      //   'scale',
+      //   { x: 0.001, y: 0.001, z: 0.25 },
+      //   { x: 1, y: 1, z: 1 },
+      //   200,
+      //   this.refs.shadow.children[0].scale
+      // ),
+      // twn(
+      //   'opacity',
+      //   { opacity: 0 },
+      //   { opacity: 1 },
+      //   1000,
+      //   this.refs.popovershadow.material
+      // ),
       twn(
-        'opacity',
-        { opacity: 0 },
-        { opacity: 1 },
-        1000,
-        this.refs.popovershadow.material
-      ),
+        'observablepos',
+        {x:0.15, y: 0.175, z: 0.2,}, 
+        {x:-0.15, y: 0, z: 0.12,},
+        200,
+        this.shadowPos 
+      )
     ]
 
     //TODO: these get interrupted, wyd?
     this.timedTransform = setTimeout(() => {
+      console.log(this.refs.shadow.children[0].material)
       this.transformTweens = [
         twn('position', { x: 0.45 }, { x: 0.6 }, 200, popover.position),
         twn('scale', { x: 1 }, { x: 0.5 }, 200, popover.scale),
@@ -118,12 +149,14 @@ export default class Popover extends React.Component {
         <resources>
           <texture resourceId = "shadow" url = {require('./shadow2.png')}/>
         </resources>
-        <mesh ref="popovershadow" position={v3(-0.05, -0.01, 0.11)}>
-          <planeGeometry width={0.7} height={0.375} />
-          <meshLambertMaterial transparent>
-            <textureResource resourceId = "shadow" />
-          </meshLambertMaterial>
-        </mesh>
+        <group ref = "shadow" position = {v3(this.shadowPos.x, this.shadowPos.y, this.shadowPos.z)}>
+          <mesh>
+            <planeGeometry width={0.7} height={0.375} />
+            <meshBasicMaterial transparent needsUpdate = {true} >
+              <textureResource resourceId = "shadow" />
+            </meshBasicMaterial>
+          </mesh>
+        </group>
         <group ref="popover" />
       </group>
     )

@@ -571,7 +571,7 @@ export default class ProjectHeap extends React.Component {
                 ref="camera"
                 fov={physics.fov}
                 aspect={this.props.width / this.props.height}
-                near={0.001}
+                near={1}
                 far={100}
                 position={this.cameraPosition}
                 quaternion={this.cameraQuaternion}
