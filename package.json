@@ -16,7 +16,8 @@
     "@tweenjs/tween.js": "16.7.0"
   },
   "devDependencies": {
-    "custom-react-scripts": "0.0.23"
+    "custom-react-scripts": "0.0.23",
+    "prettier": "^1.5.3"
   },
   "scripts": {
     "start": "react-scripts start",

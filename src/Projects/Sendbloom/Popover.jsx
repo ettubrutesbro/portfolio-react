@@ -16,6 +16,9 @@ export default class Popover extends React.Component{
         this.refs.popover.scale.set(0.001,0.001, 0.25)
         this.refs.popover.position.set(0.15,0.175, 0.2)
         this.refs.popover.visible = false
+
+        this.refs.popovershadow.material.opacity = 0
+        console.log(this.refs.popovershadow.material.opacity)
     }
 
     cycleIn(){
@@ -31,7 +34,8 @@ export default class Popover extends React.Component{
 
         this.popoverTweens = [
             twn('position', {x:.63, y:.35, z:0.2}, {x:.45,y:.175,z:0.2}, 200, popover.position),
-            twn('scale', {x: 0.001, y: 0.001, z:0.25}, {x:1,y:1,z:1}, 200, popover.scale)
+            twn('scale', {x: 0.001, y: 0.001, z:0.25}, {x:1,y:1,z:1}, 200, popover.scale),
+            twn('opacity', {opacity:0}, {opacity:1}, 1000, this.refs.popovershadow.material)
         ]
 
         //TODO: these get interrupted, wyd?
@@ -71,17 +75,14 @@ export default class Popover extends React.Component{
 
     render(){
         return(
-            <group ref = "popover">
-                <resources>
-                    <texture resourceId = "shadow2" url={require('./shadow2.png')} />
-                </resources>
-                <mesh ref = "shadow" position = {v3(-0.05,-0.01,-0.11)}>
-                    <planeBufferGeometry width = {0.7} height = {0.375} />
-                    <meshBasicMaterial transparent={true} opacity = {.8} >
-                        <textureResource resourceId = "shadow2" />
-                    </meshBasicMaterial> 
-                </mesh>
-
+            <group>
+                <mesh ref = "popovershadow" position = {v3(-0.05,-0.01,0.11)}>
+                        <planeGeometry width = {0.7} height = {0.375} />
+                        <meshLambertMaterial transparent >
+                            <texture url = {require('./shadow2.png')} transparent />
+                        </meshLambertMaterial>
+                    </mesh>
+                <group ref = "popover" />
             </group>
 
         )
