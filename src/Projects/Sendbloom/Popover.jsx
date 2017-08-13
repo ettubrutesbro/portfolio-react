@@ -115,10 +115,13 @@ export default class Popover extends React.Component {
   render() {
     return (
       <group>
+        <resources>
+          <texture resourceId = "shadow" url = {require('./shadow2.png')}/>
+        </resources>
         <mesh ref="popovershadow" position={v3(-0.05, -0.01, 0.11)}>
           <planeGeometry width={0.7} height={0.375} />
           <meshLambertMaterial transparent>
-            <texture url={require('./shadow2.png')} transparent />
+            <textureResource resourceId = "shadow" />
           </meshLambertMaterial>
         </mesh>
         <group ref="popover" />

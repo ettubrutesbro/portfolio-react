@@ -25,8 +25,15 @@ export function twn(property, start, end, duration, target, options) {
       property === 'position' ||
       property === 'scale' ||
       property === 'rotation'
-    )
-      target.set(this.x || target.x, this.y || target.y, this.z || target.z)
+    ){
+        if(Array.isArray(target)){
+            target.forEach((tgt)=>{
+                tgt.set(this.x || target.x, this.y || target.y, this.z || target.z)
+            })
+        }else{
+          target.set(this.x || target.x, this.y || target.y, this.z || target.z)
+        }
+    }
     else {
       //opacity etc.
       const allProps = Object.keys(this)
@@ -34,7 +41,6 @@ export function twn(property, start, end, duration, target, options) {
     }
   })
   if (options) {
-    // if(options.chain) tween.chain(options.chain)
     if (options.onStart) tween.onStart(options.onStart)
     if (options.onComplete) tween.onComplete(options.onComplete)
     if (options.delay) tween.delay(options.delay)
