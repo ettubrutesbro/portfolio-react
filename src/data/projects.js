@@ -28,7 +28,7 @@ const Projects = [
       camera: {
         // position: {x: 0, y: 2.75, z: 2.75}, //ortho
         position: { x: 0, y: 4, z: 6.8 },
-        zoom: 1.75,
+        zoom: 1.25,
       },
     },
   },

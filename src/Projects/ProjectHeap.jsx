@@ -554,7 +554,7 @@ export default class ProjectHeap extends React.Component {
         {debug.fps && <FPSStats />}
         <React3
           alpha
-          clearColor={0xfbfbfc}
+          // clearColor={0xfbfbfc}
           mainCamera="camera"
           width={this.props.width}
           height={this.props.height}
@@ -571,8 +571,8 @@ export default class ProjectHeap extends React.Component {
                 ref="camera"
                 fov={physics.fov}
                 aspect={this.props.width / this.props.height}
-                near={1}
-                far={100}
+                near={3}
+                far={20}
                 position={this.cameraPosition}
                 quaternion={this.cameraQuaternion}
               />
