@@ -2,7 +2,7 @@ import * as THREE from 'three'
 import * as TWEEN from '@tweenjs/tween.js'
 
 export function v3(x, y, z) {
-  return new THREE.Vector3(x, y, z)
+  return new THREE.Vector3(x||0, y||0, z||0)
 }
 
 export function twn(property, start, end, duration, target, options) {

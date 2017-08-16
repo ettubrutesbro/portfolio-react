@@ -6,6 +6,8 @@ import { observer } from 'mobx-react'
 import * as THREE from 'three'
 import { PresentationModels } from '../data/projects.js'
 
+import {nonCollisionGroup, normalCollisions, collidesWithAll} from '../constants.js'
+
 function makePresentationComponent(props) {
   const PresentationComponent = PresentationModels[props.name + 'Model']
   return PresentationComponent ? <PresentationComponent {...props} /> : null
@@ -30,7 +32,7 @@ export default class ProjectGroup extends React.Component {
     let physics = this.props.store
 
     const i = this.props.index
-    const sizeConstant = physics.viewableSizingConstant
+    const sizeConstant = 8
 
     const model = project.physicsModel || {
       types: ['box'],
@@ -56,19 +58,19 @@ export default class ProjectGroup extends React.Component {
         Math.random() * 30 - 15,
       ],
       move: true,
-      world: physics.world,
-      belongsTo: physics.normalCollisions,
-      collidesWith: physics.collidesWithAll & ~physics.nonCollisionGroup,
+      world: this.props.world,
+      belongsTo: normalCollisions,
+      collidesWith: collidesWithAll & ~nonCollisionGroup,
     }
 
-    physics.bodies[project.name] = physics.world.add(physicsGroup)
+    this.props.bodies[project.name] = this.props.world.add(physicsGroup)
 
-    physics.groups[this.props.index] = {
+    this.props.groups[this.props.index] = {
       position: new THREE.Vector3().copy(
-        physics.bodies[project.name].getPosition()
+        this.props.bodies[project.name].getPosition()
       ),
       rotation: new THREE.Quaternion().copy(
-        physics.bodies[project.name].getQuaternion()
+        this.props.bodies[project.name].getQuaternion()
       ),
     }
     if (this.props.debug) {
@@ -106,8 +108,8 @@ export default class ProjectGroup extends React.Component {
     return (
       <group
         name={project.name}
-        position={physics.groups[index].position}
-        quaternion={physics.groups[index].rotation}
+        position={this.props.groups[index].position}
+        quaternion={this.props.groups[index].rotation}
         onClick={() => console.log('what')}
       >
         {makePresentationComponent({
