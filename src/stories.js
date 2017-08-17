@@ -8,20 +8,51 @@ import { Button, Welcome } from '@storybook/react/demo';
 
 import React3 from 'react-three-renderer'
 import * as THREE from 'three'
+import * as OIMO from 'oimo'
 
-import * as utils from '../src/utilities.js'
+import * as utils from './utilities.js'
+import {noCollisions, normalCollisions, collidesWithAll} from './constants.js'
+
+import SimpleScene from './SimpleScene'
+import Ground from './Ground'
 
 const loader = new THREE.JSONLoader()
-const dragon = loader.parse(require('../src/Projects/Eclipse/dragon.json'))
+const dragon = loader.parse(require('./Projects/Eclipse/dragon.json'))
 
 storiesOf('World (3D)', module)
-    .add('Test r3r canvas', ()=> {
+    .add('Test r3r canvas', ()=> <SimpleScene />)
+
+    .add('basic constraints', () => {
+
+    })
+
+    .add('story w/ physics store', () => {
+        let world = new OIMO.World()
+        const animateFunction = () => {
+            // console.log('what')
+            world.step()
+            // console.log(obj.position)
+        }
+        // let obj = world.add({
+        //     name: 'testobj',
+        //     type: 'box',
+        //     pos: [0,10,0],
+        //     size: [1.2,1.2,1.2],
+        //     move: true,
+        //     world: world,
+        //     belongsTo: normalCollisions,
+        //     collidesWith: collidesWithAll & ~noCollisions
+        // })
+        // console.log(world)
+
+
         return (
             <div>
                 <React3
                     mainCamera = "camera"
                     width = {window.innerWidth}
                     height = {window.innerHeight}
+                    onAnimate = {animateFunction}
                 >
                     <scene>
                         <perspectiveCamera 
@@ -31,11 +62,7 @@ storiesOf('World (3D)', module)
                             near = {0.1} far = {50}
                             position = {new THREE.Vector3(0,2,10)}
                         />
-                        <mesh position = {new THREE.Vector3(0,0,0)}>
-                            <boxGeometry width = {1} height = {1} depth = {1} />
-                            <meshNormalMaterial />
-                        </mesh>
-
+                        <Ground world = {world}/>
                         <mesh position = {new THREE.Vector3(0,2,0)}>
                             <geometry 
                                 vertices = {dragon.geometry.vertices}

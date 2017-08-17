@@ -6,6 +6,7 @@ import { observer } from 'mobx-react'
 import * as THREE from 'three'
 import { PresentationModels } from '../data/projects.js'
 
+import {v3} from '../utilities.js'
 import {nonCollisionGroup, normalCollisions, collidesWithAll} from '../constants.js'
 
 function makePresentationComponent(props) {
@@ -66,9 +67,6 @@ export default class ProjectGroup extends React.Component {
     this.props.bodies[project.name] = this.props.world.add(physicsGroup)
 
     this.props.groups[this.props.index] = {
-      position: new THREE.Vector3().copy(
-        this.props.bodies[project.name].getPosition()
-      ),
       rotation: new THREE.Quaternion().copy(
         this.props.bodies[project.name].getQuaternion()
       ),
@@ -101,16 +99,22 @@ export default class ProjectGroup extends React.Component {
 
   render() {
     const physics = this.props.store
+    const bodies = this.props.bodies
+
+    
+
     const { project, index, isExpanded, isSelected } = this.props
     const capitalizedName =
       project.name.charAt(0).toUpperCase() + project.name.substr(1)
 
+    const quat = new THREE.Quaternion().copy(bodies[project.name].getQuaternion())
+    console.log(quat)
     return (
       <group
         name={project.name}
-        position={this.props.groups[index].position}
+        // position={this.props.groups[index].position}
+        position={v3().copy(bodies[project.name].getPosition())}
         quaternion={this.props.groups[index].rotation}
-        onClick={() => console.log('what')}
       >
         {makePresentationComponent({
           name: capitalizedName,

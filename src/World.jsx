@@ -37,11 +37,7 @@ export default class World extends React.Component {
   @observable projectsReady = false
   @observable renderTrigger = null
 
-  @observable defaultCameraPosition = new THREE.Vector3(0, 2, 10)
-
-  @observable cameraPosition = this.defaultCameraPosition
-  // @observable cameraRotationTween = null
-  @observable cameraPositionTween = null
+  @observable cameraPosition = new THREE.Vector3(0, 2, 10)
 
   constructor(props, context) {
     super(props, context)
@@ -456,7 +452,7 @@ export default class World extends React.Component {
     this.forceMove(body, position)
     this.lookAt(
       position,
-      selectCamera ? selectCamera.position : this.defaultCameraPosition,
+      selectCamera ? selectCamera.position : new THREE.Vector3(0,2,10),
       selectCamera ? selectCamera.zoom : ''
     )
   }
@@ -505,7 +501,6 @@ export default class World extends React.Component {
           groups = {this.groups}
           // isSelected={this.props.store.selectedProject === project.name}
           // isExpanded={this.props.store.expandedProject === project.name}
-          // tween = {TWEEN}
         />
       )
     })
@@ -541,21 +536,11 @@ export default class World extends React.Component {
                 fov={30}
                 aspect={this.props.width / this.props.height}
                 near={3}
-                far={20}
+                far={100}
                 position={this.cameraPosition}
                 quaternion={this.cameraQuaternion}
               />
             }
-
-            { <ambientLight color={0xffffff} />}
-            {
-              <directionalLight
-                color={0xffffff}
-                intensity={1.75}
-                castShadow
-                position={this.lightPosition}
-                lookAt={this.lightTarget}
-              />}
             {
               <group>
                 <mesh quaternion={new THREE.Quaternion().setFromAxisAngle(
@@ -565,19 +550,19 @@ export default class World extends React.Component {
                     width={sizeConstant}
                     height={sizeConstant}
                   />
-                  <meshBasicMaterial color={0xffffff} />
+                  <meshBasicMaterial color={0xd7d7d7} />
                 </mesh>
 
-                <mesh position={v3().copy(this.walls[0].getPosition())} visible = {false}>
+                <mesh position={v3().copy(this.walls[0].getPosition())} >
                   <boxGeometry width={1} height={10} depth={sizeConstant} />
                   <meshBasicMaterial color={0xff0000} />
                 </mesh>
 
-                <mesh position={v3().copy(this.walls[1].getPosition())} visible = {false}>
+                <mesh position={v3().copy(this.walls[1].getPosition())} >
                   <boxGeometry width={1} height={10} depth={sizeConstant} />
                   <meshBasicMaterial color={0x0000ff} />
                 </mesh>
-                <mesh position={v3().copy(this.walls[2].getPosition())} visible = {false}>
+                <mesh position={v3().copy(this.walls[2].getPosition())} >
                   <boxGeometry width={sizeConstant} height={10} depth={1} />
                   <meshBasicMaterial
                     color={0xffffff}
@@ -589,7 +574,8 @@ export default class World extends React.Component {
                   <boxGeometry width={sizeConstant} height={10} depth={1} />
                   <meshBasicMaterial color={0x550055} transparent />
                 </mesh>
-              </group>}
+              </group>
+            }
 
             {projectGroups}
           </scene>
