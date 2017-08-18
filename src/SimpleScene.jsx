@@ -6,9 +6,55 @@ import React3 from 'react-three-renderer'
 import * as THREE from 'three'
 import * as OIMO from 'oimo'
 
+@observer
 export default class SimpleScene extends React.Component{
 
-    // world = new OIMO.World()
+    /* basic scene should contain:
+        physics 
+            - a store for rotation and positions of objects
+        mouseinput / picking 
+            - tell children through props when they are clicked / selected / etc.
+            - parent App needs to know, too. 
+        responsive support
+            - resize should affect canvas, etc. 
+            - design reconsiderations at mobile resolution, etc.? 
+    */
+
+    world = new OIMO.World() //TODO: not observable?
+    bodies = {}
+
+    @observable positions = []
+    @observable rotations = []
+
+    componentDidMount(){
+        this.initStore()
+    }
+
+    @action initStore = () => {
+        this.props.children.forEach((child)=>{
+            if(!child.props.static){
+                this.positions.push(null)
+                
+             }
+        })
+    }
+
+    @action onAnimate = () => {
+        this.world.step()
+
+        const bodies = Object.keys(this.bodies)
+        for(var i = 0; i<bodies.length; i++){
+            const name = bodies[i]
+            const body = this.bodies[name]
+            this.positions[i] = new THREE.Vector3().copy(body.getPosition())
+            this.rotations[i] = new THREE.Quaternion().copy(body.getQuaternion())
+        }
+    }
+
+    @action addBody = (name, physicsModel) => {
+        console.log('adding '+name)
+        this.bodies[name] = this.world.add(physicsModel)
+    }
 
     render(){
         return(
@@ -17,6 +63,7 @@ export default class SimpleScene extends React.Component{
                     mainCamera = "camera"
                     width = {window.innerWidth}
                     height = {window.innerHeight}
+                    onAnimate = {this.onAnimate}
                 >
                     <scene>
                         <perspectiveCamera 
@@ -26,10 +73,22 @@ export default class SimpleScene extends React.Component{
                             near = {0.1} far = {50}
                             position = {new THREE.Vector3(0,2,10)}
                         />
-                        <mesh position = {new THREE.Vector3(0,0,0)}>
-                            <boxGeometry width = {1} height = {1} depth = {1} />
-                            <meshNormalMaterial />
-                        </mesh>
+
+                        {React.Children.map(this.props.children, (child,i)=>{
+
+                            const foistedProps = !child.props.static? {
+                                ...child.props,
+                                onMount: this.addBody,
+                                position: this.positions[i] || new THREE.Vector3(0,3.5,0),
+                                rotation: this.rotations[i] || new THREE.Quaternion()
+                            }
+                            :{ ...child.props, onMount: this.addBody }
+
+                            return React.cloneElement(
+                                child, 
+                                foistedProps
+                            )
+                        })}
 
                     </scene>
                 </React3>

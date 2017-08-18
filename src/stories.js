@@ -14,13 +14,24 @@ import * as utils from './utilities.js'
 import {noCollisions, normalCollisions, collidesWithAll} from './constants.js'
 
 import SimpleScene from './SimpleScene'
-import Ground from './Ground'
+import Body from './Body'
+import Constraint from './Constraint'
 
 const loader = new THREE.JSONLoader()
 const dragon = loader.parse(require('./Projects/Eclipse/dragon.json'))
 
 storiesOf('World (3D)', module)
-    .add('Test r3r canvas', ()=> <SimpleScene />)
+    .add('Test r3r canvas', ()=> (
+        <SimpleScene>
+            <Body name = "box" />
+            <Constraint 
+                name = "ground"
+                position = {{x:0,y:-5,z:0}} 
+                width={8} depth={8} height={10}
+            />
+        </SimpleScene>
+
+    ))
 
     .add('basic constraints', () => {
 
