@@ -18,6 +18,10 @@ export default class SimpleScene extends React.Component{
         responsive support
             - resize should affect canvas, etc. 
             - design reconsiderations at mobile resolution, etc.? 
+        manual rendering support
+            - API must be carefully considered - based on sleeping, etc.
+            - must be easy to unset and reset...
+        restart?
     */
 
     world = new OIMO.World() //TODO: not observable?
@@ -55,6 +59,14 @@ export default class SimpleScene extends React.Component{
         console.log('adding '+name)
         this.bodies[name] = this.world.add(physicsModel)
     }
+    @action removeBody = (name, index) =>{
+        console.log('removing ' + name + ' from oimo/world')
+        // this.world.removeRigidBody(this.bodies[name])
+        console.log(this.world.rigidBodies)
+        this.bodies[name].remove()
+        console.log('remaining bodies: ')
+
+    }
 
     render(){
         return(
@@ -78,7 +90,8 @@ export default class SimpleScene extends React.Component{
 
                             const foistedProps = !child.props.static? {
                                 ...child.props,
-                                onMount: this.addBody,
+                                key: child.props.name + '-body',
+                                index: i, onMount: this.addBody, unmount: this.removeBody,
                                 position: this.positions[i] || new THREE.Vector3(0,3.5,0),
                                 rotation: this.rotations[i] || new THREE.Quaternion()
                             }
