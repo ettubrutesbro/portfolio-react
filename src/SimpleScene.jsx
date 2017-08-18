@@ -66,7 +66,7 @@ export default class SimpleScene extends React.Component{
         // this.world.removeRigidBody(this.bodies[name])
         console.log(this.world.rigidBodies)
         this.bodies[name].remove()
-        console.log('remaining bodies: ')
+        console.log('remaining bodies: ' + this.world.numRigidBodies)
 
     }
 
