@@ -21,6 +21,7 @@ export default class Body extends React.Component{
         unmountability
             componentWillUnmount - methods for removing the oimo body
             and the three objects from render tree blah blah
+            
     */
     init = () =>{
         const physicsModel = { name: this.props.name, ...this.props.physicsModel }
@@ -33,9 +34,12 @@ export default class Body extends React.Component{
             if(!newProps.show) this.removeSelf()
         }
     }
+    componentWillUnmount(){
+        console.log('body ' + this.props.name + ' is unmounting')
+    }
 
     removeSelf = () => {
-        console.log(this.props.name + ' will unmount')
+        console.log(this.props.name + ' being removed from scene')
         this.props.unmount(this.props.name, this.props.index)
     }
 

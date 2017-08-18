@@ -58,6 +58,8 @@ export default class SimpleScene extends React.Component{
     @action addBody = (name, physicsModel) => {
         console.log('adding '+name)
         this.bodies[name] = this.world.add(physicsModel)
+        //TODO: in a more advanced version, physicsModel's position is modified by index,
+        //getting grid distribution or randomized for projects
     }
     @action removeBody = (name, index) =>{
         console.log('removing ' + name + ' from oimo/world')
