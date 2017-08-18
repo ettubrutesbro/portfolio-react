@@ -37,8 +37,7 @@ export default class SimpleScene extends React.Component{
     @action initStore = () => {
         this.props.children.forEach((child)=>{
             if(!child.props.static){
-                this.positions.push(null)
-                
+                this.positions.push(null) //TODO: watch out for this, feels shaky...
              }
         })
     }
@@ -50,6 +49,7 @@ export default class SimpleScene extends React.Component{
         for(var i = 0; i<bodies.length; i++){
             const name = bodies[i]
             const body = this.bodies[name]
+            //TODO watch for these indices to get dicey with add / removals...
             this.positions[i] = new THREE.Vector3().copy(body.getPosition())
             this.rotations[i] = new THREE.Quaternion().copy(body.getQuaternion())
         }
@@ -61,7 +61,12 @@ export default class SimpleScene extends React.Component{
         //TODO: in a more advanced version, physicsModel's position is modified by index,
         //getting grid distribution or randomized for projects
     }
-    @action removeBody = (name, index) =>{
+    modifyBody = (name, propOrFunctionCall, parameters, isFunction) => {
+        console.log('mutating: ' + name, ' prop/function ' + propOrFunctionCall + '(' + parameters + ')')
+        if(!isFunction) this.bodies[name][propOrFunctionCall] = parameters
+        else this.bodies[name][propOrFunctionCall](...parameters)
+    }
+    @action removeBody = (name) =>{
         console.log('removing ' + name + ' from oimo/world')
         // this.world.removeRigidBody(this.bodies[name])
         console.log(this.world.rigidBodies)
@@ -89,15 +94,17 @@ export default class SimpleScene extends React.Component{
                         />
 
                         {React.Children.map(this.props.children, (child,i)=>{
-
-                            const foistedProps = !child.props.static? {
-                                ...child.props,
-                                key: child.props.name + '-body',
-                                index: i, onMount: this.addBody, unmount: this.removeBody,
+                            const dynamicProps = !child.props.static? {
                                 position: this.positions[i] || new THREE.Vector3(0,3.5,0),
-                                rotation: this.rotations[i] || new THREE.Quaternion()
+                                rotation: this.rotations[i] || new THREE.Quaternion(),
+                            }:null
+                            const foistedProps = {
+                                ...child.props, 
+                                ...dynamicProps,
+                                 onMount: this.addBody, 
+                                 unmount: this.removeBody, 
+                                 mutate: this.modifyBody
                             }
-                            :{ ...child.props, onMount: this.addBody }
 
                             return React.cloneElement(
                                 child, 

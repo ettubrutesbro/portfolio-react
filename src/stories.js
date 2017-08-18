@@ -27,16 +27,18 @@ worldStories.addDecorator(withKnobs)
 
     worldStories.add('SimpleScene + Body + Constraint', ()=> {
         const showbox = boolean('box', true)
-        const showbox2 = boolean('box2', true)
+        const showground = boolean('show ground', false)
+        const phaseground = boolean('phase ground', false)
         return (
             <div>
                 <SimpleScene>
-                    <Body name = "box" show = {showbox} />
-                    <Body name = "box2" show = {showbox2} />
+                    <Body name = "box" exists = {showbox} />
                     <Constraint 
                         name = "ground"
                         position = {{x:0,y:-5,z:0}} 
                         width={8} depth={8} height={10}
+                        show = {showground}
+                        noclip = {phaseground}
                     />
                 </SimpleScene>
                 

@@ -1,12 +1,19 @@
 import React from 'react'
-
 import * as THREE from 'three'
+
+import {noCollisions, normalCollisions, collidesWithAll} from './constants'
 
 export default class Body extends React.Component{
 
     /* should form the basis of all moving (and static..?) 3d objects
         physics model as prop
             - external dictionary defines shape(s), position(s), sizes, etc. 
+        TENTATIVE
+        unmountability
+            componentWillUnmount - methods for removing the oimo body
+            and the three objects from render tree blah blah
+
+        TODO
         container for children
             - collision model optionally displayable as child(
                 -- or should it be generated from the physics model....
@@ -18,20 +25,22 @@ export default class Body extends React.Component{
             - tween support: cant affect external prop from inside here, so 
             it should be able to pass destinations / data to its parent for 
             a tween
-        unmountability
-            componentWillUnmount - methods for removing the oimo body
-            and the three objects from render tree blah blah
             
     */
     init = () =>{
-        const physicsModel = { name: this.props.name, ...this.props.physicsModel }
+        const physicsModel = { 
+            name: this.props.name, 
+            belongsTo: normalCollisions,
+            collidesWith: collidesWithAll & ~noCollisions,
+            ...this.props.physicsModel 
+        }
         this.props.onMount(this.props.name,physicsModel)
     }
     componentDidMount(){ this.init() }
     componentWillReceiveProps(newProps){
-        if(newProps.show!==this.props.show){
-            if(newProps.show) this.init()
-            if(!newProps.show) this.removeSelf()
+        if(newProps.exists!==this.props.exists){
+            if(newProps.exists) this.init()
+            if(!newProps.exists) this.removeSelf()
         }
     }
     componentWillUnmount(){
@@ -49,7 +58,7 @@ export default class Body extends React.Component{
                 ref = "group"
                 position = {this.props.position} 
                 rotation = {new THREE.Euler().setFromQuaternion(this.props.rotation)}
-                visible = {this.props.show}
+                visible = {this.props.exists}
             >
                 <mesh>
                     <boxGeometry width = {1} height = {1} depth = {1} />
@@ -65,5 +74,5 @@ Body.defaultProps = {
     physicsModel: {
         type: 'box', size: [1,1,1], move: true, pos: [0,10,0]
     },
-    show: true
+    exists: true
 }
