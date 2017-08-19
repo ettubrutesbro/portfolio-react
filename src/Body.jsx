@@ -49,7 +49,7 @@ export default class Body extends React.Component{
 
     removeSelf = () => {
         console.log(this.props.name + ' being removed from scene')
-        this.props.unmount(this.props.name, this.props.index)
+        this.props.unmount(this.props.name)
     }
 
     render(){
@@ -64,6 +64,9 @@ export default class Body extends React.Component{
                     <boxGeometry width = {1} height = {1} depth = {1} />
                     <meshNormalMaterial />
                 </mesh>
+
+                {this.props.children}
+
             </group>
         )
     }

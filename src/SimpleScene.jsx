@@ -12,6 +12,8 @@ export default class SimpleScene extends React.Component{
     /* basic scene should contain:
         physics 
             - a store for rotation and positions of objects
+
+        TODO
         mouseinput / picking 
             - tell children through props when they are clicked / selected / etc.
             - parent App needs to know, too. 
@@ -21,10 +23,10 @@ export default class SimpleScene extends React.Component{
         manual rendering support
             - API must be carefully considered - based on sleeping, etc.
             - must be easy to unset and reset...
-        restart?
+        scene restart?
     */
 
-    world = new OIMO.World() //TODO: not observable?
+    world = new OIMO.World() 
     bodies = {}
 
     @observable positions = []
@@ -58,8 +60,6 @@ export default class SimpleScene extends React.Component{
     @action addBody = (name, physicsModel) => {
         console.log('adding '+name)
         this.bodies[name] = this.world.add(physicsModel)
-        //TODO: in a more advanced version, physicsModel's position is modified by index,
-        //getting grid distribution or randomized for projects
     }
     modifyBody = (name, propOrFunctionCall, parameters, isFunction) => {
         console.log('mutating: ' + name, ' prop/function ' + propOrFunctionCall + '(' + parameters + ')')
@@ -97,7 +97,7 @@ export default class SimpleScene extends React.Component{
                             const dynamicProps = !child.props.static? {
                                 position: this.positions[i] || new THREE.Vector3(0,3.5,0),
                                 rotation: this.rotations[i] || new THREE.Quaternion(),
-                            }:null
+                            } : null
                             const foistedProps = {
                                 ...child.props, 
                                 ...dynamicProps,
