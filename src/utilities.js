@@ -140,6 +140,30 @@ export function stopAllTweens(tweenArray) {
   }
 }
 
+export function makeColliderMesh(physicsModel){
+
+    const model = physicsModel
+
+    this.physicsMeshes = model.types.map((type, i) => {
+      const n = i * 3
+      return {
+        geo: type,
+        pos: {
+          x: model.positions[n + 0],
+          y: model.positions[n + 1],
+          z: model.positions[n + 2],
+        },
+        size: {
+          w: model.sizes[n + 0],
+          h: model.sizes[n + 1],
+          d: model.sizes[n + 2],
+          r: model.sizes[n + 0],
+        },
+        color: model.debugColor || 0x888888,
+      }
+    })
+}
+
 export const rads = degs => {
   return degs * (Math.PI / 180)
 }

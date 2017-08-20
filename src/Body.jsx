@@ -17,6 +17,7 @@ export default class Body extends React.Component{
         container for children
             - collision model optionally displayable as child(
                 -- or should it be generated from the physics model....
+                -- a utility function, maybe, for generating a physics mesh
             - presentation model should be contained within
         able to receive selection / states
             - prop from outside?
@@ -27,14 +28,14 @@ export default class Body extends React.Component{
             a tween
             
     */
+    physicsModel = { 
+        name: this.props.name, 
+        belongsTo: normalCollisions,
+        collidesWith: collidesWithAll & ~noCollisions,
+        ...this.props.physicsModel 
+    }
     init = () =>{
-        const physicsModel = { 
-            name: this.props.name, 
-            belongsTo: normalCollisions,
-            collidesWith: collidesWithAll & ~noCollisions,
-            ...this.props.physicsModel 
-        }
-        this.props.onMount(this.props.name,physicsModel)
+        this.props.onMount(this.props.name,this.physicsModel)
     }
     componentDidMount(){ this.init() }
     componentWillReceiveProps(newProps){
@@ -53,6 +54,7 @@ export default class Body extends React.Component{
     }
 
     render(){
+        const {showCollider} = this.props
         return(
             <group 
                 ref = "group"
@@ -60,10 +62,21 @@ export default class Body extends React.Component{
                 rotation = {new THREE.Euler().setFromQuaternion(this.props.rotation)}
                 visible = {this.props.exists}
             >
-                <mesh>
-                    <boxGeometry width = {1} height = {1} depth = {1} />
-                    <meshNormalMaterial />
-                </mesh>
+
+
+                {showCollider && //maybe prop just affects visibility? cleaner this way though
+                    //utilities: makePhysicsMesh(this.physicsModel)
+                        //in utilities, given a physicsModel (recur thru types), output dictionary with
+                        //geo type, xyz positions, and sizes ...
+                    //then in this here render function, map through the output of the utility function
+                    //(this.physicsMehses.map((pmesh, i)))
+                    //return mesh with position, geometry to match type with dimensions
+                    
+                    <mesh>
+                        <boxGeometry width = {1} height = {1} depth = {1} />
+                        <meshNormalMaterial transparent opacity = {0.5} />
+                    </mesh>
+                }
 
                 {this.props.children}
 
@@ -77,5 +90,6 @@ Body.defaultProps = {
     physicsModel: {
         type: 'box', size: [1,1,1], move: true, pos: [0,10,0]
     },
-    exists: true
+    exists: true,
+    showCollider: false
 }

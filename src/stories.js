@@ -32,7 +32,11 @@ worldStories.addDecorator(withKnobs)
         return (
             <div>
                 <SimpleScene>
-                    <Body name = "box" exists = {showbox} />
+                    <Body 
+                        name = "box" 
+                        exists = {showbox}
+                        showCollider = {true} 
+                    />
                     <Constraint 
                         name = "ground"
                         position = {{x:0,y:-5,z:0}} 
