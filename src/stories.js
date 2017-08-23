@@ -33,7 +33,9 @@ worldStories.addDecorator(withKnobs)
         const compound = {
             type: ['box', 'box'],
             size: [.75, .2, 1, 0.5,2,0.5],
-            posShape: [0,0,0,0,0,0]
+            posShape: [0,0,0,0,0,0],
+            pos: [0,5,0],
+            move: true
         }
 
         return (

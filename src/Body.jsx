@@ -35,6 +35,7 @@ export default class Body extends React.Component{
         collidesWith: collidesWithAll & ~noCollisions,
         ...this.props.physicsModel 
     }
+    colliderMeshes = this.props.showCollider? makeColliderMesh(this.physicsModel) : null
     init = () =>{
         this.props.onMount(this.props.name,this.physicsModel)
     }
@@ -56,6 +57,7 @@ export default class Body extends React.Component{
 
     render(){
         const {showCollider} = this.props
+        // const colliderMesh = showCollider? makeColliderMesh(this.physicsModel) : null
         return(
             <group 
                 ref = "group"
@@ -67,8 +69,14 @@ export default class Body extends React.Component{
 
                 {showCollider && 
                     <group>
-                    {makeColliderMesh(this.physicsModel)}
-
+                        {this.colliderMeshes.map((mesh,i)=>{
+                            return(
+                            <mesh>
+                                <boxGeometry width = {mesh.size.w} height={mesh.size.h} depth={mesh.size.d} />
+                                <meshNormalMaterial />
+                            </mesh>
+                            )
+                        })}
                     </group>
                 }
 
