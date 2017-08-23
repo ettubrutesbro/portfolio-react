@@ -1,6 +1,7 @@
 import React from 'react'
 import * as THREE from 'three'
 
+import {makeColliderMesh} from './utilities'
 import {noCollisions, normalCollisions, collidesWithAll} from './constants'
 
 export default class Body extends React.Component{
@@ -64,18 +65,11 @@ export default class Body extends React.Component{
             >
 
 
-                {showCollider && //maybe prop just affects visibility? cleaner this way though
-                    //utilities: makePhysicsMesh(this.physicsModel)
-                        //in utilities, given a physicsModel (recur thru types), output dictionary with
-                        //geo type, xyz positions, and sizes ...
-                    //then in this here render function, map through the output of the utility function
-                    //(this.physicsMehses.map((pmesh, i)))
-                    //return mesh with position, geometry to match type with dimensions
-                    
-                    <mesh>
-                        <boxGeometry width = {1} height = {1} depth = {1} />
-                        <meshNormalMaterial transparent opacity = {0.5} />
-                    </mesh>
+                {showCollider && 
+                    <group>
+                    {makeColliderMesh(this.physicsModel)}
+
+                    </group>
                 }
 
                 {this.props.children}

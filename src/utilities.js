@@ -1,3 +1,4 @@
+import React from 'react'
 import * as THREE from 'three'
 import * as TWEEN from '@tweenjs/tween.js'
 
@@ -147,26 +148,50 @@ export function makeColliderMesh(physicsModel){
     if(!model.types && model.type) types = [model.type]
     else types = model.types
 
-    this.physicsMeshes = types.map((type, i) => {
-      const n = i * 3
-      const pos = model.positions || model.posShape
-      const size = model.sizes || model.size
-      return {
-        geo: type,
-        pos: {
-          x: pos[n + 0],
-          y: pos[n + 1],
-          z: pos[n + 2],
-        },
-        size: {
-          w: size[n + 0],
-          h: size[n + 1],
-          d: size[n + 2],
-          r: size[n + 0],
-        },
-        // color: model.debugColor || 0x888888,
-      }
-    })
+    //a physics model in OIMO should have keys:
+      // type, size, pos, posShape, move, world, name, config (restitution etc)
+      // sizes pos posShape are all arrays for oimo, convert them to xyz objects here?
+
+    const physicsMeshes = types.map((type, i) => {
+      const n = i * 3 //this only works if everything is composed of boxes or you issue dummy values
+      let pos
+      if(!model.posShape) pos = [0,0,0]
+      else pos = [model.posShape[n+0] || 0, model.posShape[n+1] || 0, model.posShape[n+2] || 0]
+
+      // let geo
+      // if(type === 'box'){
+      //   geo = <boxGeometry 
+      //     width = {model.size[n]} 
+      //     height = {model.size[n+1]} 
+      //     depth = {model.size[n+2]} 
+      //   />
+      // } 
+      // else if(type === 'sphere'){
+      //   geo = <sphereGeometry
+      //     radius = {model.size[n]}
+      //     widthSegments = {8}
+      //     heightSegments = {8}
+      //   />
+            
+      // }
+      // else if(type === 'cylinder'){  //???
+      //   geo = <cylinderGeometry
+      //     radiusTop = {model.size[n]} 
+      //     radiusBottom = {model.size[n]} 
+      //     height = {model.size[n+1]}
+      //   />
+      // }
+
+      // return <mesh position = {v3(...pos)}> 
+      //   {geo} 
+      //   <meshNormalMaterial />
+      // </mesh>
+
+
+  })
+    console.log(physicsMeshes)
+    return physicsMeshes
+
 }
 
 export const rads = degs => {
