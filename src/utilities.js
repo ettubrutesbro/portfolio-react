@@ -143,23 +143,28 @@ export function stopAllTweens(tweenArray) {
 export function makeColliderMesh(physicsModel){
 
     const model = physicsModel
+    let types
+    if(!model.types && model.type) types = [model.type]
+    else types = model.types
 
-    this.physicsMeshes = model.types.map((type, i) => {
+    this.physicsMeshes = types.map((type, i) => {
       const n = i * 3
+      const pos = model.positions || model.posShape
+      const size = model.sizes || model.size
       return {
         geo: type,
         pos: {
-          x: model.positions[n + 0],
-          y: model.positions[n + 1],
-          z: model.positions[n + 2],
+          x: pos[n + 0],
+          y: pos[n + 1],
+          z: pos[n + 2],
         },
         size: {
-          w: model.sizes[n + 0],
-          h: model.sizes[n + 1],
-          d: model.sizes[n + 2],
-          r: model.sizes[n + 0],
+          w: size[n + 0],
+          h: size[n + 1],
+          d: size[n + 2],
+          r: size[n + 0],
         },
-        color: model.debugColor || 0x888888,
+        // color: model.debugColor || 0x888888,
       }
     })
 }
