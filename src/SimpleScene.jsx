@@ -6,6 +6,8 @@ import React3 from 'react-three-renderer'
 import * as THREE from 'three'
 import * as OIMO from 'oimo'
 
+import {twn} from './utilities'
+
 @observer
 export default class SimpleScene extends React.Component{
 
@@ -65,6 +67,10 @@ export default class SimpleScene extends React.Component{
         console.log('mutating: ' + name, ' prop/function ' + propOrFunctionCall + '(' + parameters + ')')
         if(!isFunction) this.bodies[name][propOrFunctionCall] = parameters
         else this.bodies[name][propOrFunctionCall](...parameters)
+    }
+    @action forceAnimateBody = () => {
+        // const body 
+        // twn('position', v3().copy(body.getPosition), )
     }
     @action removeBody = (name) =>{
         console.log('removing ' + name + ' from oimo/world')

@@ -30,14 +30,6 @@ worldStories.addDecorator(withKnobs)
         const showground = boolean('show ground', false)
         const phaseground = boolean('phase ground', false)
 
-        const compound = {
-            type: ['cylinder', 'sphere'],
-            size: [.25, 2, 1, 0.5,2,0.5],
-            posShape: [0,0,0,0,0,0],
-            pos: [0,5,0],
-            move: true
-        }
-
         return (
             <div>
                 <SimpleScene>
@@ -45,12 +37,6 @@ worldStories.addDecorator(withKnobs)
                         name = "box" 
                         exists = {showbox}
                         showCollider = {true} 
-                    />
-
-                    <Body
-                        name = "compound"
-                        physicsModel = {compound}
-                        showCollider = {true}
                     />
                     <Constraint 
                         name = "ground"

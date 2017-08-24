@@ -57,7 +57,6 @@ export default class Body extends React.Component{
 
     render(){
         const {showCollider} = this.props
-        // const colliderMesh = showCollider? makeColliderMesh(this.physicsModel) : null
         return(
             <group 
                 ref = "group"
@@ -94,10 +93,12 @@ export default class Body extends React.Component{
                                     radialSegments = {8}
                                 />
                             }
-                            return (<mesh> 
-                                {geometry} 
-                                <meshNormalMaterial /> 
-                           </mesh>)
+                            return (
+                                <mesh key = {'collider'+i}> 
+                                    {geometry} 
+                                    <meshNormalMaterial /> 
+                                </mesh>
+                            )
                             
                         })}
                     </group>
