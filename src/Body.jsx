@@ -70,12 +70,35 @@ export default class Body extends React.Component{
                 {showCollider && 
                     <group>
                         {this.colliderMeshes.map((mesh,i)=>{
-                            return(
-                            <mesh>
-                                <boxGeometry width = {mesh.size.w} height={mesh.size.h} depth={mesh.size.d} />
-                                <meshNormalMaterial />
-                            </mesh>
-                            )
+                            let geometry
+                            if(mesh.geo === 'box'){
+                                geometry = <boxGeometry
+                                    width = {mesh.size.w}
+                                    height = {mesh.size.h}
+                                    depth = {mesh.size.d}
+                                />
+                            }
+                            else if(mesh.geo === 'sphere'){
+                                geometry = <sphereGeometry
+                                    radius = {mesh.size.r}
+                                    widthSegments = {8}
+                                    heightSegments = {8}
+                                />
+
+                            }
+                            else if(mesh.geo === 'cylinder'){
+                                geometry = <cylinderGeometry
+                                    radiusTop = {mesh.size.r}
+                                    radiusBottom = {mesh.size.r}
+                                    height = {mesh.size.h}
+                                    radialSegments = {8}
+                                />
+                            }
+                            return (<mesh> 
+                                {geometry} 
+                                <meshNormalMaterial /> 
+                           </mesh>)
+                            
                         })}
                     </group>
                 }
