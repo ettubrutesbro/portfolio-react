@@ -4,9 +4,10 @@ import {observer} from 'mobx-react'
 
 import React3 from 'react-three-renderer'
 import * as THREE from 'three'
+import * as TWEEN from '@tweenjs/tween.js'
 import * as OIMO from 'oimo'
 
-import {twn} from './utilities'
+import {twn, camelize} from './utilities'
 
 @observer
 export default class SimpleScene extends React.Component{
@@ -48,7 +49,7 @@ export default class SimpleScene extends React.Component{
 
     @action onAnimate = () => {
         this.world.step()
-
+        TWEEN.update()
         const bodies = Object.keys(this.bodies)
         for(var i = 0; i<bodies.length; i++){
             const name = bodies[i]
@@ -68,9 +69,42 @@ export default class SimpleScene extends React.Component{
         if(!isFunction) this.bodies[name][propOrFunctionCall] = parameters
         else this.bodies[name][propOrFunctionCall](...parameters)
     }
-    @action forceAnimateBody = () => {
+    @action forceAnimateBody = (name, property, goal, duration) => {
+        //can force animate position or rotation
+        const body = this.bodies[name]
+        const object = property==='position'? 'position' : 'quaternion'
+        if(!duration) duration = 500
+        const coords = body['get'+camelize(object)]()
+        const start = {x: coords.x, y: coords.y, z: coords.z}
+
+        // const start = this.bodies[]
+        const end ={x: goal.x, y: goal.y, z: goal.z}
+        console.log(start, end)
+        // body.getQuaternion.clone().setFromEuler(rads(goal.x),rads(goal.y),rads(goal.z))
+
         // const body 
-        // twn('position', v3().copy(body.getPosition), )
+        // twn(
+        //     null, start, end, duration, body,
+        //     {
+        //         call: 'set'+camelize(object), 
+        //         onUpdate: ()=>{body.sleeping = false}
+        //     }
+        // )
+        this.iono = new TWEEN.Tween(start).to(end, 500)
+        .onUpdate(function(){
+            console.log('tween')
+            body.setPosition({x:this.x, y: this.y, z: this.z})
+        }).onStart(function(){
+            body.allowSleep = false
+            body.sleeping = false
+        }).onComplete(function(){
+            body.allowSleep = true
+        })
+        .start()
+
+
+
+
     }
     @action removeBody = (name) =>{
         console.log('removing ' + name + ' from oimo/world')

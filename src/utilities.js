@@ -10,7 +10,10 @@ export function twn(property, start, end, duration, target, options) {
   const tween = new TWEEN.Tween(start).to(end, duration).onUpdate(function() {
     if (options) {
       if (options.onUpdate) options.onUpdate()
-      if(options.call) target[options.call](...this)
+      if(options.call) {
+        console.log('doing option call '+ options.call)
+        target[options.call](...this)
+      }
       if (options.traverseOpacity) {
         target.traverse(child => {
           if (child.material) {
@@ -213,6 +216,10 @@ export function makeColliderMesh(physicsModel){
     // console.log(physicsMeshes)
     return physicsMeshes
 
+}
+
+export const camelize = string => {
+  return string.charAt(0).toUpperCase() + string.slice(1)
 }
 
 export const rads = degs => {
