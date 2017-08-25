@@ -7,7 +7,7 @@ import * as THREE from 'three'
 import * as TWEEN from '@tweenjs/tween.js'
 import * as OIMO from 'oimo'
 
-import {twn, camelize} from './utilities'
+import {twn, camelize, rads} from './utilities'
 
 @observer
 export default class SimpleScene extends React.Component{
@@ -74,31 +74,31 @@ export default class SimpleScene extends React.Component{
         const body = this.bodies[name]
         const object = property==='position'? 'position' : 'quaternion'
         if(!duration) duration = 500
-        const coords = body['get'+camelize(object)]()
-        const start = {x: coords.x, y: coords.y, z: coords.z}
+        const current = body['get'+camelize(object)]()
+        
+        let start = {x: current.x, y: current.y, z: current.z, w: current.w}
+        let end
+        if(property==='position'){
+            end = {x: goal.x || current.x, y: goal.y || current.y, z: goal.z || current.z}
+        }
+        else if(property==='rotation'){ 
+            end = body.getQuaternion().clone().setFromEuler(
+                rads(goal.x), rads(goal.y), rads(goal.z)
+            )
+        }
+        
+        if(body.moveTween) body.moveTween.stop()
 
-        // const start = this.bodies[]
-        const end ={x: goal.x, y: goal.y, z: goal.z}
-        console.log(start, end)
-        // body.getQuaternion.clone().setFromEuler(rads(goal.x),rads(goal.y),rads(goal.z))
-
-        // const body 
-        // twn(
-        //     null, start, end, duration, body,
-        //     {
-        //         call: 'set'+camelize(object), 
-        //         onUpdate: ()=>{body.sleeping = false}
-        //     }
-        // )
-        this.iono = new TWEEN.Tween(start).to(end, 500)
+        body.moveTween = new TWEEN.Tween(start).to(end, duration)
         .onUpdate(function(){
-            console.log('tween')
-            body.setPosition({x:this.x, y: this.y, z: this.z})
+            if(property==='position') body.setPosition({x:this.x, y: this.y, z: this.z})
+            else body.setQuaternion({x:this.x,y:this.y,z:this.z,w:this.w})
         }).onStart(function(){
             body.allowSleep = false
             body.sleeping = false
         }).onComplete(function(){
             body.allowSleep = true
+            console.log('body sleeping?' + body.sleeping)
         })
         .start()
 

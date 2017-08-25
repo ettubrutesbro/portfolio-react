@@ -10,10 +10,7 @@ export function twn(property, start, end, duration, target, options) {
   const tween = new TWEEN.Tween(start).to(end, duration).onUpdate(function() {
     if (options) {
       if (options.onUpdate) options.onUpdate()
-      if(options.call) {
-        console.log('doing option call '+ options.call)
-        target[options.call](...this)
-      }
+      if(options.call) target[options.call](...this)
       if (options.traverseOpacity) {
         target.traverse(child => {
           if (child.material) {
