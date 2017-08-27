@@ -11,7 +11,7 @@ import MouseInput from './MouseInput'
 const tempVector2 = new THREE.Vector2()
 
 
-import {twn, camelize, rads} from './utilities'
+import {twn, cap1st, rads} from './utilities'
 
 @observer
 export default class SimpleScene extends React.Component{
@@ -65,13 +65,12 @@ export default class SimpleScene extends React.Component{
     @action onAnimate = () => {
 
         const { mouseInput, camera } = this.refs
-          if (!mouseInput.isReady()) {
+        if (!mouseInput.isReady()) {
             const { scene, container } = this.refs
-            // console.log( scene)
             mouseInput.ready(scene, container, camera)
             mouseInput.setActive(false)
-          }
-          if (this.mouseInput !== mouseInput) this.mouseInput = mouseInput
+        }
+        if (this.mouseInput !== mouseInput) this.mouseInput = mouseInput
 
         this.world.step()
         TWEEN.update()

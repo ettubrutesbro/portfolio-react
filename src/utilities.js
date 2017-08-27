@@ -215,7 +215,7 @@ export function makeColliderMesh(physicsModel){
 
 }
 
-export const camelize = string => {
+export const cap1st = string => {
   return string.charAt(0).toUpperCase() + string.slice(1)
 }
 
