@@ -112,7 +112,7 @@ export default class Body extends React.Component{
                                 />
                             }
                             return (
-                                <mesh key = {'collider'+i}> 
+                                <mesh name = {this.props.name} key = {'collider'+i}> 
                                     {geometry} 
                                     <meshNormalMaterial /> 
                                 </mesh>

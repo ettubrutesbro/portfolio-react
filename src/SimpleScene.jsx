@@ -48,7 +48,9 @@ export default class SimpleScene extends React.Component{
         const intersect = this.mouseInput._getIntersections(
           tempVector2.set(evt.clientX, evt.clientY)
         )
-        console.log(intersect)
+        if(intersect.length > 0){
+            console.log(intersect[0].object)
+        }
 
     }
 
