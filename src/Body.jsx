@@ -49,7 +49,11 @@ export default class Body extends React.Component{
     componentWillUnmount(){
         console.log('body ' + this.props.name + ' is unmounting')
     }
-
+    onSelect = () => {
+        const {name, force} = this.props
+        force(name, 'rotation', {x: 45, y: 45, z: 45})
+        force(name, 'position', {x: 1, y: 1.5, z:0})
+    }
     removeSelf = () => {
         console.log(this.props.name + ' being removed from scene')
         this.props.unmount(this.props.name)

@@ -87,9 +87,9 @@ export default class SimpleScene extends React.Component{
             )
         }
         
-        if(body.moveTween) body.moveTween.stop()
+        if(body[property+'Tween']) body[property+'Tween'].stop()
 
-        body.moveTween = new TWEEN.Tween(start).to(end, duration)
+        body[property+'Tween'] = new TWEEN.Tween(start).to(end, duration)
         .onUpdate(function(){
             if(property==='position') body.setPosition({x:this.x, y: this.y, z: this.z})
             else body.setQuaternion({x:this.x,y:this.y,z:this.z,w:this.w})
@@ -101,10 +101,6 @@ export default class SimpleScene extends React.Component{
             console.log('body sleeping?' + body.sleeping)
         })
         .start()
-
-
-
-
     }
     @action removeBody = (name) =>{
         console.log('removing ' + name + ' from oimo/world')
@@ -112,7 +108,6 @@ export default class SimpleScene extends React.Component{
         console.log(this.world.rigidBodies)
         this.bodies[name].remove()
         console.log('remaining bodies: ' + this.world.numRigidBodies)
-
     }
 
     render(){
@@ -134,16 +129,17 @@ export default class SimpleScene extends React.Component{
                         />
 
                         {React.Children.map(this.props.children, (child,i)=>{
-                            const dynamicProps = !child.props.static? {
+                            const dynamicOrNotProps = !child.props.static? {
                                 position: this.positions[i] || new THREE.Vector3(0,3.5,0),
                                 rotation: this.rotations[i] || new THREE.Quaternion(),
                             } : null
                             const foistedProps = {
                                 ...child.props, 
-                                ...dynamicProps,
+                                ...dynamicOrNotProps,
                                  onMount: this.addBody, 
                                  unmount: this.removeBody, 
-                                 mutate: this.modifyBody
+                                 mutate: this.modifyBody,
+                                 force: this.forceAnimateBody,
                             }
 
                             return React.cloneElement(
