@@ -45,14 +45,28 @@ export default class Body extends React.Component{
             if(newProps.exists) this.init()
             if(!newProps.exists) this.removeSelf()
         }
+        if(newProps.selected!==this.props.selected){
+            if(newProps.selected) this.onSelect()
+            else if(!newProps.selected) this.onDeselect()
+        }
     }
     componentWillUnmount(){
         console.log('body ' + this.props.name + ' is unmounting')
     }
     onSelect = () => {
-        const {name, force} = this.props
-        force(name, 'rotation', {x: 45, y: 45, z: 45})
-        force(name, 'position', {x: 1, y: 1.5, z:0})
+        const {name, force, onSelect} = this.props
+
+        force(name, 'rotation', onSelect.rotation || {x:0,y:0,z:0})
+        force(name, 'position', onSelect.position || {x:0,y:1.5,z:0})
+
+        //presentation model: play selection animation
+    }
+    onDeselect = () => {
+        // body.controlRot = false
+        // body.isKinematic = false
+        // body.sleeping = false
+
+        //presentation model: reverse play selection animation
     }
     removeSelf = () => {
         console.log(this.props.name + ' being removed from scene')
@@ -119,6 +133,10 @@ export default class Body extends React.Component{
 Body.defaultProps = {
     physicsModel: {
         type: 'box', size: [1,1,1], move: true, pos: [0,10,0]
+    },
+    onSelect: {
+        position: {x: 0,y:0,z:0}, 
+        rotation: {x:0,y:1.5,z:0}
     },
     exists: true,
     showCollider: false

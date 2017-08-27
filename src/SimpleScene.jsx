@@ -7,6 +7,10 @@ import * as THREE from 'three'
 import * as TWEEN from '@tweenjs/tween.js'
 import * as OIMO from 'oimo'
 
+import MouseInput from './MouseInput'
+const tempVector2 = new THREE.Vector2()
+
+
 import {twn, camelize, rads} from './utilities'
 
 @observer
@@ -32,11 +36,20 @@ export default class SimpleScene extends React.Component{
     world = new OIMO.World() 
     bodies = {}
 
+    @observable selected = null
     @observable positions = []
     @observable rotations = []
 
     componentDidMount(){
         this.initStore()
+    }
+
+    handleClick = evt => {
+        const intersect = this.mouseInput._getIntersections(
+          tempVector2.set(evt.clientX, evt.clientY)
+        )
+        console.log(intersect)
+
     }
 
     @action initStore = () => {
@@ -48,6 +61,16 @@ export default class SimpleScene extends React.Component{
     }
 
     @action onAnimate = () => {
+
+        const { mouseInput, camera } = this.refs
+          if (!mouseInput.isReady()) {
+            const { scene, container } = this.refs
+            // console.log( scene)
+            mouseInput.ready(scene, container, camera)
+            mouseInput.setActive(false)
+          }
+          if (this.mouseInput !== mouseInput) this.mouseInput = mouseInput
+
         this.world.step()
         TWEEN.update()
         const bodies = Object.keys(this.bodies)
@@ -112,16 +135,21 @@ export default class SimpleScene extends React.Component{
 
     render(){
         return(
-            <div>
+            <div 
+                ref = "container"
+                onClick = {this.handleClick}
+            >
                 <React3
                     mainCamera = "camera"
                     width = {window.innerWidth}
                     height = {window.innerHeight}
                     onAnimate = {this.onAnimate}
                 >
-                    <scene>
+                    <module ref="mouseInput" descriptor={MouseInput} />
+                    <scene ref = "scene">
                         <perspectiveCamera 
                             name = "camera"
+                            ref = "camera"
                             fov = {30}
                             aspect = {window.innerWidth / window.innerHeight}
                             near = {0.1} far = {50}
@@ -140,6 +168,7 @@ export default class SimpleScene extends React.Component{
                                  unmount: this.removeBody, 
                                  mutate: this.modifyBody,
                                  force: this.forceAnimateBody,
+                                 selected: i===this.selected,
                             }
 
                             return React.cloneElement(
