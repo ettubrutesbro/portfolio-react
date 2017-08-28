@@ -10,8 +10,9 @@ import * as OIMO from 'oimo'
 import MouseInput from './MouseInput'
 const tempVector2 = new THREE.Vector2()
 
-
-import {twn, cap1st, rads} from './utilities'
+import {findDOMNode} from 'react-dom'
+import {debounce} from 'lodash'
+import {twn, cap1st, rads, v3} from './utilities'
 
 @observer
 export default class SimpleScene extends React.Component{
@@ -19,22 +20,30 @@ export default class SimpleScene extends React.Component{
     /* basic scene should contain:
         physics 
             - a store for rotation and positions of objects
-
-        TODO
+        TENTATIVE
         mouseinput / picking 
             - tell children through props when they are clicked / selected / etc.
             - parent App needs to know, too. 
         responsive support
             - resize should affect canvas, etc. 
+            - mousepicking changes too
             - design reconsiderations at mobile resolution, etc.? 
+
+        TODO
+        debug camera control
+        diagnostic panel
         manual rendering support
             - API must be carefully considered - based on sleeping, etc.
             - must be easy to unset and reset...
         scene restart?
     */
 
+    @observable width = window.innerWidth
+    @observable height = window.innerHeight
+
     world = new OIMO.World() 
     bodies = {}
+    cameraPosition = v3(0,2,10)
 
     @observable selected = null
     @observable positions = []
@@ -42,16 +51,15 @@ export default class SimpleScene extends React.Component{
 
     componentDidMount(){
         this.initStore()
+        window.addEventListener('resize', this.handleResize)
     }
-
-    handleClick = evt => {
-        const intersect = this.mouseInput._getIntersections(
-          tempVector2.set(evt.clientX, evt.clientY)
-        )
-        if(intersect.length > 0){
-            console.log(intersect[0].object)
+    componentWillReceiveNewProps(newProps){
+        const {width, height } = this.props
+        if(newProps.width !== width || newProps.height !== height){
+            console.log('width / height props changed')
+            // if(physics.static) physics.static = false // so that canvas can adjust if sleeping
+            this.handleResize()
         }
-
     }
 
     @action initStore = () => {
@@ -64,13 +72,12 @@ export default class SimpleScene extends React.Component{
 
     @action onAnimate = () => {
 
-        const { mouseInput, camera } = this.refs
+        const { mouseInput, camera } = this
         if (!mouseInput.isReady()) {
             const { scene, container } = this.refs
             mouseInput.ready(scene, container, camera)
             mouseInput.setActive(false)
         }
-        if (this.mouseInput !== mouseInput) this.mouseInput = mouseInput
 
         this.world.step()
         TWEEN.update()
@@ -98,7 +105,7 @@ export default class SimpleScene extends React.Component{
         const body = this.bodies[name]
         const object = property==='position'? 'position' : 'quaternion'
         if(!duration) duration = 500
-        const current = body['get'+camelize(object)]()
+        const current = body['get'+cap1st(object)]()
         
         let start = {x: current.x, y: current.y, z: current.z, w: current.w}
         let end
@@ -126,12 +133,40 @@ export default class SimpleScene extends React.Component{
         })
         .start()
     }
+    @action letGoOfBody = (name) =>{
+        const body = this.bodies[name]
+        body.controlRot = false
+        body.isKinematic = false
+        body.sleeping = false
+    }
     @action removeBody = (name) =>{
         console.log('removing ' + name + ' from oimo/world')
         // this.world.removeRigidBody(this.bodies[name])
         console.log(this.world.rigidBodies)
         this.bodies[name].remove()
         console.log('remaining bodies: ' + this.world.numRigidBodies)
+    }
+    @action handleClick = evt => {
+        const intersect = this.mouseInput._getIntersections(
+          tempVector2.set(evt.clientX, evt.clientY)
+        )
+        if(intersect.length > 0){
+            this.selected = intersect[0].object.name
+        }
+        else{
+            this.selected = null
+        }
+        console.log('selected: ' + this.selected)
+    }
+    @action handleResize = debounce(() =>{
+        this.width = window.innerWidth
+        this.height = window.innerHeight
+        this.mouseInput.containerResized()
+    },50)
+
+    @action debugCycleCamera = () => {
+        if(this.camera.position.z === 10) this.cameraPosition = v3(0,-3,22)
+        else if(this.camera.position.z === 22) this.cameraPosition = v3(0,2,10)
     }
 
     render(){
@@ -142,19 +177,19 @@ export default class SimpleScene extends React.Component{
             >
                 <React3
                     mainCamera = "camera"
-                    width = {window.innerWidth}
-                    height = {window.innerHeight}
+                    width = {this.width}
+                    height = {this.height}
                     onAnimate = {this.onAnimate}
                 >
-                    <module ref="mouseInput" descriptor={MouseInput} />
+                    <module ref={(module)=>{this.mouseInput = module}} descriptor={MouseInput} />
                     <scene ref = "scene">
                         <perspectiveCamera 
                             name = "camera"
-                            ref = "camera"
+                            ref = {(perspectiveCamera)=>{this.camera = perspectiveCamera}}
                             fov = {30}
-                            aspect = {window.innerWidth / window.innerHeight}
+                            aspect = {this.width / this.height}
                             near = {0.1} far = {50}
-                            position = {new THREE.Vector3(0,2,10)}
+                            position = {this.cameraPosition}
                         />
 
                         {React.Children.map(this.props.children, (child,i)=>{
@@ -169,7 +204,8 @@ export default class SimpleScene extends React.Component{
                                  unmount: this.removeBody, 
                                  mutate: this.modifyBody,
                                  force: this.forceAnimateBody,
-                                 selected: i===this.selected,
+                                 letGo: this.letGoOfBody,
+                                 selected: this.selected===child.props.name,
                             }
 
                             return React.cloneElement(
@@ -180,6 +216,28 @@ export default class SimpleScene extends React.Component{
 
                     </scene>
                 </React3>
+
+                <div id = 'diagnostic'
+                    style = {{position: 'absolute', right: 0, bottom: 0, color: 'white'}}
+                >
+                    <ul>
+                        <li>Bodies: {Object.keys(this.bodies).join(', ')}</li>
+                        <li>All Sleeping? {
+                            Object.keys(this.bodies).filter((body)=>{
+                                return this.bodies[body].sleeping
+                            }).length===Object.keys(this.bodies).length? 'yes'
+                            : 'no'
+                        }</li>
+                        <li>Selected: {this.selected || 'n/a'}</li>
+                    </ul>
+
+                    <div id = 'button' style = {{background: 'blue', padding: '10px'}}
+                        onClick = {this.debugCycleCamera}
+                    >
+                        Cycle camera position
+                    </div>
+
+                </div>
             </div>
         )
     }

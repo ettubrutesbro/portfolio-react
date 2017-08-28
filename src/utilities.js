@@ -179,39 +179,8 @@ export function makeColliderMesh(physicsModel){
           r: model.size[n+0] || 0
         },
       }
-      // let geo
-      // if(type === 'box'){
-      //   geo = <boxGeometry 
-      //     width = {model.size[n]} 
-      //     height = {model.size[n+1]} 
-      //     depth = {model.size[n+2]} 
-      //   />
-      // } 
-      // else if(type === 'sphere'){
-      //   geo = <sphereGeometry
-      //     radius = {model.size[n]}
-      //     widthSegments = {8}
-      //     heightSegments = {8}
-      //   />
-            
-      // }
-      // else if(type === 'cylinder'){  //???
-      //   geo = <cylinderGeometry
-      //     radiusTop = {model.size[n]} 
-      //     radiusBottom = {model.size[n]} 
-      //     height = {model.size[n+1]}
-      //   />
-      // }
-
-      // return <mesh position = {v3(...pos)}> 
-      //   {geo} 
-      //   <meshNormalMaterial />
-      // </mesh>
-
-
   })
-    // console.log(physicsMeshes)
-    return physicsMeshes
+  return physicsMeshes
 
 }
 

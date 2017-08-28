@@ -1,14 +1,13 @@
 import React from 'react'
 import * as THREE from 'three'
 
+import {v3} from './utilities'
 import {noCollisions, normalCollisions, collidesWithAll} from './constants'
 
 export default class Constraint extends React.Component{
     /* for walls and grounds
         - configurable through props
             -size, position, display
-
-        TODO
         - upon prop phase, the collision group should change, allowing
             bodies to pass through
     */
@@ -45,6 +44,19 @@ export default class Constraint extends React.Component{
             collidesWith: collidesWithAll,
         }
         if(this.props.onMount) this.props.onMount(this.props.name, physicsModel)
+
+        let g = new THREE.Geometry()
+        const box = new THREE.BoxGeometry(1,1,1)
+        //matrix4.maketranslation(pos)
+        //scale that by v3(sizes)
+        //merge?? it with the geometry object
+        let matrix = new THREE.Matrix4().makeTranslation( pos.x, pos.y, pos.z )
+        matrix.scale(v3(width, height, depth))
+        g.merge(box, matrix)
+        const mtl = new THREE.MeshNormalMaterial()
+        let mesh = new THREE.Mesh(g, mtl)
+        this.refs.group.add(mesh)
+
     }
     removeSelf = () => {
         this.props.unmount(this.props.name)
@@ -56,13 +68,9 @@ export default class Constraint extends React.Component{
         const {width, height, depth} = this.props
         const pos = this.props.position
         return(
-            <mesh 
-                visible = {this.props.show} 
-                position = {new THREE.Vector3(pos.x, pos.y, pos.z)}
-            >
-                <boxGeometry width = {width} height = {height} depth = {depth} />
-                <meshNormalMaterial />
-            </mesh>
+            <group ref = "group"  visible = {this.props.show}>
+
+            </group>
         )
     }
 }

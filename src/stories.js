@@ -1,22 +1,15 @@
 import React from 'react';
 
 import { storiesOf } from '@storybook/react';
-import { withKnobs, text, boolean, number } from '@storybook/addon-knobs'
-// import { action } from '@storybook/addon-actions';
-// import { linkTo } from '@storybook/addon-links';
+import { withKnobs, text, boolean, number, select } from '@storybook/addon-knobs'
 
-import { Button, Welcome } from '@storybook/react/demo';
-
-import React3 from 'react-three-renderer'
 import * as THREE from 'three'
-import * as OIMO from 'oimo'
-
-import * as utils from './utilities.js'
-import {noCollisions, normalCollisions, collidesWithAll} from './constants.js'
 
 import SimpleScene from './SimpleScene'
 import Body from './Body'
 import Constraint from './Constraint'
+
+import {v3} from './utilities'
 
 const loader = new THREE.JSONLoader()
 const dragon = loader.parse(require('./Projects/Eclipse/dragon.json'))
@@ -32,7 +25,8 @@ worldStories.addDecorator(withKnobs)
 
         return (
             <div>
-                <SimpleScene>
+                <SimpleScene
+                >
                     <Body 
                         name = "box" 
                         exists = {showbox}
@@ -40,10 +34,16 @@ worldStories.addDecorator(withKnobs)
                     />
                     <Constraint 
                         name = "ground"
-                        position = {{x:0,y:-5,z:0}} 
-                        width={8} depth={8} height={10}
+                        position = {{x:0,y:0,z:0}} 
+                        width={8} depth={8} height={1}
                         show = {showground}
                         noclip = {phaseground}
+                    />
+                    <Constraint 
+                        name = "basement"
+                        position = {{x:0,y:-9,z:0}} 
+                        width={8} depth={8} height={1}
+                        show = {showground}
                     />
                 </SimpleScene>
                 
