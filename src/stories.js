@@ -23,6 +23,8 @@ worldStories.addDecorator(withKnobs)
         const showground = boolean('show ground', false)
         const phaseground = boolean('phase ground', false)
 
+        // const groundY = number('groundY',)
+
         return (
             <div>
                 <SimpleScene
@@ -34,14 +36,14 @@ worldStories.addDecorator(withKnobs)
                     />
                     <Constraint 
                         name = "ground"
-                        position = {{x:0,y:0,z:0}} 
+                        position = {{x:0,y:4,z:0}} 
                         width={8} depth={8} height={1}
                         show = {showground}
                         noclip = {phaseground}
                     />
                     <Constraint 
                         name = "basement"
-                        position = {{x:0,y:-9,z:0}} 
+                        position = {{x:0,y:-2,z:0}} 
                         width={8} depth={8} height={1}
                         show = {showground}
                     />

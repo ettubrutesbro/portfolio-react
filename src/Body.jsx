@@ -26,6 +26,7 @@ export default class Body extends React.Component{
             else if(!newProps.selected) this.onDeselect()
         }
     }
+
     onSelect = () => {
         const {name, force, onSelect} = this.props
         force(name, 'rotation', onSelect.rotation || {x:0,y:0,z:0})
@@ -51,30 +52,20 @@ export default class Body extends React.Component{
                 {showCollider && 
                     <group>
                         {this.colliderMeshes.map((mesh,i)=>{
-                            // let geo = new THREE.Geometry()
                             let geometry
-                            // let matrix = new THREE.Matrix4().makeTranslation(position.x,position.y,position.z)
-                            
                             if(mesh.geo === 'box'){
-                                geometry = <boxGeometry width = {1} depth = {1} height = {1} />
-                                // matrix.scale(v3(mesh.size.w,mesh.size.h,mesh.size.d))
-                                // geo.merge(geometry, matrix)
+                                geometry = <boxGeometry width = {mesh.size.w} depth = {mesh.size.d} height = {mesh.size.h} />
                             }
                             else if(mesh.geo === 'sphere'){
-                                geometry = <sphereGeometry radius = {1} widthSegments = {8}  heightSegments = {8} />
-                                // matrix.scale(v3(mesh.size.r,mesh.size.r,mesh.size.r))
-                                // geo.merge(geometry, matrix)
+                                geometry = <sphereGeometry radius = {mesh.size.r} widthSegments = {8}  heightSegments = {8} />
                             }
                             else if(mesh.geo === 'cylinder'){
                                 geometry = <cylinderGeometry
-                                    radiusTop = {1}
-                                    radiusBottom = {1}
-                                    height = {1}
+                                    radiusTop = {mesh.size.r}
+                                    radiusBottom = {mesh.size.r}
+                                    height = {mesh.size.h}
                                     radialSegments = {8}
                                 />
-                                //  matrix.scale(v3(mesh.size.w,mesh.size.h,mesh.size.d))
-                                // geo.merge(geometry, matrix)
-
                             }
                             return (
                                 <mesh name = {this.props.name} key = {'collider'+i}> 

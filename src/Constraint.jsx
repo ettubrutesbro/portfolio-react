@@ -30,6 +30,7 @@ export default class Constraint extends React.Component{
                 this.props.mutate(this.props.name, 'setupMass', [0x2, false], true)
             }
         }
+        // if(this.props.position !== newProps.position)
     }
 
     init = () => {
@@ -45,17 +46,14 @@ export default class Constraint extends React.Component{
         }
         if(this.props.onMount) this.props.onMount(this.props.name, physicsModel)
 
-        let g = new THREE.Geometry()
-        const box = new THREE.BoxGeometry(1,1,1)
-        //matrix4.maketranslation(pos)
-        //scale that by v3(sizes)
-        //merge?? it with the geometry object
-        let matrix = new THREE.Matrix4().makeTranslation( pos.x, pos.y, pos.z )
-        matrix.scale(v3(width, height, depth))
-        g.merge(box, matrix)
-        const mtl = new THREE.MeshNormalMaterial()
-        let mesh = new THREE.Mesh(g, mtl)
-        this.refs.group.add(mesh)
+        // let g = new THREE.Geometry()
+        // const box = new THREE.BoxGeometry(1,1,1)
+        // let matrix = new THREE.Matrix4().makeTranslation( pos.x, pos.y, pos.z )
+        // matrix.scale(v3(width, height, depth))
+        // g.merge(box, matrix)
+        // const mtl = new THREE.MeshNormalMaterial()
+        // let mesh = new THREE.Mesh(g, mtl)
+        // this.refs.group.add(mesh)
 
     }
     removeSelf = () => {
@@ -68,7 +66,19 @@ export default class Constraint extends React.Component{
         const {width, height, depth} = this.props
         const pos = this.props.position
         return(
-            <group ref = "group"  visible = {this.props.show}>
+            <group 
+                ref = "group"  
+                visible = {this.props.show}
+                position = {v3(pos.x,pos.y,pos.z)}
+            >
+                <mesh>
+                    <boxGeometry 
+                        width = {width}
+                        height = {height}
+                        depth = {depth}
+                    />
+                    <meshNormalMaterial />
+                </mesh>
 
             </group>
         )
