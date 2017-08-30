@@ -27,6 +27,7 @@ export default class Body extends React.Component{
         }
     }
     onSelect = () => {
+        if(this.props.notSelectable) return
         const {name, force, onSelect} = this.props
         force(name, 'rotation', onSelect.rotation || {x:0,y:0,z:0})
         force(name, 'position', onSelect.position || {x:0,y:1.5,z:0})

@@ -60,6 +60,7 @@ worldStories.addDecorator(withKnobs)
                             size: [10,1,10]
                         }}
                         dynamic = {true}
+                        showCollider = {true}
                     />
 
                 </SimpleScene>

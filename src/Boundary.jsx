@@ -52,17 +52,10 @@ export default class Boundary extends React.Component{
 
             <Body
                 {...this.props}
-                showCollider = {true}
+                notSelectable = {true}
             />
 
 
         )
     }
-}
-
-Boundary.defaultProps = {
-    show: false, 
-    static: true,
-    phase: false,
-    dynamic: false
 }
