@@ -198,7 +198,7 @@ export default class SimpleScene extends React.Component{
 
                         {React.Children.map(this.props.children, (child,i)=>{
                             const dynamicOrNotProps = !child.props.static? {
-                                position: this.positions[i] || new THREE.Vector3(0,3.5,0),
+                                position: this.positions[i] || new THREE.Vector3(),
                                 rotation: this.rotations[i] || new THREE.Quaternion(),
                             } : null
                             const foistedProps = {

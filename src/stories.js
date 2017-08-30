@@ -27,11 +27,7 @@ worldStories.addDecorator(withKnobs)
             <div>
                 <SimpleScene
                 >
-                    <Body 
-                        name = "box" 
-                        exists = {showbox}
-                        showCollider = {true} 
-                    />
+
                     <Body 
                         name = "box2" 
                         exists = {showbox}
