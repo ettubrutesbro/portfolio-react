@@ -64,9 +64,8 @@ export default class SimpleScene extends React.Component{
 
     @action initStore = () => {
         this.props.children.forEach((child)=>{
-            if(!child.props.static){
                 this.positions.push(null) //TODO: watch out for this, feels shaky...
-             }
+              
         })
     }
 
@@ -94,10 +93,6 @@ export default class SimpleScene extends React.Component{
     @action addBody = (name, physicsModel) => {
         console.log('adding '+name)
         this.bodies[name] = this.world.add(physicsModel)
-        Object.defineProperty(this.bodies[name], 'belongsTo', {
-            get: function(){ return this.shapes.belongsTo },
-            set: function(newBits){ return this.shapes.belongsTo = newBits}
-        })
     }
     modifyBody = (name, propOrFunctionCall, parameters, isFunction) => {
         console.log('mutating: ' + name, ' prop/function ' + propOrFunctionCall + '(' + parameters + ')')
@@ -197,19 +192,17 @@ export default class SimpleScene extends React.Component{
                         />
 
                         {React.Children.map(this.props.children, (child,i)=>{
-                            const dynamicOrNotProps = !child.props.static? {
-                                position: this.positions[i] || new THREE.Vector3(),
-                                rotation: this.rotations[i] || new THREE.Quaternion(),
-                            } : null
+
                             const foistedProps = {
                                 ...child.props, 
-                                ...dynamicOrNotProps,
-                                 onMount: this.addBody, 
-                                 unmount: this.removeBody, 
-                                 mutate: this.modifyBody,
-                                 force: this.forceAnimateBody,
-                                 letGo: this.letGoOfBody,
-                                 selected: this.selected===child.props.name,
+                                position: this.positions[i] || new THREE.Vector3(),
+                                rotation: this.rotations[i] || new THREE.Quaternion(),
+                                onMount: this.addBody, 
+                                unmount: this.removeBody, 
+                                mutate: this.modifyBody,
+                                force: this.forceAnimateBody,
+                                letGo: this.letGoOfBody,
+                                selected: this.selected===child.props.name,
                             }
 
                             return React.cloneElement(

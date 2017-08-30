@@ -9,7 +9,6 @@ export default class Body extends React.Component{
         name: this.props.name, 
         belongsTo: normalCollisions,
         collidesWith: collidesWithAll & ~noCollisions,
-        move: true,
         ...this.props.physicsModel 
     }
     colliderMeshes = this.props.showCollider? makeColliderMesh(this.physicsModel) : null
@@ -88,7 +87,7 @@ export default class Body extends React.Component{
 
 Body.defaultProps = {
     physicsModel: {
-        type: 'sphere', size: [3], pos: [0,40,0]
+        type: 'sphere', size: [3], pos: [0,40,0], move: true
     },
     onSelect: {
         position: {x: 0,y:1.5,z:0}, 

@@ -35,7 +35,8 @@ worldStories.addDecorator(withKnobs)
                         physicsModel = {{
                             pos: [0,14,0],
                             type: 'box',
-                            size: [1,1,1]
+                            size: [1,1,1],
+                            move: true
                         }}
                     />
                     <Body 
@@ -45,24 +46,22 @@ worldStories.addDecorator(withKnobs)
                         physicsModel = {{
                             pos: [0,12,0],
                             type: 'box',
-                            size: [1,1,1]
+                            size: [1,1,1],
+                            move: true
                         }}
                     />
 
+
                     <Boundary 
-                        dynamic = {true}
                         name = "ground"
-                        position = {{x:0,y:5,z:0}} 
-                        width={10} depth={10} height={5}
-                        show = {showground}
-                        noclip = {phaseground}
+                        physicsModel = {{
+                            type: 'box',
+                            pos: [0,1,0],
+                            size: [10,1,10]
+                        }}
+                        dynamic = {true}
                     />
-                    <Boundary 
-                        name = "basement"
-                        position = {{x:0,y:-9,z:0}} 
-                        width={50} depth={50} height={1}
-                        show = {showground}
-                    />
+
                 </SimpleScene>
                 
             </div>
