@@ -4,7 +4,7 @@ import * as THREE from 'three'
 import {v3} from './utilities'
 import {noCollisions, normalCollisions, collidesWithAll} from './constants'
 
-export default class Constraint extends React.Component{
+export default class Wall extends React.Component{
     /* for walls and grounds
         - configurable through props
             -size, position, display
@@ -47,15 +47,14 @@ export default class Constraint extends React.Component{
 
         let g = new THREE.Geometry()
         const box = new THREE.BoxGeometry(1,1,1)
-        //matrix4.maketranslation(pos)
-        //scale that by v3(sizes)
-        //merge?? it with the geometry object
-        let matrix = new THREE.Matrix4().makeTranslation( pos.x, pos.y, pos.z )
-        matrix.scale(v3(width, height, depth))
-        g.merge(box, matrix)
-        const mtl = new THREE.MeshNormalMaterial()
-        let mesh = new THREE.Mesh(g, mtl)
-        this.refs.group.add(mesh)
+        // this code doesnt seem to make a difference in the weird offset thing
+        // it's how OIMO's examples were doing placing geometries in compound situations
+        // let matrix = new THREE.Matrix4().makeTranslation( pos.x, pos.y, pos.z )
+        // matrix.scale(v3(width, height, depth))
+        // g.merge(box, matrix)
+        // const mtl = new THREE.MeshNormalMaterial()
+        // let mesh = new THREE.Mesh(g, mtl)
+        // this.refs.group.add(mesh)
 
     }
     removeSelf = () => {
@@ -68,14 +67,15 @@ export default class Constraint extends React.Component{
         const {width, height, depth} = this.props
         const pos = this.props.position
         return(
-            <group ref = "group"  visible = {this.props.show}>
-
-            </group>
+            <mesh ref = "group" position = {v3(pos.x,pos.y,pos.z)}  visible = {this.props.show}>
+                <boxGeometry width = {width} depth = {depth} height = {height} />
+                <meshNormalMaterial transparent opacity = {0.25} />
+            </mesh>
         )
     }
 }
 
-Constraint.defaultProps = {
+Wall.defaultProps = {
     show: false, 
     static: true,
     phase: false

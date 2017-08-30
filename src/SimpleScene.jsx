@@ -43,7 +43,7 @@ export default class SimpleScene extends React.Component{
 
     world = new OIMO.World() 
     bodies = {}
-    cameraPosition = v3(0,2,10)
+    cameraPosition = v3(0,2,40)
 
     @observable selected = null
     @observable positions = []
@@ -94,6 +94,10 @@ export default class SimpleScene extends React.Component{
     @action addBody = (name, physicsModel) => {
         console.log('adding '+name)
         this.bodies[name] = this.world.add(physicsModel)
+        Object.defineProperty(this.bodies[name], 'belongsTo', {
+            get: function(){ return this.shapes.belongsTo },
+            set: function(newBits){ return this.shapes.belongsTo = newBits}
+        })
     }
     modifyBody = (name, propOrFunctionCall, parameters, isFunction) => {
         console.log('mutating: ' + name, ' prop/function ' + propOrFunctionCall + '(' + parameters + ')')
@@ -165,8 +169,8 @@ export default class SimpleScene extends React.Component{
     },50)
 
     @action debugCycleCamera = () => {
-        if(this.camera.position.z === 10) this.cameraPosition = v3(0,-3,22)
-        else if(this.camera.position.z === 22) this.cameraPosition = v3(0,2,10)
+        if(this.camera.position.z === 40) this.cameraPosition = v3(0,-3,60)
+        else if(this.camera.position.z === 60) this.cameraPosition = v3(0,2,40)
     }
 
     render(){
@@ -188,7 +192,7 @@ export default class SimpleScene extends React.Component{
                             ref = {(perspectiveCamera)=>{this.camera = perspectiveCamera}}
                             fov = {30}
                             aspect = {this.width / this.height}
-                            near = {0.1} far = {50}
+                            near = {1} far = {200}
                             position = {this.cameraPosition}
                         />
 

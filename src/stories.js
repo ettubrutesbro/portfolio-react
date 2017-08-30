@@ -7,7 +7,7 @@ import * as THREE from 'three'
 
 import SimpleScene from './SimpleScene'
 import Body from './Body'
-import Constraint from './Constraint'
+import Wall from './Wall'
 
 import {v3} from './utilities'
 
@@ -32,17 +32,38 @@ worldStories.addDecorator(withKnobs)
                         exists = {showbox}
                         showCollider = {true} 
                     />
-                    <Constraint 
+                    <Body 
+                        name = "box2" 
+                        exists = {showbox}
+                        showCollider = {true} 
+                        physicsModel = {{
+                            pos: [0,14,0],
+                            type: 'box',
+                            size: [1,1,1]
+                        }}
+                    />
+                    <Body 
+                        name = "box3" 
+                        exists = {showbox}
+                        showCollider = {true} 
+                        physicsModel = {{
+                            pos: [0,12,0],
+                            type: 'box',
+                            size: [1,1,1]
+                        }}
+                    />
+
+                    <Wall 
                         name = "ground"
-                        position = {{x:0,y:0,z:0}} 
-                        width={8} depth={8} height={1}
+                        position = {{x:0,y:5,z:0}} 
+                        width={10} depth={10} height={5}
                         show = {showground}
                         noclip = {phaseground}
                     />
-                    <Constraint 
+                    <Wall 
                         name = "basement"
                         position = {{x:0,y:-9,z:0}} 
-                        width={8} depth={8} height={1}
+                        width={10} depth={10} height={1}
                         show = {showground}
                     />
                 </SimpleScene>

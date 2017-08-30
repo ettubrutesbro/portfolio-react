@@ -9,6 +9,7 @@ export default class Body extends React.Component{
         name: this.props.name, 
         belongsTo: normalCollisions,
         collidesWith: collidesWithAll & ~noCollisions,
+        move: true,
         ...this.props.physicsModel 
     }
     colliderMeshes = this.props.showCollider? makeColliderMesh(this.physicsModel) : null
@@ -51,34 +52,24 @@ export default class Body extends React.Component{
                 {showCollider && 
                     <group>
                         {this.colliderMeshes.map((mesh,i)=>{
-                            // let geo = new THREE.Geometry()
-                            let geometry
-                            // let matrix = new THREE.Matrix4().makeTranslation(position.x,position.y,position.z)
-                            
+                            let geo
                             if(mesh.geo === 'box'){
-                                geometry = <boxGeometry width = {1} depth = {1} height = {1} />
-                                // matrix.scale(v3(mesh.size.w,mesh.size.h,mesh.size.d))
-                                // geo.merge(geometry, matrix)
+                                geo = <boxGeometry width = {mesh.size.w} depth = {mesh.size.d} height = {mesh.size.h} />
                             }
                             else if(mesh.geo === 'sphere'){
-                                geometry = <sphereGeometry radius = {1} widthSegments = {8}  heightSegments = {8} />
-                                // matrix.scale(v3(mesh.size.r,mesh.size.r,mesh.size.r))
-                                // geo.merge(geometry, matrix)
+                                geo = <sphereGeometry radius = {mesh.size.r} widthSegments = {8}  heightSegments = {8} depthSegments={8} />
                             }
                             else if(mesh.geo === 'cylinder'){
-                                geometry = <cylinderGeometry
+                                geo = <cylinderGeometry
                                     radiusTop = {1}
                                     radiusBottom = {1}
                                     height = {1}
                                     radialSegments = {8}
-                                />
-                                //  matrix.scale(v3(mesh.size.w,mesh.size.h,mesh.size.d))
-                                // geo.merge(geometry, matrix)
-
+                                /> 
                             }
                             return (
                                 <mesh name = {this.props.name} key = {'collider'+i}> 
-                                    {geometry} 
+                                    {geo} 
                                     <meshNormalMaterial /> 
                                 </mesh>
                             )
@@ -97,7 +88,7 @@ export default class Body extends React.Component{
 
 Body.defaultProps = {
     physicsModel: {
-        type: 'box', size: [1,1,1], move: true, pos: [0,10,0]
+        type: 'sphere', size: [3], pos: [0,40,0]
     },
     onSelect: {
         position: {x: 0,y:1.5,z:0}, 
