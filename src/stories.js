@@ -7,7 +7,7 @@ import * as THREE from 'three'
 
 import SimpleScene from './SimpleScene'
 import Body from './Body'
-import Wall from './Wall'
+import Boundary from './Boundary'
 
 import {v3} from './utilities'
 
@@ -53,17 +53,18 @@ worldStories.addDecorator(withKnobs)
                         }}
                     />
 
-                    <Wall 
+                    <Boundary 
+                        dynamic = {true}
                         name = "ground"
                         position = {{x:0,y:5,z:0}} 
                         width={10} depth={10} height={5}
                         show = {showground}
                         noclip = {phaseground}
                     />
-                    <Wall 
+                    <Boundary 
                         name = "basement"
                         position = {{x:0,y:-9,z:0}} 
-                        width={10} depth={10} height={1}
+                        width={50} depth={50} height={1}
                         show = {showground}
                     />
                 </SimpleScene>

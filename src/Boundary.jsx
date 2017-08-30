@@ -4,7 +4,7 @@ import * as THREE from 'three'
 import {v3} from './utilities'
 import {noCollisions, normalCollisions, collidesWithAll} from './constants'
 
-export default class Wall extends React.Component{
+export default class Boundary extends React.Component{
     /* for walls and grounds
         - configurable through props
             -size, position, display
@@ -27,7 +27,7 @@ export default class Wall extends React.Component{
                 console.log('noclip disable')
                 this.removeSelf()
                 this.init()
-                this.props.mutate(this.props.name, 'setupMass', [2, true], true)
+                this.props.mutate(this.props.name, 'setupMass', [1, true], true)
             }
         }
     }
@@ -40,11 +40,12 @@ export default class Wall extends React.Component{
             size: [width, height, depth], 
             pos: [pos.x,pos.y,pos.z],
             friction: 0.6,
-            move: true,
+            move: this.props.dynamic? true : false,
             belongsTo: normalCollisions,
             collidesWith: collidesWithAll,
         }
         if(this.props.onMount) this.props.onMount(this.props.name, physicsModel)
+        if(this.props.dynamic) this.props.mutate(this.props.name, 'setPosition', [pos], true)
 
         let g = new THREE.Geometry()
         const box = new THREE.BoxGeometry(1,1,1)
@@ -76,8 +77,9 @@ export default class Wall extends React.Component{
     }
 }
 
-Wall.defaultProps = {
+Boundary.defaultProps = {
     show: false, 
     static: true,
-    phase: false
+    phase: false,
+    dynamic: false
 }
