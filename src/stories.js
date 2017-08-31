@@ -33,23 +33,23 @@ worldStories.addDecorator(withKnobs)
                         exists = {showbox}
                         showCollider = {true} 
                         physicsModel = {{
-                            pos: [0,14,0],
+                            pos: [0,10,0],
                             type: 'box',
-                            size: [1,1,1],
-                            move: true
+                            size: [1,1,1]
                         }}
                     />
+
                     <Body 
-                        name = "box3" 
+                        name = "testsphere" 
                         exists = {showbox}
                         showCollider = {true} 
                         physicsModel = {{
-                            pos: [0,12,0],
-                            type: 'box',
-                            size: [1,1,1],
-                            move: true
+                            pos: [0.5,7,0],
+                            type: 'sphere',
+                            size: [0.5]
                         }}
                     />
+
 
 
                     <Boundary 

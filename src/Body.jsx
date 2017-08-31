@@ -5,13 +5,19 @@ import {makeColliderMesh, v3} from './utilities'
 import {noCollisions, normalCollisions, collidesWithAll} from './constants'
 
 export default class Body extends React.Component{
-    physicsModel = { 
-        name: this.props.name, 
-        belongsTo: normalCollisions,
-        collidesWith: collidesWithAll & ~noCollisions,
-        ...this.props.physicsModel 
+
+    constructor(props, context){
+        super(props, context)
+        const {move} = this.props.physicsModel
+        this.physicsModel = { 
+            name: this.props.name, 
+            belongsTo: normalCollisions,
+            collidesWith: collidesWithAll & ~noCollisions,
+            move: !move && move!==false? true: false,
+            ...this.props.physicsModel 
+        }
+        this.colliderMeshes = this.props.showCollider? makeColliderMesh(this.physicsModel) : null
     }
-    colliderMeshes = this.props.showCollider? makeColliderMesh(this.physicsModel) : null
     init = () =>{
         this.props.onMount(this.props.name,this.physicsModel)
     }
@@ -57,7 +63,7 @@ export default class Body extends React.Component{
                                 geo = <boxGeometry width = {mesh.size.w} depth = {mesh.size.d} height = {mesh.size.h} />
                             }
                             else if(mesh.geo === 'sphere'){
-                                geo = <sphereGeometry radius = {mesh.size.r} widthSegments = {8}  heightSegments = {8} depthSegments={8} />
+                                geo = <sphereGeometry radius = {mesh.size.r} widthSegments = {8}  heightSegments = {8} />
                             }
                             else if(mesh.geo === 'cylinder'){
                                 geo = <cylinderGeometry
@@ -88,7 +94,7 @@ export default class Body extends React.Component{
 
 Body.defaultProps = {
     physicsModel: {
-        type: 'sphere', size: [3], pos: [0,40,0], move: true
+        type: 'sphere', size: [1], pos: [0,10,0], move: true
     },
     onSelect: {
         position: {x: 0,y:1.5,z:0}, 
