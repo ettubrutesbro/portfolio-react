@@ -32,6 +32,7 @@ export default class Body extends React.Component{
             else if(!newProps.selected) this.onDeselect()
         }
     }
+
     onSelect = () => {
         if(this.props.notSelectable) return
         const {name, force, onSelect} = this.props
@@ -67,9 +68,9 @@ export default class Body extends React.Component{
                             }
                             else if(mesh.geo === 'cylinder'){
                                 geo = <cylinderGeometry
-                                    radiusTop = {1}
-                                    radiusBottom = {1}
-                                    height = {1}
+                                    radiusTop = {mesh.size.r}
+                                    radiusBottom = {mesh.size.r}
+                                    height = {mesh.size.h}
                                     radialSegments = {8}
                                 /> 
                             }

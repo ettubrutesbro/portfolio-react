@@ -23,6 +23,8 @@ worldStories.addDecorator(withKnobs)
         const showground = boolean('show ground', false)
         const phaseground = boolean('phase ground', false)
 
+        // const groundY = number('groundY',)
+
         return (
             <div>
                 <SimpleScene
@@ -58,6 +60,7 @@ worldStories.addDecorator(withKnobs)
                         width = {10} depth = {10} height = {1}
                         dynamic = {true}
                         showCollider = {true}
+
                     />
 
                 </SimpleScene>

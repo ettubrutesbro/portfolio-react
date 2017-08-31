@@ -41,7 +41,9 @@ export default class SimpleScene extends React.Component{
     @observable width = window.innerWidth
     @observable height = window.innerHeight
 
-    world = new OIMO.World() 
+    world = new OIMO.World({
+        timestep: 1/60
+    }) 
     bodies = {}
     cameraPosition = v3(0,2,40)
 
@@ -168,8 +170,9 @@ export default class SimpleScene extends React.Component{
     },50)
 
     @action debugCycleCamera = () => {
-        if(this.camera.position.z === 40) this.cameraPosition = v3(0,-3,60)
-        else if(this.camera.position.z === 60) this.cameraPosition = v3(0,2,40)
+
+        if(this.camera.position.z === 10) this.cameraPosition = v3(0,2,22)
+        else if(this.camera.position.z === 22) this.cameraPosition = v3(0,2,10)
     }
 
     render(){
