@@ -45,13 +45,14 @@ export default class Boundary extends React.Component{
         const {physicsModel, dynamic, ...restOfProps} = this.props
         const computedPhysicsModel = {
             ...physicsModel,
-            move: dynamic? true: false, 
+            move: dynamic || physicsModel.move? true: false, 
         }
 
         return(
 
             <Body
                 {...this.props}
+                physicsModel ={computedPhysicsModel}
                 notSelectable = {true}
             />
 
