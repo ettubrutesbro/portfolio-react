@@ -109,7 +109,11 @@ export default class SimpleScene extends React.Component{
         let start = {x: current.x, y: current.y, z: current.z, w: current.w}
         let end
         if(property==='position'){
-            end = {x: goal.x || current.x, y: goal.y || current.y, z: goal.z || current.z}
+            end = {
+                x: !goal.x && goal.x!==0? current.x : goal.x, 
+                y: !goal.y && goal.y!==0? current.y : goal.y, 
+                z: !goal.z && goal.z!==0? current.z : goal.z
+            }
         }
         else if(property==='rotation'){ 
             end = body.getQuaternion().clone().setFromEuler(
