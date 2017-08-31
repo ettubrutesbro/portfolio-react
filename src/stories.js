@@ -54,11 +54,8 @@ worldStories.addDecorator(withKnobs)
 
                     <Boundary 
                         name = "ground"
-                        physicsModel = {{
-                            type: 'box',
-                            pos: [0,1,0],
-                            size: [10,1,10]
-                        }}
+                        pos = {{x: 0, y: 1, z: 0}}
+                        width = {10} depth = {10} height = {1}
                         dynamic = {true}
                         showCollider = {true}
                     />

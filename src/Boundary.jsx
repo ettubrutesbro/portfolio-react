@@ -31,8 +31,8 @@ export default class Boundary extends React.Component{
 
     init = () => {
         if(this.props.dynamic){
-            const pos = this.props.physicsModel.pos
-            this.props.mutate(this.props.name, 'setPosition', [{x:pos[0],y:pos[1],z:pos[2]}], true)
+            const pos = this.props.pos
+            this.props.mutate(this.props.name, 'setPosition', [{x:pos.x,y:pos.y,z:pos.z}], true)
         }
     }
     removeSelf = () => {
@@ -42,9 +42,11 @@ export default class Boundary extends React.Component{
 
     
     render(){
-        const {physicsModel, dynamic, ...restOfProps} = this.props
+        const {pos, width, depth, height, dynamic, ...restOfProps} = this.props
         const computedPhysicsModel = {
-            ...physicsModel,
+            type: 'box',
+            pos: [pos.x,pos.y,pos.z],
+            size: [width, height, depth],
             move: dynamic || physicsModel.move? true: false, 
         }
 
