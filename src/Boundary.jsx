@@ -47,7 +47,7 @@ export default class Boundary extends React.Component{
             type: 'box',
             pos: [pos.x,pos.y,pos.z],
             size: [width, height, depth],
-            move: dynamic || physicsModel.move? true: false, 
+            move: dynamic? true: false, 
         }
 
         return(

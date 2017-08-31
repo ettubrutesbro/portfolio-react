@@ -67,6 +67,25 @@ worldStories.addDecorator(withKnobs)
         )
     })
 
+    worldStories.add('makeEnclosure', ()=> {
+
+        //makeEnclosure({x: 8, y: 10, z: 2})
+        /*
+            loop 5
+
+            rightwall:
+            x:4.5,y:0,z:0
+            w:1,h:10,z:2
+
+        */
+
+        return(
+            <SimpleScene>
+                <Body name = "test" showCollider/> 
+            </SimpleScene>
+        )
+    })
+
 
 storiesOf('UI', module)
     .add('foo', ()=> <div />)
