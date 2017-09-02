@@ -79,7 +79,12 @@ worldStories.addDecorator(withKnobs)
             rightwall:
             x:4.5,y:0,z:0
             w:1,h:10,z:2
-
+            ground: 
+            x:0,y:-5.5,z:0
+            w:8,h:1,d:2
+            backwall: 
+            x:0,y:0,z:-2.5
+            w:8,h:10,z:1
         */
 
         return(
