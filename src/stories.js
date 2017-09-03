@@ -19,12 +19,8 @@ worldStories.addDecorator(withKnobs)
 
 
     worldStories.add('SimpleScene + Body + Constraint', ()=> {
-        const showbox = boolean('box', true)
-        const showground = boolean('show ground', false)
-        const phaseground = boolean('phase ground', false)
-
-        // const groundY = number('groundY',)
-
+        const showbox = boolean('make / unmake bodies', true)
+        const showground = boolean('show ground', true)
         return (
             <div>
                 <SimpleScene
@@ -59,7 +55,7 @@ worldStories.addDecorator(withKnobs)
                         pos = {{x: 0, y: 1, z: 0}}
                         width = {10} depth = {10} height = {1}
                         dynamic = {true}
-                        showCollider = {true}
+                        showCollider = {showground}
 
                     />
 
@@ -71,23 +67,6 @@ worldStories.addDecorator(withKnobs)
     })
 
     worldStories.add('makeEnclosure', ()=> {
-
-        //makeEnclosure({x: 8, y: 10, z: 2})
-        /*
-            loop 5
-
-            rightwall:
-            x:4.5,y:0,z:0
-            w:1,h:10,z:2
-            ground: 
-            x:0,y:-5.5,z:0
-            w:8,h:1,d:2
-            backwall: 
-            x:0,y:0,z:-2.5
-            w:8,h:10,z:1
-
-        */
-
         const enclosure = makeEnclosure({x:8,y:10,z:2})
         const sampleBodies = [0,1,2,3,4,5,6,7]
 
