@@ -66,8 +66,9 @@ export default class SimpleScene extends React.Component{
 
     @action initStore = () => {
         this.props.children.forEach((child)=>{
+            if(!child.props.static){
                 this.positions.push(null) //TODO: watch out for this, feels shaky...
-              
+             }
         })
     }
 
@@ -111,11 +112,7 @@ export default class SimpleScene extends React.Component{
         let start = {x: current.x, y: current.y, z: current.z, w: current.w}
         let end
         if(property==='position'){
-            end = {
-                x: !goal.x && goal.x!==0? current.x : goal.x, 
-                y: !goal.y && goal.y!==0? current.y : goal.y, 
-                z: !goal.z && goal.z!==0? current.z : goal.z
-            }
+            end = {x: goal.x || current.x, y: goal.y || current.y, z: goal.z || current.z}
         }
         else if(property==='rotation'){ 
             end = body.getQuaternion().clone().setFromEuler(
@@ -170,7 +167,6 @@ export default class SimpleScene extends React.Component{
     },50)
 
     @action debugCycleCamera = () => {
-
         if(this.camera.position.z === 10) this.cameraPosition = v3(0,2,22)
         else if(this.camera.position.z === 22) this.cameraPosition = v3(0,2,10)
     }
@@ -194,22 +190,24 @@ export default class SimpleScene extends React.Component{
                             ref = {(perspectiveCamera)=>{this.camera = perspectiveCamera}}
                             fov = {30}
                             aspect = {this.width / this.height}
-                            near = {1} far = {200}
+                            near = {0.1} far = {50}
                             position = {this.cameraPosition}
                         />
 
                         {React.Children.map(this.props.children, (child,i)=>{
-
+                            const dynamicOrNotProps = !child.props.static? {
+                                position: this.positions[i] || new THREE.Vector3(0,3.5,0),
+                                rotation: this.rotations[i] || new THREE.Quaternion(),
+                            } : null
                             const foistedProps = {
                                 ...child.props, 
-                                position: this.positions[i] || new THREE.Vector3(),
-                                rotation: this.rotations[i] || new THREE.Quaternion(),
-                                onMount: this.addBody, 
-                                unmount: this.removeBody, 
-                                mutate: this.modifyBody,
-                                force: this.forceAnimateBody,
-                                letGo: this.letGoOfBody,
-                                selected: this.selected===child.props.name,
+                                ...dynamicOrNotProps,
+                                 onMount: this.addBody, 
+                                 unmount: this.removeBody, 
+                                 mutate: this.modifyBody,
+                                 force: this.forceAnimateBody,
+                                 letGo: this.letGoOfBody,
+                                 selected: this.selected===child.props.name,
                             }
 
                             return React.cloneElement(
