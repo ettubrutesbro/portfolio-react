@@ -31,7 +31,6 @@ export default class SimpleScene extends React.Component{
 
         TODO
         debug camera control
-        diagnostic panel
         manual rendering support
             - API must be carefully considered - based on sleeping, etc.
             - must be easy to unset and reset...
@@ -86,6 +85,13 @@ export default class SimpleScene extends React.Component{
         for(var i = 0; i<bodies.length; i++){
             const name = bodies[i]
             const body = this.bodies[name]
+            //TODO crude sleeping function could cause other issues and might fuck performance up
+            const velocities = Object.values(body.linearVelocity).concat(Object.values(body.angularVelocity))
+            if(velocities.find((v)=>{return Math.abs(v) > 0.05})){ } // do nothing
+            else body.sleep()
+
+
+
             //TODO watch for these indices to get dicey with add / removals...
             this.positions[i] = new THREE.Vector3().copy(body.getPosition())
             this.rotations[i] = new THREE.Quaternion().copy(body.getQuaternion())
@@ -134,7 +140,7 @@ export default class SimpleScene extends React.Component{
             body.sleeping = false
         }).onComplete(function(){
             body.allowSleep = true
-            console.log('body sleeping?' + body.sleeping)
+            body.sleeping = true
         })
         .start()
     }
@@ -225,13 +231,26 @@ export default class SimpleScene extends React.Component{
                     style = {{position: 'absolute', right: 0, bottom: 0, color: 'white'}}
                 >
                     <ul>
-                        <li>Bodies: {Object.keys(this.bodies).join(', ')}</li>
-                        <li>All Sleeping? {
+                        <li>Awake dynamic bodies: {
                             Object.keys(this.bodies).filter((body)=>{
-                                return this.bodies[body].sleeping
-                            }).length===Object.keys(this.bodies).length? 'yes'
-                            : 'no'
+                                return !this.bodies[body].sleeping && this.bodies[body].isDynamic
+                            })
                         }</li>
+
+                        <li>Bodies with any velocity > 0.05: 
+                            {
+                                Object.keys(this.bodies).filter((name)=>{
+                                    const body = this.bodies[name]
+                                    const linVel = Object.values(body.linearVelocity)
+                                    const angVel = Object.values(body.angularVelocity)
+                                    const allVelocities = linVel.concat(angVel)
+                                    return allVelocities.filter((vel)=>{
+                                        return Math.abs(vel) > 0.05
+                                    }).length > 0
+                                })
+                            }
+                        </li>
+
                         <li>Selected: {this.selected || 'n/a'}</li>
                     </ul>
 

@@ -54,8 +54,6 @@ export default class Body extends React.Component{
                 rotation = {new THREE.Euler().setFromQuaternion(this.props.rotation)}
                 visible = {this.props.exists}
             >
-
-
                 {showCollider && 
                     <group>
                         {this.colliderMeshes.map((mesh,i)=>{
@@ -95,7 +93,7 @@ export default class Body extends React.Component{
 
 Body.defaultProps = {
     physicsModel: {
-        type: 'sphere', size: [1], pos: [0,10,0], move: true
+        type: 'box', size: [1,1,1], pos: [0,10,0], move: true
     },
     onSelect: {
         position: {x: 0,y:1.5,z:0}, 

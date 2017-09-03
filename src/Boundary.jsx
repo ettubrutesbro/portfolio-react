@@ -34,6 +34,7 @@ export default class Boundary extends React.Component{
             const pos = this.props.pos
             this.props.mutate(this.props.name, 'setPosition', [{x:pos.x,y:pos.y,z:pos.z}], true)
         }
+        this.props.mutate(this.props.name, 'sleeping', true)
     }
     removeSelf = () => {
         this.props.unmount(this.props.name)
