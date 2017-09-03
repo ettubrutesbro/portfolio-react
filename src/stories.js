@@ -95,8 +95,9 @@ worldStories.addDecorator(withKnobs)
         )
     })
 
-    worldStories.add('enclosure with dynamic boundary in middle', ()=>{
-        const enclosure = makeEnclosure({x:8,y:13,z:2},{x:0,y:0,z:0})
+    worldStories.add('2 enclosures?', ()=>{
+        const enclosure = makeEnclosure({x:8,y:10,z:2})
+        const bottomenclosure = makeEnclosure({x:8,y:10,z:2},{x:0,y:-6,z:0},'2')
         return(
             <SimpleScene>
                 {Array.from(Array(12)).map((body, i)=>{
@@ -119,6 +120,15 @@ worldStories.addDecorator(withKnobs)
                         width = {b.w} height = {b.h} depth = {b.d}
                         showCollider = {b.name==='frontwall'?false: true}
                         dynamic = {b.name==='bottom'?true:false}
+                    />
+                })}
+                {bottomenclosure.map((b)=>{
+                    return <Boundary
+                        name = {b.name}
+                        pos= {{x:b.x, y:b.y, z:b.z}}
+                        width = {b.w} height = {b.h} depth = {b.d}
+                        showCollider = {b.name==='frontwall2'?false: true}
+                        dynamic = {b.name==='bottom2'?true:false}
                     />
                 })}
             </SimpleScene>

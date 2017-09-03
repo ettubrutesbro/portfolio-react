@@ -71,7 +71,6 @@ export default class SimpleScene extends React.Component{
     }
 
     @action onAnimate = () => {
-
         const { mouseInput, camera } = this
         if (!mouseInput.isReady()) {
             const { scene, container } = this.refs
@@ -87,12 +86,9 @@ export default class SimpleScene extends React.Component{
             const body = this.bodies[name]
             //TODO crude sleeping function could cause other issues and might fuck performance up
             const velocities = Object.values(body.linearVelocity).concat(Object.values(body.angularVelocity))
-            if(velocities.find((v)=>{return Math.abs(v) > 0.05})){ } // do nothing
+            if(velocities.find((v)=>{return Math.abs(v) > 0.02})){ } // do nothing
             else body.sleep()
-
-
-
-            //TODO watch for these indices to get dicey with add / removals...
+            //TODO watch out for these indices to get dicey with add / removals...
             this.positions[i] = new THREE.Vector3().copy(body.getPosition())
             this.rotations[i] = new THREE.Quaternion().copy(body.getQuaternion())
         }
@@ -237,7 +233,7 @@ export default class SimpleScene extends React.Component{
                             })
                         }</li>
 
-                        <li>Bodies with any velocity > 0.05: 
+                        <li>Bodies with any velocity > 0.01: 
                             {
                                 Object.keys(this.bodies).filter((name)=>{
                                     const body = this.bodies[name]
