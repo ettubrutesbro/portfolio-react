@@ -45,7 +45,7 @@ export default class SimpleScene extends React.Component{
         timestep: 1/60
     }) 
     bodies = {}
-    cameraPosition = v3(0,2,10)
+    cameraPosition = v3(0,2,40)
 
     @observable selected = null
     @observable positions = []

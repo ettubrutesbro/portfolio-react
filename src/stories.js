@@ -89,10 +89,22 @@ worldStories.addDecorator(withKnobs)
         */
 
         const enclosure = makeEnclosure({x:8,y:10,z:2})
+        const sampleBodies = [0,1,2,3,4,5,6,7]
 
         return(
             <SimpleScene>
-                <Body name = "test" showCollider/>
+                {Array.from(Array(25)).map((body, i)=>{
+                    return(
+                    <Body name = {'body'+i} showCollider
+                        physicsModel = {{
+                            pos: [(Math.round(Math.random()) * 2 - 1) * Math.random()*4 ,10+(2*i),0],
+                            size: [0.25+(Math.random()*0.75)],
+                            type: 'sphere'
+                        }}
+                        
+                    />
+                    )
+                })}
                 {enclosure.map((b)=>{
                     return <Boundary
                         name = {b.name}
