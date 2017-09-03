@@ -9,7 +9,7 @@ import SimpleScene from './SimpleScene'
 import Body from './Body'
 import Boundary from './Boundary'
 
-import {v3} from './utilities'
+import {v3, makeEnclosure} from './utilities'
 
 const loader = new THREE.JSONLoader()
 const dragon = loader.parse(require('./Projects/Eclipse/dragon.json'))
@@ -85,11 +85,22 @@ worldStories.addDecorator(withKnobs)
             backwall: 
             x:0,y:0,z:-2.5
             w:8,h:10,z:1
+
         */
+
+        const enclosure = makeEnclosure({x:8,y:10,z:2})
 
         return(
             <SimpleScene>
-                <Body name = "test" showCollider/> 
+                <Body name = "test" showCollider/>
+                {enclosure.map((b)=>{
+                    return <Boundary
+                        name = {b.name}
+                        pos= {{x:b.x, y:b.y, z:b.z}}
+                        width = {b.w} height = {b.h} depth = {b.d}
+                        showCollider = {b.name==='frontwall'?false: true}
+                    />
+                })}
             </SimpleScene>
         )
     })

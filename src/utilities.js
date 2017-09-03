@@ -184,6 +184,18 @@ export function makeColliderMesh(physicsModel){
 
 }
 
+export function makeEnclosure(volume){
+  //given XYZ volume, create a 5-walled (open-top) enclosure with physics/mesh
+  //return an array of objects {x,y,z,w,h,d}
+  return [
+    {name: 'rightwall', x: (volume.x/2)+.5, y: 0, z:0, w: 1, h: volume.y, d: volume.z}, //r
+    {name: 'leftwall', x: -(volume.x/2)-.5, y: 0, z:0, w: 1, h: volume.y, d: volume.z}, //l
+    {name: 'backwall', x: 0, y: 0, z:-(volume.z/2)-.5, w: volume.x, h: volume.y, d: 1}, //b
+    {name: 'frontwall', x: 0, y: 0, z:(volume.z/2)+.5, w: volume.x, h: volume.y, d: 1}, //f
+    {name: 'bottom', x: 0, y: -(volume.y/2)-.5, z:0, w: volume.x, h: 1, d: volume.z}, //f
+  ]
+}
+
 export const cap1st = string => {
   return string.charAt(0).toUpperCase() + string.slice(1)
 }
