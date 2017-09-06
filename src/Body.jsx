@@ -28,7 +28,8 @@ export default class Body extends React.Component{
             if(!newProps.exists) this.removeSelf()
         }
         if(newProps.selected!==this.props.selected){
-            if(newProps.selected) this.onSelect()
+            if(newProps.selected===true) this.onSelect()
+            else if(newProps.selected){ } //another has been selected
             else if(!newProps.selected) this.onDeselect()
         }
     }

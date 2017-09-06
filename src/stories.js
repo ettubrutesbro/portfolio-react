@@ -135,6 +135,37 @@ worldStories.addDecorator(withKnobs)
         )
     })
 
+    worldStories.add('dynamic enclosure', ()=>{
+        const enclosure = makeEnclosure({x:8,y:10,z:2})
+        return(
+            <SimpleScene>
+                {Array.from(Array(12)).map((body, i)=>{
+                    return(
+                    <Body name = {'body'+i} showCollider
+                        physicsModel = {{
+                            pos: [(Math.round(Math.random()) * 2 - 1) * Math.random()*4 ,10+(2*i),0],
+                            size: [0.5+(Math.random()*0.5)],
+                            type: 'sphere'
+                        }}
+                        
+                    />
+                    )
+                })}
+                {enclosure.map((b)=>{
+                    return <Boundary
+                        name = {b.name}
+                        pos= {{x:b.x, y:b.y, z:b.z}}
+                        width = {b.w} height = {b.h} depth = {b.d}
+                        showCollider = {b.name==='frontwall'?false: true}
+                        dynamic = {true}
+                    />
+                })}
+
+
+            </SimpleScene>
+        )
+    } )
+
 
 storiesOf('UI', module)
     .add('foo', ()=> <div />)

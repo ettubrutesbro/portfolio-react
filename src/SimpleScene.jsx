@@ -86,7 +86,7 @@ export default class SimpleScene extends React.Component{
             const body = this.bodies[name]
             //TODO crude sleeping function could cause other issues and might fuck performance up
             const velocities = Object.values(body.linearVelocity).concat(Object.values(body.angularVelocity))
-            if(velocities.find((v)=>{return Math.abs(v) > 0.02})){ } // do nothing
+            if(velocities.find((v)=>{return Math.abs(v) > 0.025})){ } // do nothing
             else body.sleep()
             //TODO watch out for these indices to get dicey with add / removals...
             this.positions[i] = new THREE.Vector3().copy(body.getPosition())
@@ -211,7 +211,7 @@ export default class SimpleScene extends React.Component{
                                 mutate: this.modifyBody,
                                 force: this.forceAnimateBody,
                                 letGo: this.letGoOfBody,
-                                selected: this.selected===child.props.name,
+                                selected: this.selected===child.props.name?true:this.selected?'other':false,
                             }
 
                             return React.cloneElement(
