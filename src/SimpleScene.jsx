@@ -94,9 +94,10 @@ export default class SimpleScene extends React.Component{
         }
     }
 
-    @action addBody = (name, physicsModel) => {
+    @action addBody = (name, physicsModel, isSelectable) => {
         console.log('adding '+name)
         this.bodies[name] = this.world.add(physicsModel)
+        if(isSelectable) this.bodies[name].isSelectable = true
     }
     modifyBody = (name, propOrFunctionCall, parameters, isFunction) => {
         console.log('mutating: ' + name, ' prop/function ' + propOrFunctionCall + '(' + parameters + ')')
@@ -158,6 +159,11 @@ export default class SimpleScene extends React.Component{
           tempVector2.set(evt.clientX, evt.clientY)
         )
         if(intersect.length > 0){
+            const target = intersect[0].object.name
+            if(!this.bodies[target].isSelectable){
+                console.log('cant select this target')
+                return
+            }
             this.selected = intersect[0].object.name
         }
         else{
@@ -201,7 +207,6 @@ export default class SimpleScene extends React.Component{
                         />
 
                         {React.Children.map(this.props.children, (child,i)=>{
-
                             const foistedProps = {
                                 ...child.props, 
                                 position: this.positions[i] || new THREE.Vector3(),

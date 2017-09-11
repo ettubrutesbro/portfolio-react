@@ -19,13 +19,8 @@ export default class Boundary extends React.Component{
         this.init()
     }
     componentWillReceiveProps(newProps){
-        if(this.props.noclip !== newProps.noclip){
-            if(newProps.noclip){
-                
-            }
-            else{
-               
-            }
+        if(this.props.selected!==newProps.selected){
+            if(this.props.dynamic) console.log('bound ' + this.props.name + ' should move')
         }
     }
 
@@ -56,7 +51,7 @@ export default class Boundary extends React.Component{
             <Body
                 {...this.props}
                 physicsModel ={computedPhysicsModel}
-                notSelectable = {true}
+                isSelectable = {false}
             />
 
 

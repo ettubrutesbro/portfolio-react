@@ -19,7 +19,7 @@ export default class Body extends React.Component{
         this.colliderMeshes = this.props.showCollider? makeColliderMesh(this.physicsModel) : null
     }
     init = () =>{
-        this.props.onMount(this.props.name,this.physicsModel)
+        this.props.onMount(this.props.name,this.physicsModel,this.props.isSelectable)
     }
     componentDidMount(){ this.init() }
     componentWillReceiveProps(newProps){
@@ -101,5 +101,6 @@ Body.defaultProps = {
         rotation: {x:15,y:45,z:30}
     },
     exists: true,
-    showCollider: false
+    showCollider: false,
+    isSelectable: true
 }
