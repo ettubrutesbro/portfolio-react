@@ -17,6 +17,10 @@ import {SesemeModel} from './Projects/Seseme/Seseme'
 
 
 const models = storiesOf('Models', module)
+
+const loader = new THREE.JSONLoader()
+const dragon = loader.parse(require('./Projects/Eclipse/dragon.json'))
+
 models.addDecorator(withKnobs)
 models.add('Cube', () => {
     return(
@@ -29,11 +33,10 @@ models.add('Cube', () => {
     )
 })
 models.add('Dragon', () => {
-    const loader = new THREE.JSONLoader()
-    const dragon = loader.parse(require('./Projects/Eclipse/dragon.json'))
+    const yRot = number('rotate Y', 90)
     return(
         <SimpleScene>
-            <mesh scale = {v3(2,2,2)} rotation = {new THREE.Euler(0,rads(90),0)}>
+            <mesh rotation = {new THREE.Euler(0,rads(yRot),0)}>
                 <geometry 
                     vertices = {dragon.geometry.vertices}
                     faces = {dragon.geometry.faces}
@@ -47,7 +50,7 @@ models.add('Sendbloom', () => {
     const yRot = number('rotate Y', 0)
     return(
         <SimpleScene>
-            <group scale = {v3(2,2,2)} rotation = {new THREE.Euler(0,rads(yRot),0)}>
+            <group rotation = {new THREE.Euler(0,rads(yRot),0)}>
             <SendbloomModel />
             </group>
         </SimpleScene>
@@ -57,7 +60,7 @@ models.add('Seseme', () => {
     const yRot = number('rotate Y', 0)
     return(
         <SimpleScene>
-            <group scale = {v3(2,2,2)} rotation = {new THREE.Euler(0,rads(yRot),0)}>
+            <group rotation = {new THREE.Euler(0,rads(yRot),0)}>
             <SesemeModel />
             </group>
         </SimpleScene>

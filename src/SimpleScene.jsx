@@ -21,7 +21,7 @@ export default class SimpleScene extends React.Component{
     @observable width = window.innerWidth
     @observable height = window.innerHeight
 
-    cameraPosition = v3(0,2,40)
+    cameraPosition = v3(0,0,10)
 
 
     componentDidMount(){
@@ -35,7 +35,7 @@ export default class SimpleScene extends React.Component{
             this.handleResize()
         }
     }
-    
+
     @action handleResize = debounce(() =>{
         this.width = window.innerWidth
         this.height = window.innerHeight
