@@ -6,24 +6,76 @@ import { withKnobs, text, boolean, number, select } from '@storybook/addon-knobs
 import * as THREE from 'three'
 
 import SimpleScene from './SimpleScene'
+import InteractiveScene from './InteractiveScene'
 import Body from './Body'
 import Boundary from './Boundary'
 
-import {v3, makeEnclosure, makeElevator} from './utilities'
+import {v3, makeEnclosure, makeElevator, rads} from './utilities'
 
-const loader = new THREE.JSONLoader()
-const dragon = loader.parse(require('./Projects/Eclipse/dragon.json'))
+import {SendbloomModel} from './Projects/Sendbloom/Sendbloom'
+import {SesemeModel} from './Projects/Seseme/Seseme'
+
+
+const models = storiesOf('Models', module)
+models.addDecorator(withKnobs)
+models.add('Cube', () => {
+    return(
+        <SimpleScene>
+            <mesh>
+                <boxGeometry width = {1} height = {1} depth = {1} />
+                <meshNormalMaterial />
+            </mesh>
+        </SimpleScene>
+    )
+})
+models.add('Dragon', () => {
+    const loader = new THREE.JSONLoader()
+    const dragon = loader.parse(require('./Projects/Eclipse/dragon.json'))
+    return(
+        <SimpleScene>
+            <mesh scale = {v3(2,2,2)} rotation = {new THREE.Euler(0,rads(90),0)}>
+                <geometry 
+                    vertices = {dragon.geometry.vertices}
+                    faces = {dragon.geometry.faces}
+                />
+                <meshNormalMaterial />
+            </mesh>
+        </SimpleScene>
+    )
+})
+models.add('Sendbloom', () => {
+    const yRot = number('rotate Y', 0)
+    return(
+        <SimpleScene>
+            <group scale = {v3(2,2,2)} rotation = {new THREE.Euler(0,rads(yRot),0)}>
+            <SendbloomModel />
+            </group>
+        </SimpleScene>
+    )
+})
+models.add('Seseme', () => {
+    const yRot = number('rotate Y', 0)
+    return(
+        <SimpleScene>
+            <group scale = {v3(2,2,2)} rotation = {new THREE.Euler(0,rads(yRot),0)}>
+            <SesemeModel />
+            </group>
+        </SimpleScene>
+    )
+})
+
+
 
 const worldStories = storiesOf('World (3D)', module)
 worldStories.addDecorator(withKnobs)
 
 
-    worldStories.add('SimpleScene + Body + Constraint', ()=> {
+    worldStories.add('InteractiveScene + Body + Constraint', ()=> {
         const showbox = boolean('make / unmake bodies', true)
         const showground = boolean('show ground', true)
         return (
             <div>
-                <SimpleScene
+                <InteractiveScene
                 >
 
                     <Body 
@@ -59,7 +111,7 @@ worldStories.addDecorator(withKnobs)
 
                     />
 
-                </SimpleScene>
+                </InteractiveScene>
                 
             </div>
 
@@ -70,7 +122,7 @@ worldStories.addDecorator(withKnobs)
         const enclosure = makeEnclosure({x:8,y:10,z:2})
 
         return(
-            <SimpleScene>
+            <InteractiveScene>
                 {Array.from(Array(25)).map((body, i)=>{
                     return(
                     <Body name = {'body'+i} showCollider
@@ -91,14 +143,14 @@ worldStories.addDecorator(withKnobs)
                         showCollider = {b.name==='frontwall'?false: true}
                     />
                 })}
-            </SimpleScene>
+            </InteractiveScene>
         )
     })
 
     worldStories.add('makeElevator', ()=>{
         const elevator = makeElevator({x:8,y:10,z:2})
         return(
-            <SimpleScene>
+            <InteractiveScene>
                 {Array.from(Array(12)).map((body, i)=>{
                     return(
                     <Body name = {'body'+i} showCollider
@@ -122,7 +174,7 @@ worldStories.addDecorator(withKnobs)
                 })}
 
 
-            </SimpleScene>
+            </InteractiveScene>
         )
     } )
 
