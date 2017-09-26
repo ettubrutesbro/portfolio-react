@@ -105,7 +105,7 @@ models.add('Wake', () => {
 
 
 
-const worldStories = storiesOf('World (3D)', module)
+const worldStories = storiesOf('Interactive Scenes', module)
 worldStories.addDecorator(withKnobs)
 
 
@@ -218,5 +218,5 @@ worldStories.addDecorator(withKnobs)
     } )
 
 
-storiesOf('UI', module)
+storiesOf('UI (DOM)', module)
     .add('foo', ()=> <div />)
