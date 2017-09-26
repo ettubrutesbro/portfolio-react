@@ -1,7 +1,7 @@
 import React from 'react'
 import * as THREE from 'three'
 
-import { v3, twn, makeColorBox, makeColorMesh, rads } from '../../utilities.js'
+import { v3, twn, makeColorBox, makeColorMesh, rads } from '../../helpers/utilities'
 
 export default class BottomBar extends React.Component {
   constructor(props, context) {

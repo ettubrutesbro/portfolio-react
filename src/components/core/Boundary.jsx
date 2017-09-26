@@ -3,7 +3,7 @@ import * as THREE from 'three'
 
 import Body from './Body'
 
-import {v3} from './utilities'
+import {v3} from '../../helpers/utilities'
 import {noCollisions, normalCollisions, collidesWithAll} from './constants'
 
 export default class Boundary extends React.Component{

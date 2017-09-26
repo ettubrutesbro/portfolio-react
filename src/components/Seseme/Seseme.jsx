@@ -6,7 +6,7 @@ import * as TWEEN from '@tweenjs/tween.js'
 
 import styles from './Seseme.css'
 
-import { v3 } from '../../utilities.js'
+import { v3 } from '../../helpers/utilities.js'
 
 @observer
 export class SesemeModel extends React.Component {

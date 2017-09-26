@@ -5,15 +5,15 @@ import { withKnobs, text, boolean, number, select } from '@storybook/addon-knobs
 
 import * as THREE from 'three'
 
-import SimpleScene from './SimpleScene'
-import InteractiveScene from './InteractiveScene'
-import Body from './Body'
-import Boundary from './Boundary'
+import SimpleScene from './components/core/SimpleScene'
+import InteractiveScene from './components/core/InteractiveScene'
+import Body from './components/core/Body'
+import Boundary from './components/core/Boundary'
 
-import {v3, makeEnclosure, makeElevator, rads} from './utilities'
+import {v3, makeEnclosure, makeElevator, rads} from './helpers/utilities'
 
-import {SendbloomModel} from './Projects/Sendbloom/Sendbloom'
-import {SesemeModel} from './Projects/Seseme/Seseme'
+import {SendbloomModel} from './components/Sendbloom/Sendbloom'
+import {SesemeModel} from './components/Seseme/Seseme'
 
 
 const models = storiesOf('Models', module)

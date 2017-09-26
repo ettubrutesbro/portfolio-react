@@ -7,12 +7,12 @@ import * as THREE from 'three'
 import * as TWEEN from '@tweenjs/tween.js'
 import * as OIMO from 'oimo'
 
-import MouseInput from './MouseInput'
+import MouseInput from '../../helpers/MouseInput'
 const tempVector2 = new THREE.Vector2()
 
 import {findDOMNode} from 'react-dom'
 import {debounce} from 'lodash'
-import {twn, cap1st, rads, v3} from './utilities'
+import {twn, cap1st, rads, v3} from '../../helpers/utilities'
 
 @observer
 export default class InteractiveScene extends React.Component{

@@ -1,7 +1,7 @@
 import React from 'react'
 import * as THREE from 'three'
 
-import { v3, twn, makeColorBox } from '../../utilities.js'
+import { v3, twn, makeColorBox } from '../../helpers/utilities'
 
 export default class Sidebar extends React.Component {
   componentDidMount() {

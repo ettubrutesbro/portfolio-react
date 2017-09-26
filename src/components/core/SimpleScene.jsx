@@ -11,7 +11,7 @@ const tempVector2 = new THREE.Vector2()
 
 import {findDOMNode} from 'react-dom'
 import {debounce} from 'lodash'
-import {twn, cap1st, rads, v3} from './utilities'
+import {twn, cap1st, rads, v3} from '../../helpers/utilities'
 
 @observer
 export default class SimpleScene extends React.Component{

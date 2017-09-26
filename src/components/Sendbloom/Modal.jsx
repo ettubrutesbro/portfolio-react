@@ -1,7 +1,7 @@
 import React from 'react'
 import * as THREE from 'three'
 
-import { v3, twn, makeColorBox, makeColorMesh } from '../../utilities.js'
+import { v3, twn, makeColorBox, makeColorMesh } from '../../helpers/utilities'
 
 export default class Modal extends React.Component {
   constructor(props, context) {

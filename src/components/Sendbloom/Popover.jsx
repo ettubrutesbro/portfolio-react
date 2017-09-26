@@ -1,7 +1,7 @@
 import React from 'react'
 import * as THREE from 'three'
 
-import { v3, twn, makeColorBox, rads } from '../../utilities.js'
+import { v3, twn, makeColorBox, rads } from '../../helpers/utilities'
 
 export default class Popover extends React.Component {
     componentDidMount() {

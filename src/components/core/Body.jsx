@@ -1,7 +1,7 @@
 import React from 'react'
 import * as THREE from 'three'
 
-import {makeColliderMesh, v3} from './utilities'
+import {makeColliderMesh, v3} from '../../helpers/utilities'
 import {noCollisions, normalCollisions, collidesWithAll} from './constants'
 
 export default class Body extends React.Component{

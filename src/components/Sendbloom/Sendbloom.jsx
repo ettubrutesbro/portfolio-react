@@ -4,8 +4,7 @@ import { action, observable } from 'mobx'
 import * as THREE from 'three'
 import * as TWEEN from '@tweenjs/tween.js'
 
-import { rads } from '../../helpers.js'
-import { v3, twn, makeColorMesh, makeColorBox } from '../../utilities.js'
+import { rads, v3, twn, makeColorMesh, makeColorBox } from '../../helpers/utilities'
 
 import { mapValues } from 'lodash'
 
