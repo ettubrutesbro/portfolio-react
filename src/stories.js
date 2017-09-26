@@ -20,6 +20,8 @@ const models = storiesOf('Models', module)
 
 const loader = new THREE.JSONLoader()
 const dragon = loader.parse(require('./Projects/Eclipse/dragon.json'))
+const wakebed = loader.parse(require('./Projects/Wake/wakebed.json'))
+
 
 models.addDecorator(withKnobs)
 models.add('Cube', () => {
@@ -57,12 +59,26 @@ models.add('Sendbloom', () => {
     )
 })
 models.add('Seseme', () => {
-    const yRot = number('rotate Y', 0)
+    const sesemeyRot = number('rotate Y', 0)
     return(
         <SimpleScene>
-            <group rotation = {new THREE.Euler(0,rads(yRot),0)}>
+            <group rotation = {new THREE.Euler(0,rads(sesemeyRot),0)}>
             <SesemeModel />
             </group>
+        </SimpleScene>
+    )
+})
+models.add('Wake', () => {
+    const wakexRot = number('rotate X', 15)
+    const wakeyRot = number('rotate Y', 150)
+    return(
+        <SimpleScene>
+            <mesh position = {v3(0,0,0)} rotation = {new THREE.Euler(rads(wakexRot),rads(wakeyRot),0)}>
+                <geometry vertices = {wakebed.geometry.vertices}
+                    faces = {wakebed.geometry.faces}
+                />
+                <meshNormalMaterial />
+            </mesh>
         </SimpleScene>
     )
 })
