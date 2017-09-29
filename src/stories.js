@@ -15,14 +15,13 @@ import {v3, makeEnclosure, makeElevator, rads} from './helpers/utilities'
 import {SendbloomModel} from './components/Sendbloom/Sendbloom'
 import {SesemeModel} from './components/Seseme/Seseme'
 
-
 const models = storiesOf('Models', module)
 
 const loader = new THREE.JSONLoader()
-const dragon = loader.parse(require('./Projects/Eclipse/dragon.json'))
-const wakebed = loader.parse(require('./Projects/Wake/bed.json'))
-const wakesleeper = loader.parse(require('./Projects/Wake/sleeper.json'))
-const wakesleeperl = loader.parse(require('./Projects/Wake/sleeperL.json'))
+const dragon = loader.parse(require('./components/Eclipse/dragon.json'))
+const wakebed = loader.parse(require('./components/Wake/bed.json'))
+const wakesleeper = loader.parse(require('./components/Wake/sleeper.json'))
+const wakesleeperl = loader.parse(require('./components/Wake/sleeperL.json'))
 
 
 models.addDecorator(withKnobs)

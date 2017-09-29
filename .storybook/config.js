@@ -5,6 +5,7 @@ import { configure } from '@storybook/react';
 function loadStories() {
   // require('../stories');
   require('../src/stories.js')
+  require('../src/stories/tests.js')
 }
 
 configure(loadStories, module);
