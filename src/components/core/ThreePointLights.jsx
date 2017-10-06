@@ -6,7 +6,15 @@ import { v3 } from '../../helpers/utilities'
 export default class ThreePointLights extends React.Component {
     render() {
         const sf = this.props.scale
-        const { light1, light2, light3 } = this.props
+        const { light1, light2, light3, debug } = this.props
+
+        const debugMesh = (
+            <mesh>
+                <boxGeometry width = {0.75} height = {0.75} depth = {0.75} />
+                <meshNormalMaterial />
+            </mesh>
+        )
+
         return (
             <group>
                 <group
@@ -16,10 +24,7 @@ export default class ThreePointLights extends React.Component {
                         light1.position.z * sf
                     )}
                 >
-                <mesh>
-                    <boxGeometry width = {0.75} height = {0.75} depth = {0.75} />
-                    <meshNormalMaterial />
-                </mesh>
+                {debug && debugMesh}
                 <pointLight
                     color={light1.color}
                     decay={3}
@@ -36,10 +41,7 @@ export default class ThreePointLights extends React.Component {
                         light2.position.z * sf
                     )}
                 >
-                <mesh>
-                    <boxGeometry width = {0.75} height = {0.75} depth = {0.75} />
-                    <meshNormalMaterial />
-                </mesh>
+                {debug && debugMesh}
                 <pointLight
                     color={light2.color}
                     decay={3}
@@ -56,10 +58,7 @@ export default class ThreePointLights extends React.Component {
                         light3.position.z * sf
                     )}
                 >
-                <mesh>
-                    <boxGeometry width = {0.75} height = {0.75} depth = {0.75} />
-                    <meshNormalMaterial />
-                </mesh>
+                {debug && debugMesh}
                 <pointLight
                     color={light3.color}
                     decay={3}

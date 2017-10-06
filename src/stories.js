@@ -36,18 +36,24 @@ models.add('Cube', () => {
         </SimpleScene>
     )
 })
-models.add('Dragon', () => {
+models.add('Dragon (lit)', () => {
     const yRot = number('rotate Y', 90)
     return(
         <SimpleScene>
             <ambientLight intensity = {0.1} color = {0xffffff} />
-            <ThreePointLights scale = {1} debug = {true} />
+            <ThreePointLights 
+                scale = {0.8} 
+                debug = {true} 
+                light1 = {{position: v3(1.5,-0,3.5), intensity: 0.3, color: 0x99ccdf, on: true}}
+                light2 = {{position: v3(-4,0,1), intensity: 0.6, color: 0xdeddbb, on: true}}
+                light3 = {{position: v3(0,3,-0.5), intensity: 1.05, color: 0x6989ff, on: true}}
+            />
             <mesh rotation = {new THREE.Euler(0,rads(yRot),0)}>
                 <geometry 
                     vertices = {dragon.geometry.vertices}
                     faces = {dragon.geometry.faces}
                 />
-                <meshLambertMaterial color = {0xdedede} />
+                <meshPhongMaterial color = {0xdedede} />
             </mesh>
         </SimpleScene>
     )
