@@ -9,49 +9,73 @@ export default class ThreePointLights extends React.Component {
         const { light1, light2, light3 } = this.props
         return (
             <group>
-                <pointLight
+                <group
                     position={v3(
                         light1.position.x * sf,
                         light1.position.y * sf,
                         light1.position.z * sf
                     )}
+                >
+                <mesh>
+                    <boxGeometry width = {0.75} height = {0.75} depth = {0.75} />
+                    <meshNormalMaterial />
+                </mesh>
+                <pointLight
                     color={light1.color}
                     decay={3}
                     distance={36}
                     visible={light1.on}
                     intensity={light1.intensity}
                 />
-                <pointLight
+                </group>
+
+                <group 
                     position={v3(
                         light2.position.x * sf,
                         light2.position.y * sf,
                         light2.position.z * sf
                     )}
+                >
+                <mesh>
+                    <boxGeometry width = {0.75} height = {0.75} depth = {0.75} />
+                    <meshNormalMaterial />
+                </mesh>
+                <pointLight
                     color={light2.color}
                     decay={3}
                     distance={36}
                     visible={light2.on}
                     intensity={light2.intensity}
                 />
-                <pointLight
+                </group>
+
+                <group
                     position={v3(
                         light3.position.x * sf,
                         light3.position.y * sf,
                         light3.position.z * sf
                     )}
+                >
+                <mesh>
+                    <boxGeometry width = {0.75} height = {0.75} depth = {0.75} />
+                    <meshNormalMaterial />
+                </mesh>
+                <pointLight
                     color={light3.color}
                     decay={3}
                     distance={36}
                     visible={light3.on}
                     intensity={light3.intensity}
                 />
+                </group>
+
             </group>
         )
     }
 }
 
 ThreePointLights.defaultProps = {
-    scale: 2,
+    scale: 1,
     light1: {
         position: v3(3, 2, 3.5),
         intensity: 0.6,
@@ -70,4 +94,5 @@ ThreePointLights.defaultProps = {
         color: 0x0077ff,
         on: true,
     },
+    debug: false
 }

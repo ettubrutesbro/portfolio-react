@@ -9,6 +9,7 @@ import SimpleScene from './components/core/SimpleScene'
 import InteractiveScene from './components/core/InteractiveScene'
 import Body from './components/core/Body'
 import Boundary from './components/core/Boundary'
+import ThreePointLights from './components/core/ThreePointLights'
 
 import {v3, makeEnclosure, makeElevator, rads} from './helpers/utilities'
 
@@ -39,12 +40,14 @@ models.add('Dragon', () => {
     const yRot = number('rotate Y', 90)
     return(
         <SimpleScene>
+            <ambientLight intensity = {0.1} color = {0xffffff} />
+            <ThreePointLights scale = {1} debug = {true} />
             <mesh rotation = {new THREE.Euler(0,rads(yRot),0)}>
                 <geometry 
                     vertices = {dragon.geometry.vertices}
                     faces = {dragon.geometry.faces}
                 />
-                <meshNormalMaterial />
+                <meshLambertMaterial color = {0xdedede} />
             </mesh>
         </SimpleScene>
     )
