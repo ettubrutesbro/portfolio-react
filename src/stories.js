@@ -119,9 +119,33 @@ models.add('Sendbloom', () => {
     )
 })
 models.add('Seseme', () => {
+        const debugshowlights = boolean('show light positions', true)
+
+    const light1 = object('light 1', {
+        position: '1.5,0.5,4.5',
+        intensity: 5.5
+    })
+    const l1color = color('light1 color(hex)', '#D0F7F7')
+    const light2 = object('light 2', {
+        position: '-4,-1.25,-.25',
+        intensity: 5
+    })
+    const l2color = color('light2 color(hex)', '#856960')
+    const light3 = object('light 3', {
+        position: '0,3,-1.25',
+        intensity: 12
+    })
+    const l3color = color('light3 color(hex)', '#B9CCD4')
+
+    const mtlcolor  = color('material color', '#5C5A5A')
+    const emissive = color('emissive', '#B5B8B8')
+    const specular = color('specular', '#E98F53')
+    const shininess = number('shininess', 1.5)
     const sesemeyRot = number('rotate Y', 0)
     return (
         <SimpleScene>
+            <ambientLight color = {0xffffff} />
+            <ThreePointLights debug = {debugshowlights}/>
             <group rotation={new THREE.Euler(0, rads(sesemeyRot), 0)}>
                 <SesemeModel />
             </group>
