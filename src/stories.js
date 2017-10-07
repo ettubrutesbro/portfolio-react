@@ -62,6 +62,10 @@ models.add('Dragon (lit)', () => {
     })
     const l3color = color('light3 color(hex)', '#6989ff')
 
+    const mtlcolor  = color('material color', '#d7d7d7')
+    const emissive = color('emissive', '#')
+    const specular = color('specular', '#')
+    const shininess = number('shininess', 0)
 
     const yRot = number('rotate Y', 90)
 
@@ -96,7 +100,10 @@ models.add('Dragon (lit)', () => {
                     faces={dragon.geometry.faces}
                 />
                 <meshPhongMaterial 
-                    color={0xdedede}
+                    color={mtlcolor}
+                    emissive = {emissive}
+                    specular = {specular}
+                    shininess = {shininess}
 
                 />
             </mesh>
