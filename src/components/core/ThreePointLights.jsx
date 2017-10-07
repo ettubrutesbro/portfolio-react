@@ -8,12 +8,7 @@ export default class ThreePointLights extends React.Component {
         const sf = this.props.scale
         const { light1, light2, light3, debug } = this.props
 
-        const debugMesh = (
-            <mesh>
-                <boxGeometry width = {0.75} height = {0.75} depth = {0.75} />
-                <meshNormalMaterial />
-            </mesh>
-        )
+        const debugGeometry = (<boxGeometry width = {0.25} height = {0.25} depth = {0.25} />)
 
         return (
             <group>
@@ -24,7 +19,12 @@ export default class ThreePointLights extends React.Component {
                         light1.position.z * sf
                     )}
                 >
-                {debug && debugMesh}
+                {debug && 
+                    <mesh> 
+                        {debugGeometry} 
+                        <meshBasicMaterial wireframe = {true} color = {light1.color} /> 
+                    </mesh>
+                }
                 <pointLight
                     color={light1.color}
                     decay={3}
@@ -41,7 +41,12 @@ export default class ThreePointLights extends React.Component {
                         light2.position.z * sf
                     )}
                 >
-                {debug && debugMesh}
+                {debug && 
+                    <mesh> 
+                        {debugGeometry} 
+                        <meshBasicMaterial wireframe = {true} color = {light2.color} /> 
+                    </mesh>
+                }
                 <pointLight
                     color={light2.color}
                     decay={3}
@@ -58,7 +63,12 @@ export default class ThreePointLights extends React.Component {
                         light3.position.z * sf
                     )}
                 >
-                {debug && debugMesh}
+                {debug && 
+                    <mesh> 
+                        {debugGeometry} 
+                        <meshBasicMaterial wireframe = {true} color = {light3.color} /> 
+                    </mesh>
+                }
                 <pointLight
                     color={light3.color}
                     decay={3}
