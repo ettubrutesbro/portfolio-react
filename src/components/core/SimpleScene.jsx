@@ -58,6 +58,7 @@ export default class SimpleScene extends React.Component{
                     width = {this.width}
                     height = {this.height}
                     onAnimate = {this.onAnimate}
+                    clearColor = {this.props.clearColor}
                 >
                     <scene ref = "scene">
                         <perspectiveCamera 
@@ -76,4 +77,8 @@ export default class SimpleScene extends React.Component{
             </div>
         )
     }
+}
+
+SimpleScene.defaultProps = {
+    clearColor: 0xdedede
 }

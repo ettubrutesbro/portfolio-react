@@ -47,31 +47,30 @@ models.add('Dragon (lit)', () => {
     const debugshowlights = boolean('show light positions', true)
 
     const light1 = object('light 1', {
-        position: '1.5,0,3.5',
-        intensity: 3
+        position: '1.5,0.5,4.5',
+        intensity: 5.5
     })
-    const l1color = color('light1 color(hex)', '#99ccdf')
+    const l1color = color('light1 color(hex)', '#D0F7F7')
     const light2 = object('light 2', {
-        position: '-1,0,1',
-        intensity: 6
+        position: '-4,-1.25,-.25',
+        intensity: 5
     })
-    const l2color = color('light2 color(hex)', '#deddbb')
+    const l2color = color('light2 color(hex)', '#856960')
     const light3 = object('light 3', {
-        position: '0,3,-.5',
-        intensity: 10.5
+        position: '0,3,-1.25',
+        intensity: 12
     })
-    const l3color = color('light3 color(hex)', '#6989ff')
+    const l3color = color('light3 color(hex)', '#B9CCD4')
 
-    const mtlcolor  = color('material color', '#d7d7d7')
-    const emissive = color('emissive', '#')
-    const specular = color('specular', '#')
-    const shininess = number('shininess', 0)
+    const mtlcolor  = color('material color', '#5C5A5A')
+    const emissive = color('emissive', '#B5B8B8')
+    const specular = color('specular', '#E98F53')
+    const shininess = number('shininess', 1.5)
 
     const yRot = number('rotate Y', 90)
 
     return (
-        <SimpleScene>
-            <ambientLight intensity={0.1} color={0xffffff} />
+        <SimpleScene clearColor = {0xededed}>
             <ThreePointLights
                 scale={0.8}
                 debug={debugshowlights}
@@ -104,7 +103,6 @@ models.add('Dragon (lit)', () => {
                     emissive = {emissive}
                     specular = {specular}
                     shininess = {shininess}
-
                 />
             </mesh>
         </SimpleScene>
