@@ -145,7 +145,28 @@ models.add('Seseme', () => {
     return (
         <SimpleScene>
             <ambientLight color = {0xffffff} />
-            <ThreePointLights debug = {debugshowlights}/>
+            <ThreePointLights
+                scale={0.8}
+                debug={debugshowlights}
+                light1={{
+                    position: v3(...light1.position.split(',')),
+                    intensity: light1.intensity / 10,
+                    color: parseInt('0x'+l1color.replace('#','')),
+                    on: true,
+                }}
+                light2={{
+                    position: v3(...light2.position.split(',')),
+                    intensity: light2.intensity / 10,
+                    color: parseInt('0x'+l2color.replace('#','')),
+                    on: true,
+                }}
+                light3={{
+                    position: v3(...light3.position.split(',')),
+                    intensity: light3.intensity / 10,
+                    color: parseInt('0x'+l3color.replace('#','')),
+                    on: true,
+                }}
+            />
             <group rotation={new THREE.Euler(0, rads(sesemeyRot), 0)}>
                 <SesemeModel />
             </group>

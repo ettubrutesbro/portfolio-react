@@ -130,7 +130,7 @@ export class SesemeModel extends React.Component {
           )}
         >
           <planeBufferGeometry width={0.975} height={0.975} />
-          <meshPhongMaterial color = {0x555555} />
+          <meshPhongMaterial color = {0x555555} shininess = {5}/>
         </mesh>
         {this.pedestal &&
           <mesh
@@ -144,7 +144,7 @@ export class SesemeModel extends React.Component {
               // faceVertexUvs = {this.parsedModel.geometry.faceVertexUvs}
               // colors = {this.parsedModel.geometry.colors}
             />
-            <meshPhongMaterial color = {0x555555}  />
+            <meshPhongMaterial color = {0x555555}  shininess = {5}/>
           </mesh>}
         {this.pillar &&
           <group>
@@ -158,7 +158,7 @@ export class SesemeModel extends React.Component {
                   quaternion={p.quat || null}
                 >
                   <geometryResource resourceId="pillar" />
-                  <meshPhongMaterial color = {0x555555} />
+                  <meshPhongMaterial color = {0x555555} shininess = {5}/>
                 </mesh>
               )
             })}
