@@ -27,8 +27,8 @@ export default class ThreePointLights extends React.Component {
                 }
                 <pointLight
                     color={light1.color}
-                    decay={3}
-                    distance={36}
+                    decay={this.props.decay}
+                    distance={this.props.distance}
                     visible={light1.on}
                     intensity={light1.intensity}
                 />
@@ -49,8 +49,8 @@ export default class ThreePointLights extends React.Component {
                 }
                 <pointLight
                     color={light2.color}
-                    decay={3}
-                    distance={36}
+                    decay={this.props.decay}
+                    distance={this.props.distance}
                     visible={light2.on}
                     intensity={light2.intensity}
                 />
@@ -71,8 +71,8 @@ export default class ThreePointLights extends React.Component {
                 }
                 <pointLight
                     color={light3.color}
-                    decay={3}
-                    distance={36}
+                    decay={this.props.decay}
+                    distance={this.props.distance}
                     visible={light3.on}
                     intensity={light3.intensity}
                 />
@@ -85,6 +85,8 @@ export default class ThreePointLights extends React.Component {
 
 ThreePointLights.defaultProps = {
     scale: 1,
+    decay: 3, 
+    distance: 36,
     light1: {
         position: v3(3, 2, 3.5),
         intensity: 0.6,

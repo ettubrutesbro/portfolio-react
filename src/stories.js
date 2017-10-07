@@ -22,7 +22,7 @@ import ThreePointLights from './components/core/ThreePointLights'
 import { v3, makeEnclosure, makeElevator, rads } from './helpers/utilities'
 
 import { SendbloomModel } from './components/Sendbloom/Sendbloom'
-import { SesemeModel } from './components/Seseme/Seseme'
+import Seseme from './components/Seseme/Seseme'
 
 const models = storiesOf('Models', module)
 
@@ -47,24 +47,24 @@ models.add('Dragon (lit)', () => {
     const debugshowlights = boolean('show light positions', true)
 
     const light1 = object('light 1', {
-        position: '1.5,0.5,4.5',
-        intensity: 5.5
+        position: '6,3,8',
+        intensity: 7
     })
     const l1color = color('light1 color(hex)', '#D0F7F7')
     const light2 = object('light 2', {
-        position: '-4,-1.25,-.25',
-        intensity: 5
+        position: '-6,0.5,1',
+        intensity: 2
     })
-    const l2color = color('light2 color(hex)', '#856960')
+    const l2color = color('light2 color(hex)', '#806554')
     const light3 = object('light 3', {
-        position: '0,3,-1.25',
-        intensity: 12
+        position: '0,5,0',
+        intensity: 6
     })
     const l3color = color('light3 color(hex)', '#B9CCD4')
 
-    const mtlcolor  = color('material color', '#5C5A5A')
+    const mtlcolor  = color('material color', '#777777')
     const emissive = color('emissive', '#B5B8B8')
-    const specular = color('specular', '#E98F53')
+    const specular = color('specular', '#FF8F4A')
     const shininess = number('shininess', 1.5)
 
     const yRot = number('rotate Y', 90)
@@ -122,31 +122,42 @@ models.add('Seseme', () => {
         const debugshowlights = boolean('show light positions', true)
 
     const light1 = object('light 1', {
-        position: '1.5,0.5,4.5',
-        intensity: 5.5
+        position: '6,3,8',
+        intensity: 7
     })
     const l1color = color('light1 color(hex)', '#D0F7F7')
     const light2 = object('light 2', {
-        position: '-4,-1.25,-.25',
-        intensity: 5
+        position: '-6,0.5,1',
+        intensity: 2
     })
-    const l2color = color('light2 color(hex)', '#856960')
+    const l2color = color('light2 color(hex)', '#806554')
     const light3 = object('light 3', {
-        position: '0,3,-1.25',
-        intensity: 12
+        position: '0,5,0',
+        intensity: 6
     })
     const l3color = color('light3 color(hex)', '#B9CCD4')
 
-    const mtlcolor  = color('material color', '#5C5A5A')
-    const emissive = color('emissive', '#B5B8B8')
-    const specular = color('specular', '#E98F53')
-    const shininess = number('shininess', 1.5)
+    const mtlcolor  = color('material color', '#FFFFFF')
+    const emissive = color('emissive', '#383838')
+    const specular = color('specular', '#D69D68')
+    const shininess = number('shininess', 15)
+
+    const decay = number('decay', 3)
+    const distance = number('distance', 36)
+
     const sesemeyRot = number('rotate Y', 0)
     return (
-        <SimpleScene>
-            <ambientLight color = {0xffffff} />
+        <SimpleScene clearColor = {0xdedede} >
+            <hemisphereLight
+                skyColor={0xffe8bb}
+                groundColor={0x8aaabb}
+                intensity={0.1}
+                visible={true}
+            />
             <ThreePointLights
                 scale={0.8}
+                decay = {decay}
+                distance = {distance}
                 debug={debugshowlights}
                 light1={{
                     position: v3(...light1.position.split(',')),
@@ -168,7 +179,9 @@ models.add('Seseme', () => {
                 }}
             />
             <group rotation={new THREE.Euler(0, rads(sesemeyRot), 0)}>
-                <SesemeModel />
+                <Seseme 
+                    debugMtl = {{color: mtlcolor, emissive: emissive, specular: specular, shininess: shininess}}
+                />
             </group>
         </SimpleScene>
     )

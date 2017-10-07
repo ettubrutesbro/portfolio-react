@@ -9,7 +9,7 @@ import styles from './Seseme.css'
 import { v3 } from '../../helpers/utilities.js'
 
 @observer
-export class SesemeModel extends React.Component {
+export default class Seseme extends React.Component {
   @observable mode = this.props.mode
   @observable tween = null
   @observable plrTweens = [null, null, null, null]
@@ -108,6 +108,9 @@ export class SesemeModel extends React.Component {
   @action setYPos = (i, y) => (this.pillars[i].pos.y = y)
 
   render() {
+
+    const mtl = this.props.debugMtl
+
     const scaleAdjust = new THREE.Vector3(0.08, 0.08, 0.08)
     const pillarPositions = []
 
@@ -130,7 +133,7 @@ export class SesemeModel extends React.Component {
           )}
         >
           <planeBufferGeometry width={0.975} height={0.975} />
-          <meshPhongMaterial color = {0x555555} shininess = {5}/>
+          <meshPhongMaterial {...mtl}/>
         </mesh>
         {this.pedestal &&
           <mesh
@@ -144,7 +147,7 @@ export class SesemeModel extends React.Component {
               // faceVertexUvs = {this.parsedModel.geometry.faceVertexUvs}
               // colors = {this.parsedModel.geometry.colors}
             />
-            <meshPhongMaterial color = {0x555555}  shininess = {5}/>
+            <meshPhongMaterial {...mtl}/>
           </mesh>}
         {this.pillar &&
           <group>
@@ -158,7 +161,7 @@ export class SesemeModel extends React.Component {
                   quaternion={p.quat || null}
                 >
                   <geometryResource resourceId="pillar" />
-                  <meshPhongMaterial color = {0x555555} shininess = {5}/>
+                  <meshPhongMaterial {...mtl}/>
                 </mesh>
               )
             })}
@@ -168,16 +171,3 @@ export class SesemeModel extends React.Component {
   }
 }
 
-@observer
-export class SesemeInfo extends React.Component {
-  //extend InfoComponent someday....
-  render() {
-    return (
-      <div className={styles.seseme}>
-        An interactive installation combining robotics & a webapp, SESEME is
-        what I mostly worked on for 2 1/2 years after graduation — and a project
-        I remember very fondly.
-      </div>
-    )
-  }
-}
