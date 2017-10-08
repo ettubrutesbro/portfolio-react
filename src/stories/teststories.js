@@ -30,55 +30,11 @@ tests.addDecorator(withKnobs)
 
 
 tests.add('disappearing-ground enclosure', () => {
-     const enclosure = makeElevator({ x: 8, y: 10, z: 3 })
+     const enclosure = makeElevator({ x: 8, y: 13, z: 3 }, {x:0,y:-2,z:0})
      const wallsExist = boolean('walls?', true)
 
     return (
-        <InteractiveScene>
-            {Array.from(Array(12)).map((body, i) => {
-                return (
-                    <Body
-                        name={'body' + i}
-                        showCollider
-                        physicsModel={{
-                            pos: [
-                                (Math.round(Math.random()) * 2 - 1) *
-                                    Math.random() *
-                                    4,
-                                10 + 2 * i,
-                                0,
-                            ],
-                            size: [0.75 + Math.random() * 0.75],
-                            type: 'sphere',
-                        }}
-                    />
-                )
-            })}
-            {enclosure.map(b => {
-                return (
-                    <Boundary
-                        name={b.name}
-                        pos={{ x: b.x, y: b.y, z: b.z }}
-                        exists = {b.name==='bottom'? wallsExist: true}
-                        width={b.w}
-                        height={b.h}
-                        depth={b.d}
-                        showCollider={b.name === 'frontwall' ? false : true}
-                        // dynamic = {true}
-                    />
-                )
-            })}
-        </InteractiveScene>
-    )
-})
-
-tests.add('disappearing-ground enclosure (style)', () => {
-     const enclosure = makeElevator({ x: 8, y: 10, z: 3 })
-     const wallsExist = boolean('walls?', true)
-
-    return (
-        <InteractiveScene background = {0xdedede}>
-            <ThreePointLights />
+        <InteractiveScene background = {0xffffff}>
             {Array.from(Array(12)).map((body, i) => {
                 return (
                     <Body
@@ -108,8 +64,53 @@ tests.add('disappearing-ground enclosure (style)', () => {
                         width={b.w}
                         height={b.h}
                         depth={b.d}
-                        showCollider={false}
+                        // showCollider={b.name === 'frontwall' ? false : true}
+                        showCollider = {false}
                         // dynamic = {true}
+                    />
+                )
+            })}
+        </InteractiveScene>
+    )
+})
+
+tests.add('disappearing-ground enclosure (style)', () => {
+     const enclosure = makeElevator({ x: 8, y: 12, z: 3 })
+     const wallsExist = boolean('walls?', true)
+
+    return (
+        <InteractiveScene background = {0xdedede}>
+            <ThreePointLights />
+            {Array.from(Array(12)).map((body, i) => {
+                return (
+                    <Body
+                        name={'body' + i}
+                        showCollider
+                        physicsModel={{
+                            pos: [
+                                (Math.round(Math.random()) * 2 - 1) *
+                                    Math.random() *
+                                    4,
+                                10 + 2 * i,
+                                0,
+                            ],
+                            size: [0.75 + Math.random() * 0.75],
+                            type: 'sphere',
+                        }}
+                    />
+                )
+            })}
+            {enclosure.map(b => {
+                return (
+                    <Boundary
+                        name={b.name}
+                        pos={{ x: b.x, y: b.y, z: b.z }}
+                        exists = {b.name==='bottom'? wallsExist: true}
+                        width={b.w}
+                        height={b.h}
+                        depth={b.d}
+                        showCollider={false}
+                        dynamic = {false}
                     />
                 )
             })}

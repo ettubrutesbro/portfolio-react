@@ -13,6 +13,7 @@ const tempVector2 = new THREE.Vector2()
 import {findDOMNode} from 'react-dom'
 import {debounce} from 'lodash'
 import {twn, cap1st, rads, v3} from '../../helpers/utilities'
+import ThreePointLights from './ThreePointLights'
 
 @observer
 export default class InteractiveScene extends React.Component{
@@ -209,6 +210,8 @@ export default class InteractiveScene extends React.Component{
                             position = {this.cameraPosition}
                         />
 
+                        <ThreePointLights />
+
                         {React.Children.map(this.props.children, (child,i)=>{
                             const foistedProps = {
                                 ...child.props, 
@@ -274,4 +277,5 @@ export default class InteractiveScene extends React.Component{
 
     InteractiveScene.defaultProps = {
         background: 0x000000,
+        defaultLighting: false,
     }
