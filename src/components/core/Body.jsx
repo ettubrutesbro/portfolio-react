@@ -44,6 +44,12 @@ export default class Body extends React.Component{
     removeSelf = () => {
         console.log(this.props.name + ' being removed from scene')
         this.props.unmount(this.props.name)
+        this.setupMass()
+    }
+    setupMass = () => {
+        this.props.mutate(
+            this.props.name, 'setupMass', [0x1, true], true
+        )
     }
 
     render(){

@@ -2,7 +2,11 @@ import React from 'react'
 import * as THREE from 'three'
 
 import SimpleScene from '../components/core/SimpleScene'
-import { v3, rads } from '../helpers/utilities'
+import InteractiveScene from '../components/core/InteractiveScene'
+import Body from '../components/core/Body'
+import Boundary from '../components/core/Boundary'
+
+import { v3, rads, makeEnclosure, makeElevator } from '../helpers/utilities'
 
 import { storiesOf } from '@storybook/react'
 import {
@@ -17,6 +21,56 @@ import ThreePointLights from '../components/core/ThreePointLights'
 
 const tests = storiesOf('Tests', module)
 tests.addDecorator(withKnobs)
+
+// tests.add('joint hinge from oimo?', () => {
+//     return(
+
+//     )
+// })
+
+
+tests.add('disappearing-ground enclosure', () => {
+     const enclosure = makeElevator({ x: 8, y: 10, z: 2 })
+     const wallsExist = boolean('walls?', true)
+
+    return (
+        <InteractiveScene>
+            {Array.from(Array(25)).map((body, i) => {
+                return (
+                    <Body
+                        name={'body' + i}
+                        showCollider
+                        physicsModel={{
+                            pos: [
+                                (Math.round(Math.random()) * 2 - 1) *
+                                    Math.random() *
+                                    4,
+                                10 + 2 * i,
+                                0,
+                            ],
+                            size: [0.25 + Math.random() * 0.75],
+                            type: 'sphere',
+                        }}
+                    />
+                )
+            })}
+            {enclosure.map(b => {
+                return (
+                    <Boundary
+                        name={b.name}
+                        pos={{ x: b.x, y: b.y, z: b.z }}
+                        exists = {b.name==='bottom'? wallsExist: true}
+                        width={b.w}
+                        height={b.h}
+                        depth={b.d}
+                        showCollider={b.name === 'frontwall' ? false : true}
+                        // dynamic = {true}
+                    />
+                )
+            })}
+        </InteractiveScene>
+    )
+})
 
 
 tests.add('threepointlights, spelled out', () => {

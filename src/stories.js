@@ -337,7 +337,7 @@ worldStories.add('makeElevator', () => {
                         height={b.h}
                         depth={b.d}
                         showCollider={b.name === 'frontwall' ? false : true}
-                        dynamic={b.name === 'bottom' ? true : false}
+                        dynamic={true}
                     />
                 )
             })}
