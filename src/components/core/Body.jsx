@@ -53,7 +53,7 @@ export default class Body extends React.Component{
     }
 
     render(){
-        const {showCollider, position} = this.props
+        const {showCollider, position, debugMtl} = this.props
         return(
             <group 
                 ref = "group"
@@ -82,7 +82,9 @@ export default class Body extends React.Component{
                             return (
                                 <mesh name = {this.props.name} key = {'collider'+i}> 
                                     {geo} 
-                                    <meshNormalMaterial /> 
+                                    {debugMtl === 'normal' && <meshNormalMaterial />}
+                                    {debugMtl === 'lambert' && <meshLambertMaterial color = {0xb1b1b1} />}
+                                    {debugMtl === 'phong' && <meshPhongMaterial color = {0xd7d7d7} shininess = {0} emissive = {0xb1b1b1}/>}
                                 </mesh>
                             )
                             
@@ -99,11 +101,12 @@ export default class Body extends React.Component{
 }
 
 Body.defaultProps = {
+    debugMtl: 'normal',
     physicsModel: {
         type: 'box', size: [1,1,1], pos: [0,10,0], move: true
     },
     onSelect: {
-        position: {x: 0,y:1.5,z:0}, 
+        position: {x: 0,y:3,z:0}, 
         rotation: {x:15,y:45,z:30}
     },
     exists: true,

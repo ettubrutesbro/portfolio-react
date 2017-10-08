@@ -30,12 +30,12 @@ tests.addDecorator(withKnobs)
 
 
 tests.add('disappearing-ground enclosure', () => {
-     const enclosure = makeElevator({ x: 8, y: 10, z: 2 })
+     const enclosure = makeElevator({ x: 8, y: 10, z: 3 })
      const wallsExist = boolean('walls?', true)
 
     return (
         <InteractiveScene>
-            {Array.from(Array(25)).map((body, i) => {
+            {Array.from(Array(12)).map((body, i) => {
                 return (
                     <Body
                         name={'body' + i}
@@ -48,7 +48,7 @@ tests.add('disappearing-ground enclosure', () => {
                                 10 + 2 * i,
                                 0,
                             ],
-                            size: [0.25 + Math.random() * 0.75],
+                            size: [0.75 + Math.random() * 0.75],
                             type: 'sphere',
                         }}
                     />
@@ -64,6 +64,51 @@ tests.add('disappearing-ground enclosure', () => {
                         height={b.h}
                         depth={b.d}
                         showCollider={b.name === 'frontwall' ? false : true}
+                        // dynamic = {true}
+                    />
+                )
+            })}
+        </InteractiveScene>
+    )
+})
+
+tests.add('disappearing-ground enclosure (style)', () => {
+     const enclosure = makeElevator({ x: 8, y: 10, z: 3 })
+     const wallsExist = boolean('walls?', true)
+
+    return (
+        <InteractiveScene background = {0xdedede}>
+            <ThreePointLights />
+            {Array.from(Array(12)).map((body, i) => {
+                return (
+                    <Body
+                        debugMtl = 'phong'
+                        name={'body' + i}
+                        showCollider
+                        physicsModel={{
+                            pos: [
+                                (Math.round(Math.random()) * 2 - 1) *
+                                    Math.random() *
+                                    4,
+                                10 + 2 * i,
+                                0,
+                            ],
+                            size: [0.75 + Math.random() * 0.75],
+                            type: 'sphere',
+                        }}
+                    />
+                )
+            })}
+            {enclosure.map(b => {
+                return (
+                    <Boundary
+                        name={b.name}
+                        pos={{ x: b.x, y: b.y, z: b.z }}
+                        exists = {b.name==='bottom'? wallsExist: true}
+                        width={b.w}
+                        height={b.h}
+                        depth={b.d}
+                        showCollider={false}
                         // dynamic = {true}
                     />
                 )

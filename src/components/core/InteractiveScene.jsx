@@ -196,6 +196,7 @@ export default class InteractiveScene extends React.Component{
                     width = {this.width}
                     height = {this.height}
                     onAnimate = {this.onAnimate}
+                    clearColor = {this.props.background}
                 >
                     <module ref={(module)=>{this.mouseInput = module}} descriptor={MouseInput} />
                     <scene ref = "scene">
@@ -267,4 +268,10 @@ export default class InteractiveScene extends React.Component{
             </div>
         )
     }
+
 }
+
+
+    InteractiveScene.defaultProps = {
+        background: 0x000000,
+    }
