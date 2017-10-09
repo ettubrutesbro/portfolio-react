@@ -11,7 +11,7 @@ import MouseInput from '../../helpers/MouseInput'
 const tempVector2 = new THREE.Vector2()
 
 import {findDOMNode} from 'react-dom'
-import {debounce} from 'lodash'
+import {debounce, flatten} from 'lodash'
 import {twn, cap1st, rads, v3} from '../../helpers/utilities'
 import ThreePointLights from './ThreePointLights'
 
@@ -65,10 +65,9 @@ export default class InteractiveScene extends React.Component{
     }
 
     @action initStore = () => {
-        this.props.children.forEach((child)=>{
-                this.positions.push(null) //TODO: watch out for this, feels shaky...
-              
-        })
+        //flatmap children
+        const children = flatten(this.props.children)
+
     }
 
     @action onAnimate = () => {
@@ -187,6 +186,13 @@ export default class InteractiveScene extends React.Component{
     }
 
     render(){
+        const children = flatten(this.props.children)
+        const physicsChildren = children.filter((child)=>{
+            console.log(child)
+            if(!child.props.nonBody) return true
+            else return false
+        })
+
         return(
             <div 
                 ref = "container"
@@ -210,26 +216,26 @@ export default class InteractiveScene extends React.Component{
                             position = {this.cameraPosition}
                         />
 
-                        <ThreePointLights />
+                        { /* physics-enabled children only */
+                            React.Children.map(physicsChildren, (child,i)=>{
+                                const foistedProps = {
+                                    ...child.props, 
+                                    position: this.positions[i] || new THREE.Vector3(),
+                                    rotation: this.rotations[i] || new THREE.Quaternion(),
+                                    onMount: this.addBody, 
+                                    unmount: this.removeBody, 
+                                    mutate: this.modifyBody,
+                                    force: this.forceAnimateBody,
+                                    letGo: this.letGoOfBody,
+                                    selected: this.selected===child.props.name?true:this.selected?'other':false,
+                                }
 
-                        {React.Children.map(this.props.children, (child,i)=>{
-                            const foistedProps = {
-                                ...child.props, 
-                                position: this.positions[i] || new THREE.Vector3(),
-                                rotation: this.rotations[i] || new THREE.Quaternion(),
-                                onMount: this.addBody, 
-                                unmount: this.removeBody, 
-                                mutate: this.modifyBody,
-                                force: this.forceAnimateBody,
-                                letGo: this.letGoOfBody,
-                                selected: this.selected===child.props.name?true:this.selected?'other':false,
-                            }
-
-                            return React.cloneElement(
-                                child, 
-                                foistedProps
-                            )
-                        })}
+                                return React.cloneElement(
+                                    child, 
+                                    foistedProps
+                                )
+                            })
+                        }
 
                     </scene>
                 </React3>

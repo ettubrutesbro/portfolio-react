@@ -22,19 +22,13 @@ import ThreePointLights from '../components/core/ThreePointLights'
 const tests = storiesOf('Tests', module)
 tests.addDecorator(withKnobs)
 
-// tests.add('joint hinge from oimo?', () => {
-//     return(
 
-//     )
-// })
-
-
-tests.add('disappearing-ground enclosure', () => {
+tests.add('lit enclosure w. toggle-ground', () => {
      const enclosure = makeElevator({ x: 8, y: 13, z: 3 }, {x:0,y:-2,z:0})
-     const wallsExist = boolean('walls?', true)
+     const wallsExist = boolean('ground?', true)
 
     return (
-        <InteractiveScene background = {0xffffff}>
+        <InteractiveScene background = {0xdedede}>
             {Array.from(Array(12)).map((body, i) => {
                 return (
                     <Body
@@ -64,8 +58,8 @@ tests.add('disappearing-ground enclosure', () => {
                         width={b.w}
                         height={b.h}
                         depth={b.d}
-                        // showCollider={b.name === 'frontwall' ? false : true}
-                        showCollider = {false}
+                        showCollider={b.name === 'frontwall' ? false : true}
+                        // showCollider = {true}
                         // dynamic = {true}
                     />
                 )
@@ -73,51 +67,6 @@ tests.add('disappearing-ground enclosure', () => {
         </InteractiveScene>
     )
 })
-
-tests.add('disappearing-ground enclosure (style)', () => {
-     const enclosure = makeElevator({ x: 8, y: 12, z: 3 })
-     const wallsExist = boolean('walls?', true)
-
-    return (
-        <InteractiveScene background = {0xdedede}>
-            <ThreePointLights />
-            {Array.from(Array(12)).map((body, i) => {
-                return (
-                    <Body
-                        name={'body' + i}
-                        showCollider
-                        physicsModel={{
-                            pos: [
-                                (Math.round(Math.random()) * 2 - 1) *
-                                    Math.random() *
-                                    4,
-                                10 + 2 * i,
-                                0,
-                            ],
-                            size: [0.75 + Math.random() * 0.75],
-                            type: 'sphere',
-                        }}
-                    />
-                )
-            })}
-            {enclosure.map(b => {
-                return (
-                    <Boundary
-                        name={b.name}
-                        pos={{ x: b.x, y: b.y, z: b.z }}
-                        exists = {b.name==='bottom'? wallsExist: true}
-                        width={b.w}
-                        height={b.h}
-                        depth={b.d}
-                        showCollider={false}
-                        dynamic = {false}
-                    />
-                )
-            })}
-        </InteractiveScene>
-    )
-})
-
 
 tests.add('threepointlights, spelled out', () => {
     const point1 = boolean('point light 1', true)
@@ -202,71 +151,5 @@ tests.add('threepointlights, spelled out', () => {
                 <meshPhongMaterial color={0xdedede} />
             </mesh>
         </SimpleScene>
-    )
-})
-
-
-tests.add('ThreePointLights (rgb)', () => {
-    return(
-    <SimpleScene>
-        <ThreePointLights />
-        <mesh
-            position={v3(0, -2, 0)}
-            rotation={new THREE.Euler(rads(-90), 0, 0)}
-        >
-            <boxGeometry width={5} height={5} depth={1} />
-            <meshPhongMaterial color={0x878787} />
-        </mesh>
-
-        <mesh
-            position={v3(0, -1.125, 0)}
-            rotation={new THREE.Euler(0, rads(45), 0)}
-        >
-            <sphereGeometry radius = {0.4} heightSegments = {12} widthSegments ={12} />
-            <meshPhongMaterial color={0xdedede} />
-        </mesh>
-        <mesh
-            position={v3(1, -1.125, 0)}
-            rotation={new THREE.Euler(0, rads(45), 0)}
-        >
-            <boxGeometry width = {0.5} depth = {0.5} height = {0.5} />
-            <meshPhongMaterial color={0xdedede} />
-        </mesh>
-    </SimpleScene>
-    )
-})
-
-tests.add('ThreePointLights (orangeyblue-white) ', () => {
-    return(
-    <SimpleScene>
-        <ThreePointLights 
-            //API needs improvement....too verbose for small changes
-            light1 = {{position: v3(1.5,-0,3.5), intensity: 0.3, color: 0x99ccdf, on: true}}
-            light2 = {{position: v3(-4,0,1), intensity: 0.6, color: 0xdeddbb, on: true}}
-            light3 = {{position: v3(0,3,-0.5), intensity: 1.05, color: 0x6989ff, on: true}}
-        />
-        <mesh
-            position={v3(0, -2, 0)}
-            rotation={new THREE.Euler(rads(-90), 0, 0)}
-        >
-            <boxGeometry width={5} height={5} depth={1} />
-            <meshPhongMaterial color={0x878787} />
-        </mesh>
-
-        <mesh
-            position={v3(0, -1.125, 0)}
-            rotation={new THREE.Euler(0, rads(45), 0)}
-        >
-            <sphereGeometry radius = {0.4} heightSegments = {12} widthSegments ={12} />
-            <meshPhongMaterial color={0xdedede} />
-        </mesh>
-        <mesh
-            position={v3(1, -1.125, 0)}
-            rotation={new THREE.Euler(0, rads(45), 0)}
-        >
-            <boxGeometry width = {0.5} depth = {0.5} height = {0.5} />
-            <meshPhongMaterial color={0xdedede} />
-        </mesh>
-    </SimpleScene>
     )
 })

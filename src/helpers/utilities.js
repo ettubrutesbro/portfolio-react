@@ -143,7 +143,7 @@ export function stopAllTweens(tweenArray) {
 }
 
 export function makeColliderMesh(physicsModel){
-  console.log(physicsModel)
+  // console.log(physicsModel)
     const model = physicsModel
     let types
     // if(!model.types && model.type) types = [model.type]
@@ -155,7 +155,7 @@ export function makeColliderMesh(physicsModel){
     //a physics model in OIMO should have keys:
       // type, size, pos, posShape, move, world, name, config (restitution etc)
       // sizes pos posShape are all arrays for oimo, convert them to xyz objects here?
-    console.log(types)
+    // console.log(types)
     const physicsMeshes = types.map((type, i) => {
       const n = i * 3 //this only works if everything is composed of boxes or you issue dummy values
       let pos
