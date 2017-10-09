@@ -72,7 +72,6 @@ export default class Portfolio extends React.Component{
             })}
 
             {enclosure.map((b,i) => {
-                console.log(enclosure)
                 return (
                     <Boundary
                         key = {'wall'+i}

@@ -27,10 +27,11 @@ export default class Body extends React.Component{
             if(newProps.exists) this.init()
             if(!newProps.exists) this.removeSelf()
         }
-        if(newProps.selected!==this.props.selected){
+        if(newProps.selected!==this.props.selected && this.props.isSelectable){
             if(newProps.selected===true) this.onSelect()
             else if(newProps.selected==='other' && this.props.selected===true){ this.onDeselect() } //another has been selected
             else if(this.props.selected===true && !newProps.selected) this.onDeselect()
+            else if(this.props.selected==='other' && !newProps.selected) this.respawn()
         }
     }
 
@@ -44,12 +45,25 @@ export default class Body extends React.Component{
     removeSelf = () => {
         console.log(this.props.name + ' being removed from scene')
         this.props.unmount(this.props.name)
-        this.setupMass()
-    }
-    setupMass = () => {
+        // this.setupMass()
         this.props.mutate(
-            this.props.name, 'setupMass', [0x1, true], true
-        )
+            this.props.name, 'setupMass', [0x4, true], true
+        )   
+    }
+
+    respawn = () => {
+        console.log('respawn ', this.props.name)
+    }
+
+    setupMass = () => {
+        if(this.props.isSelectable){
+
+        }
+        else{
+            this.props.mutate(
+                this.props.name, 'setupMass', [0x1, true], true
+            )
+        }
     }
 
     render(){

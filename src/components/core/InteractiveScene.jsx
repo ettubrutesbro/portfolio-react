@@ -88,13 +88,21 @@ export default class InteractiveScene extends React.Component{
         for(var i = 0; i<bodies.length; i++){
             const name = bodies[i]
             const body = this.bodies[name]
-            //TODO crude sleeping function could cause other issues and might fuck performance up
-            const velocities = Object.values(body.linearVelocity).concat(Object.values(body.angularVelocity))
-            if(velocities.find((v)=>{return Math.abs(v) > 0.025})){ } // do nothing
-            else body.sleep()
+            if(!body.isDynamic) continue
+            //crude sleep
+            // const velocities = Object.values(body.linearVelocity).concat(Object.values(body.angularVelocity))
+            // if(velocities.find((v)=>{return Math.abs(v) > 0.025})){ } // do nothing
+            // else body.sleep()
+
             //TODO watch out for these indices to get dicey with add / removals...
             this.positions[i] = new THREE.Vector3().copy(body.getPosition())
             this.rotations[i] = new THREE.Quaternion().copy(body.getQuaternion())
+
+            //threshold sleeping = no infinite abysses
+                //TODO: this threshold # should be a prop or something
+            if(this.positions[i].y < -20){
+                body.sleep()
+            }
         }
     }
 
@@ -144,6 +152,9 @@ export default class InteractiveScene extends React.Component{
             body.sleeping = true
         })
         .start()
+    }
+    @action restoreBodies = () => {
+
     }
     @action letGoOfBody = (name) =>{
         const body = this.bodies[name]

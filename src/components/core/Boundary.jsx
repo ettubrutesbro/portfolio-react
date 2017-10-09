@@ -19,16 +19,16 @@ export default class Boundary extends React.Component{
         this.init()
     }
     componentWillReceiveProps(newProps){
-        if(this.props.selected!==newProps.selected){
-            if(this.props.dynamic) console.log('bound ' + this.props.name + ' should move')
-        }
+        // if(this.props.selected!==newProps.selected){
+        //     if(this.props.dynamic) console.log('bound ' + this.props.name + ' should move')
+        // }
     }
 
     init = () => {
-        if(this.props.dynamic){
-            const pos = this.props.pos
-            this.props.mutate(this.props.name, 'setPosition', [{x:pos.x,y:pos.y,z:pos.z}], true)
-        }
+        // if(this.props.dynamic){
+        //     const pos = this.props.pos
+        //     this.props.mutate(this.props.name, 'setPosition', [{x:pos.x,y:pos.y,z:pos.z}], true)
+        // }
         this.props.mutate(this.props.name, 'sleeping', true)
     }
     removeSelf = () => {
@@ -43,7 +43,7 @@ export default class Boundary extends React.Component{
             type: 'box',
             pos: [pos.x,pos.y,pos.z],
             size: [width, height, depth],
-            move: dynamic? true: false, 
+            move: false
         }
 
         return(
