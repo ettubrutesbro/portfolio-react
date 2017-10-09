@@ -24,11 +24,16 @@ tests.addDecorator(withKnobs)
 
 
 tests.add('lit enclosure w. toggle-ground', () => {
-     const enclosure = makeElevator({ x: 8, y: 13, z: 3 }, {x:0,y:-2,z:0})
-     const wallsExist = boolean('ground?', true)
-
+    const enclosure = makeElevator({ x: 8, y: 13, z: 3 }, {x:0,y:-2,z:0})
+    const wallsExist = boolean('ground?', true)
+    // const lights = (<hemisphereLight groundColor = {0x898989} skyColor = {0xffffff} intensity = {0.9}/>)
+    const lights = (<ThreePointLights scale = {4.25} decay = {1.5} distance = {72}/>)
     return (
-        <InteractiveScene background = {0xdedede}>
+        <InteractiveScene 
+            background = {0xdedede} 
+            lights = {lights}
+        >
+
             {Array.from(Array(12)).map((body, i) => {
                 return (
                     <Body
@@ -58,12 +63,13 @@ tests.add('lit enclosure w. toggle-ground', () => {
                         width={b.w}
                         height={b.h}
                         depth={b.d}
-                        showCollider={b.name === 'frontwall' ? false : true}
+                        // showCollider={b.name === 'frontwall' ? false : true}
                         // showCollider = {true}
                         // dynamic = {true}
                     />
                 )
             })}
+
         </InteractiveScene>
     )
 })

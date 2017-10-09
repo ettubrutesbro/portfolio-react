@@ -216,6 +216,8 @@ export default class InteractiveScene extends React.Component{
                             position = {this.cameraPosition}
                         />
 
+                        {this.props.lights}
+
                         { /* physics-enabled children only */
                             React.Children.map(physicsChildren, (child,i)=>{
                                 const foistedProps = {
@@ -284,4 +286,5 @@ export default class InteractiveScene extends React.Component{
     InteractiveScene.defaultProps = {
         background: 0x000000,
         defaultLighting: false,
+        lights: null,
     }
