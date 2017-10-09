@@ -42,7 +42,8 @@ export default class InteractiveScene extends React.Component{
     @observable height = window.innerHeight
 
     world = new OIMO.World({
-        timestep: 1/60
+        timestep: 1/60,
+        iterations: 15,
     }) 
     bodies = {}
     cameraPosition = v3(0,2,40)
