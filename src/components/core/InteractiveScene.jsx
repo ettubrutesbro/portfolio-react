@@ -156,13 +156,15 @@ export default class InteractiveScene extends React.Component{
     @action restoreBodies = (wasSelected) => {
         const bodies = Object.keys(this.bodies)
         for(var i = 0; i<bodies.length; i++){
-            if(i===wasSelected) continue
             const name = bodies[i]
+            if(wasSelected === name) continue
             const body = this.bodies[name]
 
             body.awake()
-            body.setPosition({x: 0, y: 1+i*3.5, z: 0})
-            this.letGoOfBody(name)
+            //TODO: randomize x position and some rotation stuff?
+                //also be using the enclosure's aperture as guiding constant here
+            body.setPosition({x: (Math.random() * 6) - 3, y: 15+i*3.5, z: 0})
+            setTimeout(()=>{this.letGoOfBody(name)}, 100)
         }
     }
     @action letGoOfBody = (name) =>{
@@ -199,7 +201,7 @@ export default class InteractiveScene extends React.Component{
         }
         else{ //user clicked empty space
             if(this.selected && this.props.onDeselect) this.props.onDeselect()
-            if(this.selected) this.restoreBodies()
+            if(this.selected) this.restoreBodies(this.selected)
             this.selected = null
         }
         console.log('selected: ' + this.selected)
