@@ -68,9 +68,9 @@ export default class InteractiveScene extends React.Component{
     @action initStore = () => {
         //flatmap children
         // const children = flatten(this.props.children)
-        this.props.children.forEach((child)=>{
-            this.positions.push(null)
-        })
+        // this.props.children.forEach((child)=>{
+        //     this.positions.push(null)
+        // })
 
     }
 
@@ -153,8 +153,17 @@ export default class InteractiveScene extends React.Component{
         })
         .start()
     }
-    @action restoreBodies = () => {
+    @action restoreBodies = (wasSelected) => {
+        const bodies = Object.keys(this.bodies)
+        for(var i = 0; i<bodies.length; i++){
+            if(i===wasSelected) continue
+            const name = bodies[i]
+            const body = this.bodies[name]
 
+            body.awake()
+            body.setPosition({x: 0, y: 1+i*3.5, z: 0})
+            this.letGoOfBody(name)
+        }
     }
     @action letGoOfBody = (name) =>{
         const body = this.bodies[name]
@@ -173,11 +182,14 @@ export default class InteractiveScene extends React.Component{
         const intersect = this.mouseInput._getIntersections(
           tempVector2.set(evt.clientX, evt.clientY)
         )
-        if(intersect.length > 0){
+
+        //logic here is confusing TODO
+        let selection = null
+        if(intersect.length > 0){ //user clicked something
             const target = intersect[0].object.name
-            if(!this.bodies[target].isSelectable){
-                console.log('cant select this target')
+            if(!this.bodies[target].isSelectable){ //non-selectable target
                 if(this.selected && this.props.onDeselect) this.props.onDeselect()
+                if(this.selected) this.restoreBodies()
                 this.selected = null
             }
             else{
@@ -185,8 +197,9 @@ export default class InteractiveScene extends React.Component{
                 if(this.props.onSelect) this.props.onSelect(this.selected)   
             }
         }
-        else{
+        else{ //user clicked empty space
             if(this.selected && this.props.onDeselect) this.props.onDeselect()
+            if(this.selected) this.restoreBodies()
             this.selected = null
         }
         console.log('selected: ' + this.selected)
@@ -204,6 +217,11 @@ export default class InteractiveScene extends React.Component{
     }
 
     render(){
+
+        // const {positions, rotations, bodies} = this
+        const positions = this.positions.toJS()
+        const rotations = this.rotations.toJS()
+
         return(
             <div 
                 ref = "container"
@@ -231,10 +249,17 @@ export default class InteractiveScene extends React.Component{
 
                         { /* physics-enabled children only */
                             React.Children.map(this.props.children, (child,i)=>{
+                                //TODO name
+                                const posRot = i+1 > positions.length? { position: v3(0,0,0), rotation: new THREE.Quaternion() }
+                                : {position: this.positions[i], rotation: this.rotations[i]}
+
                                 const foistedProps = {
                                     ...child.props, 
-                                    position: this.positions[i] || new THREE.Vector3(),
-                                    rotation: this.rotations[i] || new THREE.Quaternion(),
+                                    ...posRot,
+                                    // position: this.positions[i] || new THREE.Vector3(),
+                                    // rotation: this.rotations[i] || new THREE.Quaternion(),
+                                    // position: v3(0,0,0),
+                                    // rotation: new THREE.Quaternion(),
                                     onMount: this.addBody, 
                                     unmount: this.removeBody, 
                                     mutate: this.modifyBody,

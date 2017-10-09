@@ -52,18 +52,7 @@ export default class Body extends React.Component{
     }
 
     respawn = () => {
-        console.log('respawn ', this.props.name)
-    }
-
-    setupMass = () => {
-        if(this.props.isSelectable){
-
-        }
-        else{
-            this.props.mutate(
-                this.props.name, 'setupMass', [0x1, true], true
-            )
-        }
+        //not sure if anything needed here
     }
 
     render(){
