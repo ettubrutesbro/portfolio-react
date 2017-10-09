@@ -15,6 +15,7 @@ import * as THREE from 'three'
 
 import SimpleScene from './components/core/SimpleScene'
 import InteractiveScene from './components/core/InteractiveScene'
+import Portfolio from './components/core/Portfolio'
 import Body from './components/core/Body'
 import Boundary from './components/core/Boundary'
 import ThreePointLights from './components/core/ThreePointLights'

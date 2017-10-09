@@ -66,7 +66,10 @@ export default class InteractiveScene extends React.Component{
 
     @action initStore = () => {
         //flatmap children
-        const children = flatten(this.props.children)
+        // const children = flatten(this.props.children)
+        this.props.children.forEach((child)=>{
+            this.positions.push(null)
+        })
 
     }
 

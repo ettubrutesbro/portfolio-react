@@ -3,8 +3,11 @@ import * as THREE from 'three'
 
 import SimpleScene from '../components/core/SimpleScene'
 import InteractiveScene from '../components/core/InteractiveScene'
+import Portfolio from '../components/core/Portfolio'
+
 import Body from '../components/core/Body'
 import Boundary from '../components/core/Boundary'
+
 
 import { v3, rads, makeEnclosure, makeElevator } from '../helpers/utilities'
 
@@ -59,7 +62,7 @@ tests.add('lit enclosure w. toggle-ground', () => {
                     <Boundary
                         name={b.name}
                         pos={{ x: b.x, y: b.y, z: b.z }}
-                        exists = {b.name==='bottom'? wallsExist: true}
+                        exists = {wallsExist}
                         width={b.w}
                         height={b.h}
                         depth={b.d}
@@ -157,5 +160,11 @@ tests.add('threepointlights, spelled out', () => {
                 <meshPhongMaterial color={0xdedede} />
             </mesh>
         </SimpleScene>
+    )
+})
+
+tests.add('Portfolio', ()=>{
+    return(
+        <Portfolio />
     )
 })
