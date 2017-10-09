@@ -186,13 +186,6 @@ export default class InteractiveScene extends React.Component{
     }
 
     render(){
-        const children = flatten(this.props.children)
-        const physicsChildren = children.filter((child)=>{
-            console.log(child)
-            if(!child.props.nonBody) return true
-            else return false
-        })
-
         return(
             <div 
                 ref = "container"
@@ -219,7 +212,7 @@ export default class InteractiveScene extends React.Component{
                         {this.props.lights}
 
                         { /* physics-enabled children only */
-                            React.Children.map(physicsChildren, (child,i)=>{
+                            React.Children.map(this.props.children, (child,i)=>{
                                 const foistedProps = {
                                     ...child.props, 
                                     position: this.positions[i] || new THREE.Vector3(),
