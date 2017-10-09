@@ -165,13 +165,16 @@ export default class InteractiveScene extends React.Component{
             const target = intersect[0].object.name
             if(!this.bodies[target].isSelectable){
                 console.log('cant select this target')
+                if(this.selected && this.props.onDeselect) this.props.onDeselect()
                 this.selected = null
             }
             else{
-                this.selected = intersect[0].object.name   
+                this.selected = intersect[0].object.name
+                if(this.props.onSelect) this.props.onSelect(this.selected)   
             }
         }
         else{
+            if(this.selected && this.props.onDeselect) this.props.onDeselect()
             this.selected = null
         }
         console.log('selected: ' + this.selected)

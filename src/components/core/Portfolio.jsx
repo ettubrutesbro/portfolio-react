@@ -1,6 +1,5 @@
 import React from 'react'
 import {observable, action} from 'mobx'
-// import {observer} from 'mobx-react'
 
 import InteractiveScene from './InteractiveScene'
 import ThreePointLights from './ThreePointLights'
@@ -10,17 +9,20 @@ import Boundary from './Boundary'
 
 import {makeElevator} from '../../helpers/utilities'
 
-// @observer
 export default class Portfolio extends React.Component{
 
     //projects
     @observable selected = null
 
-
+    @action selectProject = selected => {
+        this.selected = selected
+    }
+    @action deselectProject = () => {
+        this.selected = null
+    }
 
     render(){
-
-        const enclosure = makeElevator({ x: 8, y: 12, z: 2 }, null, 'foo')
+        const enclosure = makeElevator({ x: 8, y: 12, z: 2 })
         const lights = (
             <ThreePointLights
                 scale = {4.25}
@@ -33,6 +35,8 @@ export default class Portfolio extends React.Component{
         <InteractiveScene
             background = {0xdedede}
             lights = {lights}
+            onSelect = {this.selectProject}
+            onDeselect = {this.deselectProject}
         >
             <Body
                 name = 'testbox' 
@@ -49,7 +53,7 @@ export default class Portfolio extends React.Component{
                 showCollider
                 exists
                 physicsModel = {{
-                    pos: [3,0,0],
+                    pos: [2,3,0],
                     size: [1],
                     type: 'sphere'
                 }}
@@ -66,7 +70,7 @@ export default class Portfolio extends React.Component{
                         width={b.w}
                         height={b.h}
                         depth={b.d}
-                        showCollider={b.name.includes('frontwall') ? false : true}
+                        // showCollider={b.name.includes('frontwall') ? false : true}
                         // showCollider = {true}
                         // dynamic = {true}
                     />
