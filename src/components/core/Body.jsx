@@ -85,6 +85,7 @@ export default class Body extends React.Component{
                             return (
                                 <mesh name = {this.props.name} key = {'collider'+i}> 
                                     {geo} 
+                                    {debugMtl === 'wire' && <meshBasicMaterial wireframe = {true} color = {0x000000} /> }
                                     {debugMtl === 'normal' && <meshNormalMaterial />}
                                     {debugMtl === 'lambert' && <meshLambertMaterial color = {0xb1b1b1} />}
                                     {debugMtl === 'phong' && <meshPhongMaterial color = {0xd7d7d7} shininess = {0} emissive = {0xb1b1b1}/>}

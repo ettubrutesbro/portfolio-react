@@ -29,7 +29,7 @@ export default class Boundary extends React.Component{
         //     const pos = this.props.pos
         //     this.props.mutate(this.props.name, 'setPosition', [{x:pos.x,y:pos.y,z:pos.z}], true)
         // }
-        this.props.mutate(this.props.name, 'sleeping', true)
+        // this.props.mutate(this.props.name, 'sleeping', true)
     }
     removeSelf = () => {
         this.props.unmount(this.props.name)
@@ -38,7 +38,7 @@ export default class Boundary extends React.Component{
 
     
     render(){
-        const {pos, width, depth, height, dynamic, ...restOfProps} = this.props
+        const {pos, width, depth, height, ...restOfProps} = this.props
         const computedPhysicsModel = {
             type: 'box',
             pos: [pos.x,pos.y,pos.z],

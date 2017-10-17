@@ -49,6 +49,8 @@ export default class Portfolio extends React.Component{
             lights = {lights}
             onSelect = {this.selectProject}
             onDeselect = {this.deselectProject}
+            debug = {this.props.debug}
+            debugCamPos = {this.props.debugCamPos}
         >
            {Array.from(Array(12)).map((body, i) => {
                 return (
@@ -82,8 +84,9 @@ export default class Portfolio extends React.Component{
                         height={b.h}
                         depth={b.d}
                         // showCollider={b.name.includes('frontwall') ? false : true}
-                        // showCollider = {true}
-                        dynamic = {false}
+                        showCollider = {true}
+                        debugMtl = 'wire'
+                        // dynamic = {false}
                     />
                 )
             })}

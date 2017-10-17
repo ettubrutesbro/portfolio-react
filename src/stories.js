@@ -15,12 +15,11 @@ import * as THREE from 'three'
 
 import SimpleScene from './components/core/SimpleScene'
 import InteractiveScene from './components/core/InteractiveScene'
-import Portfolio from './components/core/Portfolio'
 import Body from './components/core/Body'
 import Boundary from './components/core/Boundary'
 import ThreePointLights from './components/core/ThreePointLights'
 
-import { v3, makeEnclosure, makeElevator, rads } from './helpers/utilities'
+import { v3, makeEnclosure, rads } from './helpers/utilities'
 
 import { SendbloomModel } from './components/Sendbloom/Sendbloom'
 import Seseme from './components/Seseme/Seseme'
@@ -306,44 +305,5 @@ worldStories.add('makeEnclosure', () => {
     )
 })
 
-worldStories.add('makeElevator', () => {
-    const elevator = makeElevator({ x: 8, y: 10, z: 2 })
-    return (
-        <InteractiveScene>
-            {Array.from(Array(12)).map((body, i) => {
-                return (
-                    <Body
-                        name={'body' + i}
-                        showCollider
-                        physicsModel={{
-                            pos: [
-                                (Math.round(Math.random()) * 2 - 1) *
-                                    Math.random() *
-                                    4,
-                                10 + 2 * i,
-                                0,
-                            ],
-                            size: [0.5 + Math.random() * 0.5],
-                            type: 'sphere',
-                        }}
-                    />
-                )
-            })}
-            {elevator.map(b => {
-                return (
-                    <Boundary
-                        name={b.name}
-                        pos={{ x: b.x, y: b.y, z: b.z }}
-                        width={b.w}
-                        height={b.h}
-                        depth={b.d}
-                        showCollider={b.name === 'frontwall' ? false : true}
-                        dynamic={true}
-                    />
-                )
-            })}
-        </InteractiveScene>
-    )
-})
 
 storiesOf('UI (DOM)', module).add('foo', () => <div />)

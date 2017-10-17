@@ -9,7 +9,7 @@ import Body from '../components/core/Body'
 import Boundary from '../components/core/Boundary'
 
 
-import { v3, rads, makeEnclosure, makeElevator } from '../helpers/utilities'
+import { v3, rads, makeEnclosure  } from '../helpers/utilities'
 
 import { storiesOf } from '@storybook/react'
 import {
@@ -27,7 +27,6 @@ tests.addDecorator(withKnobs)
 
 
 tests.add('lit enclosure w. toggle-ground', () => {
-    const enclosure = makeElevator({ x: 8, y: 13, z: 3 }, {x:0,y:-2,z:0})
     const wallsExist = boolean('ground?', true)
     // const lights = (<hemisphereLight groundColor = {0x898989} skyColor = {0xffffff} intensity = {0.9}/>)
     const lights = (<ThreePointLights scale = {4.25} decay = {1.5} distance = {72}/>)
@@ -164,7 +163,16 @@ tests.add('threepointlights, spelled out', () => {
 })
 
 tests.add('Portfolio', ()=>{
+    const debug = boolean('debug mode', false)
+    const debugCamX = number('debug cam x', 0)
+    const debugCamY = number('debug cam Y', 0)
+    const debugCamZ = number('debug cam Z', 0)
+
+    const debugCamPos = {x: debugCamX, y: debugCamY, z: debugCamZ}
     return(
-        <Portfolio />
+        <Portfolio
+            debug = {debug}
+            debugCamPos = {debugCamPos}
+         />
     )
 })

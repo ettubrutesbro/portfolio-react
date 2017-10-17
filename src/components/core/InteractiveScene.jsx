@@ -88,7 +88,12 @@ export default class InteractiveScene extends React.Component{
         for(var i = 0; i<bodies.length; i++){
             const name = bodies[i]
             const body = this.bodies[name]
-            if(!body.isDynamic) continue
+            
+            //this would be good but you need this function to set the position of
+            //non-dynamic bodies at least ONCE - was breaking showCollider for
+            // boundaries
+            // if(!body.isDynamic) continue
+
             //crude sleep
             // const velocities = Object.values(body.linearVelocity).concat(Object.values(body.angularVelocity))
             // if(velocities.find((v)=>{return Math.abs(v) > 0.025})){ } // do nothing
@@ -108,6 +113,7 @@ export default class InteractiveScene extends React.Component{
 
     @action addBody = (name, physicsModel, isSelectable) => {
         console.log('adding '+name)
+        console.log('@pos: '+ physicsModel.pos)
         this.bodies[name] = this.world.add(physicsModel)
         if(isSelectable) this.bodies[name].isSelectable = true
     }
@@ -221,8 +227,14 @@ export default class InteractiveScene extends React.Component{
     render(){
 
         // const {positions, rotations, bodies} = this
+
+        const {debugCamPos} = this.props
+
         const positions = this.positions.toJS()
         const rotations = this.rotations.toJS()
+
+        const debugCameraPos = v3(debugCamPos.x, debugCamPos.y, debugCamPos.z)
+
 
         return(
             <div 
@@ -244,7 +256,7 @@ export default class InteractiveScene extends React.Component{
                             fov = {30}
                             aspect = {this.width / this.height}
                             near = {1} far = {200}
-                            position = {this.cameraPosition}
+                            position = {!this.props.debug? this.cameraPosition : debugCameraPos}
                         />
 
                         {this.props.lights}
@@ -252,8 +264,9 @@ export default class InteractiveScene extends React.Component{
                         { /* physics-enabled children only */
                             React.Children.map(this.props.children, (child,i)=>{
                                 //TODO name
-                                const posRot = i+1 > positions.length? { position: v3(0,0,0), rotation: new THREE.Quaternion() }
-                                : {position: this.positions[i], rotation: this.rotations[i]}
+                                const posRot = i+1 > positions.length? 
+                                    { position: v3(0,0,0), rotation: new THREE.Quaternion() }
+                                    : {position: this.positions[i], rotation: this.rotations[i]}
 
                                 const foistedProps = {
                                     ...child.props, 
@@ -279,9 +292,15 @@ export default class InteractiveScene extends React.Component{
 
                     </scene>
                 </React3>
-
+                {this.props.debug && 
                 <div id = 'diagnostic'
-                    style = {{position: 'absolute', right: 0, bottom: 0, color: 'white'}}
+                    style = {{
+                        backgroundColor: 'black',
+                        position:'absolute', 
+                        right: 0, 
+                        bottom: 0, 
+                        color: 'white'
+                    }}
                 >
                     <ul>
                         <li>Awake dynamic bodies: {
@@ -289,20 +308,6 @@ export default class InteractiveScene extends React.Component{
                                 return !this.bodies[body].sleeping && this.bodies[body].isDynamic
                             })
                         }</li>
-
-                        <li>Bodies with any velocity > 0.01: 
-                            {
-                                Object.keys(this.bodies).filter((name)=>{
-                                    const body = this.bodies[name]
-                                    const linVel = Object.values(body.linearVelocity)
-                                    const angVel = Object.values(body.angularVelocity)
-                                    const allVelocities = linVel.concat(angVel)
-                                    return allVelocities.filter((vel)=>{
-                                        return Math.abs(vel) > 0.05
-                                    }).length > 0
-                                })
-                            }
-                        </li>
 
                         <li>Selected: {this.selected || 'n/a'}</li>
                     </ul>
@@ -314,6 +319,7 @@ export default class InteractiveScene extends React.Component{
                     </div>
 
                 </div>
+                }
             </div>
         )
     }
@@ -325,4 +331,5 @@ export default class InteractiveScene extends React.Component{
         background: 0x000000,
         defaultLighting: false,
         lights: null,
+        debugCamPos: {x: 0, y: 0, z: 0}
     }
