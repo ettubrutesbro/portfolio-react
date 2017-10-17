@@ -1,5 +1,5 @@
 import React from 'react'
-import {observable, action} from 'mobx'
+import {observable, action, toJS} from 'mobx'
 import {observer} from 'mobx-react'
 
 import React3 from 'react-three-renderer'
@@ -14,6 +14,9 @@ import {findDOMNode} from 'react-dom'
 import {debounce, flatten} from 'lodash'
 import {twn, cap1st, rads, v3} from '../../helpers/utilities'
 import ThreePointLights from './ThreePointLights'
+
+// import {toJS} from 'mobx'
+// console.log(toJS)
 
 @observer
 export default class InteractiveScene extends React.Component{
@@ -49,8 +52,8 @@ export default class InteractiveScene extends React.Component{
     cameraPosition = v3(0,2,40)
 
     @observable selected = null
-    @observable positions = []
-    @observable rotations = []
+    @observable positions = new Map()
+    @observable rotations = new Map()
 
     componentDidMount(){
         this.initStore()
@@ -67,10 +70,6 @@ export default class InteractiveScene extends React.Component{
 
     @action initStore = () => {
         //flatmap children
-        // const children = flatten(this.props.children)
-        // this.props.children.forEach((child)=>{
-        //     this.positions.push(null)
-        // })
 
     }
 
@@ -84,10 +83,22 @@ export default class InteractiveScene extends React.Component{
 
         this.world.step()
         TWEEN.update()
-        const bodies = Object.keys(this.bodies)
-        for(var i = 0; i<bodies.length; i++){
-            const name = bodies[i]
-            const body = this.bodies[name]
+        // console.log(this.positions)
+
+        // console.log(positions)
+        // console.log(this.positions)
+
+
+        const positionKeys = this.positions.keys()
+        for(var i = 0; i<positionKeys.length; i++){
+            // console.log(positionKeys[i])
+            const name = positionKeys[i]
+            const newPos = this.bodies[name].getPosition()
+            const newRot = this.bodies[name].getQuaternion()
+            // console.log(newPos)
+            // console.log(this.positions.values[name])
+            // const position = this.positions[name]
+            // const rotation = this.rotations[name]
             
             //this would be good but you need this function to set the position of
             //non-dynamic bodies at least ONCE - was breaking showCollider for
@@ -100,21 +111,31 @@ export default class InteractiveScene extends React.Component{
             // else body.sleep()
 
             //TODO watch out for these indices to get dicey with add / removals...
-            this.positions[i] = new THREE.Vector3().copy(body.getPosition())
-            this.rotations[i] = new THREE.Quaternion().copy(body.getQuaternion())
+            // console.log(this.positions[name])
+            // const newPos = new THREE.Vector3().copy(this.positions[name])
+            this.positions.set(name, newPos)
+            this.rotations.set(name, newRot)
+            // console.log(this.positions.get(name))
+            // console.log(this.positions.get(name))
+            // // console.log(this.positions[name].y)
+            // this.rotations.set(name, new THREE.Quaternion().copy(rotation))
 
             //threshold sleeping = no infinite abysses
                 //TODO: this threshold # should be a prop or something
-            if(this.positions[i].y < -20){
-                body.sleep()
-            }
+            // if(this.positions[name].y < -20){
+            //     body.sleep()
+            // }
         }
     }
 
     @action addBody = (name, physicsModel, isSelectable) => {
         console.log('adding '+name)
+        // console.log('@pos: ')
         console.log('@pos: '+ physicsModel.pos)
         this.bodies[name] = this.world.add(physicsModel)
+        this.positions.set(name, new THREE.Vector3().copy(this.bodies[name].getPosition()))
+        this.rotations.set(name, new THREE.Quaternion().copy(this.bodies[name].getQuaternion()))
+        // this.rotations[name] = new THREE.Quaternion().copy(this.bodies[name].getQuaternion())
         if(isSelectable) this.bodies[name].isSelectable = true
     }
     modifyBody = (name, propOrFunctionCall, parameters, isFunction) => {
@@ -181,9 +202,11 @@ export default class InteractiveScene extends React.Component{
     }
     @action removeBody = (name) =>{
         console.log('removing ' + name + ' from oimo/world')
+        // console.log(this.positions.length)
         // this.world.removeRigidBody(this.bodies[name])
         console.log(this.world.rigidBodies)
         this.bodies[name].remove()
+        // console.log(this.positions.length)
         console.log('remaining bodies: ' + this.world.numRigidBodies)
     }
     @action handleClick = evt => {
@@ -230,11 +253,13 @@ export default class InteractiveScene extends React.Component{
 
         const {debugCamPos} = this.props
 
-        const positions = this.positions.toJS()
+        const positions = toJS(this.positions)
         const rotations = this.rotations.toJS()
+        // console.log(this.positions.toJS())
+        // console.log(this.positions)
+        console.log(positions)
 
         const debugCameraPos = v3(debugCamPos.x, debugCamPos.y, debugCamPos.z)
-
 
         return(
             <div 
@@ -263,14 +288,20 @@ export default class InteractiveScene extends React.Component{
 
                         { /* physics-enabled children only */
                             React.Children.map(this.props.children, (child,i)=>{
-                                //TODO name
-                                const posRot = i+1 > positions.length? 
-                                    { position: v3(0,0,0), rotation: new THREE.Quaternion() }
-                                    : {position: this.positions[i], rotation: this.rotations[i]}
+                                const name = child.props.name
+                                // console.log(positions[name])
+                                const newPos = i >= Object.keys(positions).length? v3(0,0,0) : 
+                                v3().copy(positions[name])
+
+                                // console.log(newPos)
+                                // console.log(v3().copy(newPos))
+                                // console.log(name + ' @ position ' + newPos)
+                                // console.log(newPos)
+                                const positionRotation = {position: newPos, rotation: new THREE.Quaternion()}
 
                                 const foistedProps = {
                                     ...child.props, 
-                                    ...posRot,
+                                    ...positionRotation,
                                     // position: this.positions[i] || new THREE.Vector3(),
                                     // rotation: this.rotations[i] || new THREE.Quaternion(),
                                     // position: v3(0,0,0),

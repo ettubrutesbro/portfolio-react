@@ -20,6 +20,7 @@ export default class Body extends React.Component{
     }
     init = () =>{
         this.props.onMount(this.props.name,this.physicsModel,this.props.isSelectable)
+        if(!this.props.exists) this.removeSelf()
     }
     componentDidMount(){ this.init() }
     componentWillReceiveProps(newProps){
@@ -86,8 +87,9 @@ export default class Body extends React.Component{
                                 <mesh name = {this.props.name} key = {'collider'+i}> 
                                     {geo} 
                                     {debugMtl === 'wire' && <meshBasicMaterial wireframe = {true} color = {0x000000} /> }
+                                    {debugMtl === 'basic' && <meshBasicMaterial color = {0x000000} /> }
                                     {debugMtl === 'normal' && <meshNormalMaterial />}
-                                    {debugMtl === 'lambert' && <meshLambertMaterial color = {0xb1b1b1} />}
+                                    {debugMtl === 'lambert' && <meshLambertMaterial color = {0xffffff} />}
                                     {debugMtl === 'phong' && <meshPhongMaterial color = {0xd7d7d7} shininess = {0} emissive = {0xb1b1b1}/>}
                                 </mesh>
                             )

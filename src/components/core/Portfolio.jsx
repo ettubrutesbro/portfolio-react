@@ -33,7 +33,10 @@ export default class Portfolio extends React.Component{
     }
 
     render(){
-        const enclosure = makeEnclosure({ x: 10, y: 14, z: 4.25 }, {x: 0, y: -1.5, z: 0})
+        const enclosure = makeEnclosure(
+            { x: 13, y: 30, z: 4.25 }, //volume
+            {x: 0, y: 0, z: 0} //position offset
+        )
         const lights = (
             <ThreePointLights
                 scale = {4.25}
@@ -52,9 +55,10 @@ export default class Portfolio extends React.Component{
             debug = {this.props.debug}
             debugCamPos = {this.props.debugCamPos}
         >
-           {Array.from(Array(12)).map((body, i) => {
+           {Array.from(Array(2)).map((body, i) => {
                 return (
                     <Body
+                        key = {'debugbody'+i}
                         debugMtl = 'phong'
                         name={'body' + i}
                         showCollider
@@ -83,13 +87,16 @@ export default class Portfolio extends React.Component{
                         width={b.w}
                         height={b.h}
                         depth={b.d}
-                        // showCollider={b.name.includes('frontwall') ? false : true}
-                        showCollider = {true}
-                        debugMtl = 'wire'
+                        showCollider={b.name.includes('frontwall') ? false : true}
+                        // showCollider = {true}
+                        debugMtl = 'phong'
                         // dynamic = {false}
                     />
                 )
             })}
+
+
+
         </InteractiveScene> 
     )}
 }
