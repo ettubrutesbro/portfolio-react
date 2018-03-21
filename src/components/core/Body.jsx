@@ -57,7 +57,7 @@ export default class Body extends React.Component{
 
 
     render(){
-        const {showCollider, position, debugMtl} = this.props
+        const {showCollider, position, debugMtl, name} = this.props
         return(
             <group 
                 ref = "group"
@@ -70,13 +70,13 @@ export default class Body extends React.Component{
                         {this.colliderMeshes.map((mesh,i)=>{
                             let geo
                             if(mesh.geo === 'box'){
-                                geo = <boxGeometry width = {mesh.size.w} depth = {mesh.size.d} height = {mesh.size.h} />
+                                geo = <boxGeometry key = {name+'geo'+i} width = {mesh.size.w} depth = {mesh.size.d} height = {mesh.size.h} />
                             }
                             else if(mesh.geo === 'sphere'){
-                                geo = <sphereGeometry radius = {mesh.size.r} widthSegments = {8}  heightSegments = {8} />
+                                geo = <sphereGeometry key = {name+'geo'+i} radius = {mesh.size.r} widthSegments = {8}  heightSegments = {8} />
                             }
                             else if(mesh.geo === 'cylinder'){
-                                geo = <cylinderGeometry
+                                geo = <cylinderGeometry key = {name+'geo'+i}
                                     radiusTop = {mesh.size.r}
                                     radiusBottom = {mesh.size.r}
                                     height = {mesh.size.h}

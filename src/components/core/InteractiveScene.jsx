@@ -100,12 +100,15 @@ export default class InteractiveScene extends React.Component{
             //threshold sleeping = no infinite abysses
                 //TODO: this threshold # should be a prop or something
             if(this.positions[i].y < -20){
-
-                //actually we should restore the body in question, then sleep it
-                if(!this.lostBodies.includes(name)) this.lostBodies.push(name)
-                    //insert function here that then moves the body to a position above
-                    //also using its index so its not colliding with the next / prev lostbody
+                if(body.isSelectable && !this.lostBodies.includes(name)){
+                    this.lostBodies.push(name)
+                    console.log(name, 'fell into the abyss')
+                }
+                body.setPosition(v3(0,3,0)) 
                 body.sleep()
+                //insert function here that then moves the body to a position above
+                //also using its index so its not colliding with the next / prev lostbody
+                
             }
         }
     }
@@ -159,18 +162,7 @@ export default class InteractiveScene extends React.Component{
         })
         .start()
     }
-    @action wakeAllBodies = () => {
-        const bodies = Object.keys(this.bodies)
-        for(var i = 0; i<bodies.length; i++){
-            const name = bodies[i]
-            const body = this.bodies[name]
-            if(!body.isDynamic){
-                console.log('tried to wake non-dynamic body, skipping')
-                continue
-            }
-            body.awake()
-        }
-    }
+
     @action restoreBodies = (wasSelected) => {
 
         //which bodies are lost? 
@@ -196,21 +188,16 @@ export default class InteractiveScene extends React.Component{
         body.sleeping = false
     }
     @action removeBody = (name) =>{
-        // this.world.removeRigidBody(this.bodies[name])
         const oldNumBodies = this.world.numRigidBodies
         this.bodies[name].remove()
         console.log(this.bodies[name])
-        // this.bodies.delete(this.bodies[name])
         console.log(`# bodies before removing ${name}:`, oldNumBodies, 'now:', this.world.numRigidBodies)
-        // this.wakeAllBodies()
+
     }
     @action handleClick = evt => {
         const intersect = this.mouseInput._getIntersections(
           tempVector2.set(evt.clientX, evt.clientY)
         )
-
-        this.wakeAllBodies()
-
         //logic here is confusing TODO
         let selection = null
         //CLICKED SOMETHING
@@ -291,6 +278,8 @@ export default class InteractiveScene extends React.Component{
                                     : {position: this.positions[i], rotation: this.rotations[i]}
 
                                 const foistedProps = {
+
+                                    key: 'sceneChild'+i,
                                     ...child.props, 
                                     ...posRot,
                                     // position: this.positions[i] || new THREE.Vector3(),
@@ -354,5 +343,6 @@ export default class InteractiveScene extends React.Component{
         background: 0x000000,
         defaultLighting: false,
         lights: null,
-        debugCamPos: {x: 0, y: 0, z: 0}
+        debugCamPos: {x: 0, y: 0, z: 0},
+        freezeThreshold: -20, //point on Y axis at which out-of-view objects will be frozen
     }

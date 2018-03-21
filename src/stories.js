@@ -282,6 +282,7 @@ worldStories.add('makeEnclosure', () => {
             {Array.from(Array(3)).map((body, i) => {
                 return (
                     <Body
+                        key = {'body'+i}
                         name={'body' + i}
                         showCollider
                         physicsModel={{
@@ -298,9 +299,10 @@ worldStories.add('makeEnclosure', () => {
                     />
                 )
             })}
-            {enclosure.map(b => {
+            {enclosure.map((b,i) => {
                 return (
                     <Boundary
+                        key = {'wall'+i}
                         name={b.name}
                         pos={{ x: b.x, y: b.y, z: b.z }}
                         width={b.w}
