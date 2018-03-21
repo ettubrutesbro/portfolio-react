@@ -19,7 +19,7 @@ export default class Body extends React.Component{
         this.colliderMeshes = this.props.showCollider? makeColliderMesh(this.physicsModel) : null
     }
     init = () =>{
-        this.props.onMount(this.props.name,this.physicsModel,this.props.isSelectable)
+        this.props.onMount(this.props.name,this.physicsModel,this.props.isSelectable, this.props.kinematicByDefault)
     }
     componentDidMount(){ this.init() }
     componentWillReceiveProps(newProps){
@@ -47,7 +47,7 @@ export default class Body extends React.Component{
         this.props.unmount(this.props.name)
         // this.setupMass()
         this.props.mutate(
-            this.props.name, 'setupMass', [0x4, true], true
+            this.props.name, 'setupMass', [0x1, true], true
         )   
     }
 

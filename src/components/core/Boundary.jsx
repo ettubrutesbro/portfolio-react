@@ -8,7 +8,7 @@ import {noCollisions, normalCollisions, collidesWithAll} from './constants'
 
 export default class Boundary extends React.Component{
     /* for walls and grounds
-        Body, but always a box with some other functions called 
+        Body, always a box with some other functions called 
             either set to move: false (static boundary), 
                 or true for dynamic bounds
                 in the latter case, a setPosition call occurs on mount
@@ -43,7 +43,7 @@ export default class Boundary extends React.Component{
             type: 'box',
             pos: [pos.x,pos.y,pos.z],
             size: [width, height, depth],
-            move: false
+            move: this.props.dynamic
         }
 
         return(
@@ -52,6 +52,8 @@ export default class Boundary extends React.Component{
                 {...this.props}
                 physicsModel ={computedPhysicsModel}
                 isSelectable = {false}
+
+                // kinematicByDefault = {true}
             />
 
 

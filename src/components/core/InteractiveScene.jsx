@@ -52,6 +52,8 @@ export default class InteractiveScene extends React.Component{
     @observable positions = []
     @observable rotations = []
 
+    @observable lostBodies = []
+
     componentDidMount(){
         this.initStore()
         window.addEventListener('resize', this.handleResize)
@@ -106,15 +108,19 @@ export default class InteractiveScene extends React.Component{
             //threshold sleeping = no infinite abysses
                 //TODO: this threshold # should be a prop or something
             if(this.positions[i].y < -20){
+
+                //actually we should restore the body in question, then sleep it
+                if(!this.lostBodies.includes(name))this.lostBodies.push(name)
                 body.sleep()
             }
         }
     }
 
-    @action addBody = (name, physicsModel, isSelectable) => {
+    @action addBody = (name, physicsModel, isSelectable, kinematicByDefault) => {
         console.log('adding '+name)
         console.log('@pos: '+ physicsModel.pos)
         this.bodies[name] = this.world.add(physicsModel)
+        if(kinematicByDefault) this.bodies[name].isKinematic = true
         if(isSelectable) this.bodies[name].isSelectable = true
     }
     modifyBody = (name, propOrFunctionCall, parameters, isFunction) => {
@@ -159,13 +165,29 @@ export default class InteractiveScene extends React.Component{
         })
         .start()
     }
-    @action restoreBodies = (wasSelected) => {
+    @action wakeAllBodies = () => {
         const bodies = Object.keys(this.bodies)
         for(var i = 0; i<bodies.length; i++){
             const name = bodies[i]
-            if(wasSelected === name) continue
             const body = this.bodies[name]
+            if(!body.isDynamic){
+                console.log('tried to wake non-dynamic body, skipping')
+                continue
+            }
+            body.awake()
+        }
+    }
+    @action restoreBodies = (wasSelected) => {
 
+        //which bodies are lost? 
+
+        const bodies = Object.keys(this.bodies)
+        for(var i = 0; i<bodies.length; i++){
+            const name = bodies[i]
+            if(!this.lostBodies.includes(name)) continue
+            // if(wasSelected === name) continue
+            const body = this.bodies[name]
+            // if(!body.isDynamic) continue
             body.awake()
             //TODO: randomize x position and some rotation stuff?
                 //also be using the enclosure's aperture as guiding constant here
@@ -185,21 +207,27 @@ export default class InteractiveScene extends React.Component{
         console.log(this.world.rigidBodies)
         this.bodies[name].remove()
         console.log('remaining bodies: ' + this.world.numRigidBodies)
+        this.wakeAllBodies()
     }
     @action handleClick = evt => {
         const intersect = this.mouseInput._getIntersections(
           tempVector2.set(evt.clientX, evt.clientY)
         )
 
+        this.wakeAllBodies()
+
         //logic here is confusing TODO
         let selection = null
-        if(intersect.length > 0){ //user clicked something
+        //CLICKED SOMETHING
+        if(intersect.length > 0){
             const target = intersect[0].object.name
-            if(!this.bodies[target].isSelectable){ //non-selectable target
-                if(this.selected && this.props.onDeselect) this.props.onDeselect()
+            //NON SELECTABLE TARGET
+            if(!this.bodies[target].isSelectable){ 
+                if(this.selected && this.props.onDeselect) this.props.onDeselect()    
                 if(this.selected) this.restoreBodies()
                 this.selected = null
             }
+            //CLICKED SELECTABLE TARGET
             else{
                 this.selected = intersect[0].object.name
                 if(this.props.onSelect) this.props.onSelect(this.selected)   
@@ -234,7 +262,6 @@ export default class InteractiveScene extends React.Component{
         const rotations = this.rotations.toJS()
 
         const debugCameraPos = v3(debugCamPos.x, debugCamPos.y, debugCamPos.z)
-
 
         return(
             <div 
@@ -302,14 +329,15 @@ export default class InteractiveScene extends React.Component{
                         color: 'white'
                     }}
                 >
-                    <ul>
+                    <ul style = {{listStyleType: 'none'}}>
                         <li>Awake dynamic bodies: {
                             Object.keys(this.bodies).filter((body)=>{
                                 return !this.bodies[body].sleeping && this.bodies[body].isDynamic
-                            })
+                            }).length
                         }</li>
 
                         <li>Selected: {this.selected || 'n/a'}</li>
+                        <li>Lost bodies: {this.lostBodies.length}</li>
                     </ul>
 
                     <div id = 'button' style = {{background: 'blue', padding: '10px'}}

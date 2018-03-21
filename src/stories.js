@@ -268,9 +268,20 @@ worldStories.add('InteractiveScene + Body + Constraint', () => {
 worldStories.add('makeEnclosure', () => {
     const enclosure = makeEnclosure({ x: 8, y: 10, z: 2 })
 
+    const walls = boolean('walls exist', true)
+
     return (
-        <InteractiveScene>
-            {Array.from(Array(25)).map((body, i) => {
+        <InteractiveScene
+            debug
+            debugCamPos = {{x: 0, y: 2, z:40}}
+            onSelect = {()=>{
+                console.log('selected')
+            }}
+            onDeselect = {()=>{
+                console.log('deselected')
+            }}
+        >
+            {Array.from(Array(3)).map((body, i) => {
                 return (
                     <Body
                         name={'body' + i}
@@ -298,9 +309,21 @@ worldStories.add('makeEnclosure', () => {
                         height={b.h}
                         depth={b.d}
                         showCollider={b.name === 'frontwall' ? false : true}
+                        exists = {walls}
+                        // dynamic = {true}
                     />
                 )
             })}
+                <Boundary
+                    name="ground"
+                    pos={{ x: 0, y: 1, z: 0 }}
+                    width={10}
+                    depth={10}
+                    height={1}
+                    exists = {walls}
+                    showCollider = {true}
+                    // dynamic = {true}
+                />
         </InteractiveScene>
     )
 })
