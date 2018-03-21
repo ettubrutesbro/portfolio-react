@@ -256,7 +256,6 @@ worldStories.add('InteractiveScene + Body + Constraint', () => {
                     width={10}
                     depth={10}
                     height={1}
-                    dynamic={true}
                     showCollider={showground}
                 />
             </InteractiveScene>

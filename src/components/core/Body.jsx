@@ -18,17 +18,26 @@ export default class Body extends React.Component{
         }
         this.colliderMeshes = this.props.showCollider? makeColliderMesh(this.physicsModel) : null
     }
-    init = () =>{
-        this.props.onMount(this.props.name,this.physicsModel,this.props.isSelectable, this.props.kinematicByDefault)
+    makeBody = () =>{
+        this.props.onMount(
+            this.props.name,
+            this.physicsModel,
+            this.props.isSelectable
+        )
+    }
+    removeBody = () => {
+        // this.props.unmount(this.props.name)
+        this.props.mutate(
+            this.props.name, 'setupMass', [0x1, true], true
+        )   
     }
     componentDidMount(){ 
-        if(this.props.exists) this.init()
-        else this.removeSelf() 
+        if(this.props.exists) this.makeBody()
     }
     componentWillReceiveProps(newProps){
         if(newProps.exists!==this.props.exists){
-            if(newProps.exists) this.init()
-            if(!newProps.exists) this.removeSelf()
+            if(newProps.exists) this.makeBody()
+            if(!newProps.exists) this.removeBody()
         }
         if(newProps.selected!==this.props.selected && this.props.isSelectable){
             if(newProps.selected===true) this.onSelect()
@@ -45,12 +54,7 @@ export default class Body extends React.Component{
         force(name, 'position', onSelect.position || {x:0,y:1.5,z:0})
     }
     onDeselect = () => { this.props.letGo(this.props.name) }
-    removeSelf = () => {
-        this.props.unmount(this.props.name)
-        // this.props.mutate(
-        //     this.props.name, 'setupMass', [0x0, true], true
-        // )   
-    }
+
 
     render(){
         const {showCollider, position, debugMtl} = this.props

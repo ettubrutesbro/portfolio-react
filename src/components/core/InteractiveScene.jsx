@@ -46,7 +46,8 @@ export default class InteractiveScene extends React.Component{
         timestep: 1/60,
         iterations: 15,
     }) 
-    bodies = {}
+    // @observable bodies = observable.map()
+    @observable bodies = {}
     cameraPosition = v3(0,2,40)
 
     @observable selected = null
@@ -101,18 +102,20 @@ export default class InteractiveScene extends React.Component{
             if(this.positions[i].y < -20){
 
                 //actually we should restore the body in question, then sleep it
-                if(!this.lostBodies.includes(name))this.lostBodies.push(name)
+                if(!this.lostBodies.includes(name)) this.lostBodies.push(name)
+                    //insert function here that then moves the body to a position above
+                    //also using its index so its not colliding with the next / prev lostbody
                 body.sleep()
             }
         }
     }
 
-    @action addBody = (name, physicsModel, isSelectable, kinematicByDefault) => {
-        console.log('adding '+name)
-        console.log('@pos: '+ physicsModel.pos)
-        this.bodies[name] = this.world.add(physicsModel)
-        if(kinematicByDefault) this.bodies[name].isKinematic = true
-        if(isSelectable) this.bodies[name].isSelectable = true
+    @action addBody = (name, physicsModel, isSelectable) => {
+
+            console.log('adding', name, 'at', physicsModel.pos)
+            this.bodies[name] = this.world.add(physicsModel)
+            //we can add kinematic by default and set isKinematic but it seems to be useless
+            if(isSelectable) this.bodies[name].isSelectable = true
     }
     modifyBody = (name, propOrFunctionCall, parameters, isFunction) => {
         console.log('mutating: ' + name, ' prop/function ' + propOrFunctionCall + '(' + parameters + ')')
@@ -196,6 +199,8 @@ export default class InteractiveScene extends React.Component{
         // this.world.removeRigidBody(this.bodies[name])
         const oldNumBodies = this.world.numRigidBodies
         this.bodies[name].remove()
+        console.log(this.bodies[name])
+        // this.bodies.delete(this.bodies[name])
         console.log(`# bodies before removing ${name}:`, oldNumBodies, 'now:', this.world.numRigidBodies)
         // this.wakeAllBodies()
     }
