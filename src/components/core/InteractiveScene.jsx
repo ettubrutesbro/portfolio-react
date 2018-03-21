@@ -99,15 +99,18 @@ export default class InteractiveScene extends React.Component{
 
             //threshold sleeping = no infinite abysses
                 //TODO: this threshold # should be a prop or something
-            if(this.positions[i].y < -20){
-                if(body.isSelectable && !this.lostBodies.includes(name)){
-                    this.lostBodies.push(name)
+            if(this.positions[i].y < this.props.freezeThreshold && (!this.lostBodies.includes(name) || body.sleeping)){
+                
+                
+                if(body.isSelectable){
                     console.log(name, 'fell into the abyss')
-                }
-                body.setPosition(v3(0,3,0)) 
-                body.sleep()
-                //insert function here that then moves the body to a position above
-                //also using its index so its not colliding with the next / prev lostbody
+                    this.lostBodies.push(name)
+                    //if it actually needs to be placed out of view then randomize it
+                    //laterally and make sure it wont run into the others
+                    const maxItemHeight = 3 //coefficient for avoiding y-collisions
+                    body.setPosition(v3(0,2+(this.lostBodies.length*maxItemHeight),0))
+                 } 
+                else body.sleep()
                 
             }
         }
