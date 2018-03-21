@@ -16,7 +16,6 @@ import * as THREE from 'three'
 import SimpleScene from './components/core/SimpleScene'
 import InteractiveScene from './components/core/InteractiveScene'
 import Body, {Boundary} from './components/core/Body'
-// import Boundary from './components/core/Boundary'
 import ThreePointLights from './components/core/ThreePointLights'
 
 import { v3, makeEnclosure, rads } from './helpers/utilities'

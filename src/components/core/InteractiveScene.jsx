@@ -1,30 +1,3 @@
-import React from 'react'
-import {observable, action} from 'mobx'
-import {observer} from 'mobx-react'
-
-import React3 from 'react-three-renderer'
-import * as THREE from 'three'
-import * as TWEEN from '@tweenjs/tween.js'
-import * as OIMO from 'oimo'
-
-import MouseInput from '../../helpers/MouseInput'
-const tempVector2 = new THREE.Vector2()
-
-import {findDOMNode} from 'react-dom'
-import {debounce, flatten} from 'lodash'
-import {twn, cap1st, rads, v3} from '../../helpers/utilities'
-import ThreePointLights from './ThreePointLights'
-
-
-class SceneStore {
-    @observable someshit = 'helloworld'
-}
-
-const store = new SceneStore()
-window.store = store
-
-@observer
-export default class InteractiveScene extends React.Component{
 
     /* basic scene should contain:
         physics 
@@ -46,6 +19,26 @@ export default class InteractiveScene extends React.Component{
         scene restart?
     */
 
+
+import React from 'react'
+import {observable, action} from 'mobx'
+import {observer} from 'mobx-react'
+
+import React3 from 'react-three-renderer'
+import * as THREE from 'three'
+import * as TWEEN from '@tweenjs/tween.js'
+import * as OIMO from 'oimo'
+
+import MouseInput from '../../helpers/MouseInput'
+const tempVector2 = new THREE.Vector2()
+
+import {findDOMNode} from 'react-dom'
+import {debounce, flatten} from 'lodash'
+import {twn, cap1st, rads, v3} from '../../helpers/utilities'
+import ThreePointLights from './ThreePointLights'
+
+@observer
+export default class InteractiveScene extends React.Component{
     @observable width = window.innerWidth
     @observable height = window.innerHeight
 
@@ -63,7 +56,6 @@ export default class InteractiveScene extends React.Component{
     @observable lostBodies = []
 
     componentDidMount(){
-        this.initStore()
         window.addEventListener('resize', this.handleResize)
     }
     componentWillReceiveNewProps(newProps){
@@ -73,15 +65,6 @@ export default class InteractiveScene extends React.Component{
             // if(physics.static) physics.static = false // so that canvas can adjust if sleeping
             this.handleResize()
         }
-    }
-
-    @action initStore = () => {
-        //flatmap children
-        // const children = flatten(this.props.children)
-        // this.props.children.forEach((child)=>{
-        //     this.positions.push(null)
-        // })
-
     }
 
     @action onAnimate = () => {
