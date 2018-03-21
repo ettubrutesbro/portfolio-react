@@ -3,8 +3,8 @@ import * as THREE from 'three'
 
 import Body from './Body'
 
-import {v3} from '../../helpers/utilities'
-import {noCollisions, normalCollisions, collidesWithAll} from './constants'
+// import {v3} from '../../helpers/utilities'
+// import {noCollisions, normalCollisions, collidesWithAll} from './constants'
 
 export default class Boundary extends React.Component{
     /* for walls and grounds
@@ -14,29 +14,6 @@ export default class Boundary extends React.Component{
                 in the latter case, a setPosition call occurs on mount
                 that allows us to animate (or set) the position away later
     */
-
-    componentDidMount(){
-        this.init()
-    }
-    componentWillReceiveProps(newProps){
-        // if(this.props.selected!==newProps.selected){
-        //     if(this.props.dynamic) console.log('bound ' + this.props.name + ' should move')
-        // }
-    }
-
-    init = () => {
-        // if(this.props.dynamic){
-        //     const pos = this.props.pos
-        //     this.props.mutate(this.props.name, 'setPosition', [{x:pos.x,y:pos.y,z:pos.z}], true)
-        // }
-        // this.props.mutate(this.props.name, 'sleeping', true)
-    }
-    removeSelf = () => {
-        this.props.unmount(this.props.name)
-    }
-
-
-    
     render(){
         const {pos, width, depth, height, ...restOfProps} = this.props
         const computedPhysicsModel = {
@@ -47,7 +24,6 @@ export default class Boundary extends React.Component{
         }
 
         return(
-
             <Body
                 {...this.props}
                 physicsModel ={computedPhysicsModel}

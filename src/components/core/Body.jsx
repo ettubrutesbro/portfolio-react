@@ -21,7 +21,10 @@ export default class Body extends React.Component{
     init = () =>{
         this.props.onMount(this.props.name,this.physicsModel,this.props.isSelectable, this.props.kinematicByDefault)
     }
-    componentDidMount(){ this.init() }
+    componentDidMount(){ 
+        if(this.props.exists) this.init()
+        else this.removeSelf() 
+    }
     componentWillReceiveProps(newProps){
         if(newProps.exists!==this.props.exists){
             if(newProps.exists) this.init()
@@ -31,7 +34,7 @@ export default class Body extends React.Component{
             if(newProps.selected===true) this.onSelect()
             else if(newProps.selected==='other' && this.props.selected===true){ this.onDeselect() } //another has been selected
             else if(this.props.selected===true && !newProps.selected) this.onDeselect()
-            else if(this.props.selected==='other' && !newProps.selected) this.respawn()
+            // else if(this.props.selected==='other' && !newProps.selected) this.respawn()
         }
     }
 
@@ -43,16 +46,10 @@ export default class Body extends React.Component{
     }
     onDeselect = () => { this.props.letGo(this.props.name) }
     removeSelf = () => {
-        console.log(this.props.name + ' being removed from scene')
         this.props.unmount(this.props.name)
-        // this.setupMass()
-        this.props.mutate(
-            this.props.name, 'setupMass', [0x1, true], true
-        )   
-    }
-
-    respawn = () => {
-        //not sure if anything needed here
+        // this.props.mutate(
+        //     this.props.name, 'setupMass', [0x0, true], true
+        // )   
     }
 
     render(){
@@ -116,4 +113,19 @@ Body.defaultProps = {
     exists: true,
     showCollider: false,
     isSelectable: true
+}
+
+export const Boundary = (props) => {
+    return(
+        <Body 
+            {...props}
+            physicsModel = {{
+                type: 'box',
+                pos: [props.pos.x,props.pos.y,props.pos.z],
+                size: [props.width, props.height, props.depth],
+                move: props.dynamic
+            }}
+            isSelectable = {false}
+        />
+    )
 }

@@ -15,6 +15,14 @@ import {debounce, flatten} from 'lodash'
 import {twn, cap1st, rads, v3} from '../../helpers/utilities'
 import ThreePointLights from './ThreePointLights'
 
+
+class SceneStore {
+    @observable someshit = 'helloworld'
+}
+
+const store = new SceneStore()
+window.store = store
+
 @observer
 export default class InteractiveScene extends React.Component{
 
@@ -202,12 +210,11 @@ export default class InteractiveScene extends React.Component{
         body.sleeping = false
     }
     @action removeBody = (name) =>{
-        console.log('removing ' + name + ' from oimo/world')
         // this.world.removeRigidBody(this.bodies[name])
-        console.log(this.world.rigidBodies)
+        const oldNumBodies = this.world.numRigidBodies
         this.bodies[name].remove()
-        console.log('remaining bodies: ' + this.world.numRigidBodies)
-        this.wakeAllBodies()
+        console.log(`# bodies before removing ${name}:`, oldNumBodies, 'now:', this.world.numRigidBodies)
+        // this.wakeAllBodies()
     }
     @action handleClick = evt => {
         const intersect = this.mouseInput._getIntersections(

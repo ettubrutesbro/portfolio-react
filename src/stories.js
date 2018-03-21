@@ -15,8 +15,8 @@ import * as THREE from 'three'
 
 import SimpleScene from './components/core/SimpleScene'
 import InteractiveScene from './components/core/InteractiveScene'
-import Body from './components/core/Body'
-import Boundary from './components/core/Boundary'
+import Body, {Boundary} from './components/core/Body'
+// import Boundary from './components/core/Boundary'
 import ThreePointLights from './components/core/ThreePointLights'
 
 import { v3, makeEnclosure, rads } from './helpers/utilities'
@@ -316,13 +316,13 @@ worldStories.add('makeEnclosure', () => {
             })}
                 <Boundary
                     name="ground"
-                    pos={{ x: 0, y: 1, z: 0 }}
+                    pos={{ x: 0, y: -0.25, z: 0 }}
                     width={10}
                     depth={10}
-                    height={1}
+                    height={0.5}
                     exists = {walls}
                     showCollider = {true}
-                    // dynamic = {true}
+                    dynamic = {false}
                 />
         </InteractiveScene>
     )
