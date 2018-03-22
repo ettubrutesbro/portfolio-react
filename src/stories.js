@@ -18,6 +18,8 @@ import InteractiveScene from './components/core/InteractiveScene'
 import Body, {Boundary} from './components/core/Body'
 import ThreePointLights from './components/core/ThreePointLights'
 
+import AscendingCatcher from './components/AscendingCatcher'
+
 import { v3, makeEnclosure, rads } from './helpers/utilities'
 
 import { SendbloomModel } from './components/Sendbloom/Sendbloom'
@@ -325,6 +327,11 @@ worldStories.add('makeEnclosure', () => {
                     dynamic = {false}
                 />
         </InteractiveScene>
+    )
+})
+.add('AscendingCatcher', ()=> {
+    return(
+        <AscendingCatcher />
     )
 })
 
