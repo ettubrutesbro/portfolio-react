@@ -330,8 +330,13 @@ worldStories.add('makeEnclosure', () => {
     )
 })
 .add('AscendingCatcher', ()=> {
+    const groundA = boolean('ground A exists', true)
+    const groundB = boolean('ground B exists', true)
     return(
-        <AscendingCatcher />
+        <AscendingCatcher 
+            groundA = {groundA}
+            groundB = {groundB}
+        />
     )
 })
 

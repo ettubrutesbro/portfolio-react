@@ -8,26 +8,34 @@ import Body, {Boundary} from './core/Body'
 
 import {makeEnclosure} from '../helpers/utilities'
 
+@observer
 export default class AscendingCatcher extends React.Component{
+
 
     @observable onBottom = 'b' 
 
+    @observable groundExists = true
+    @action toggleGround = (set) => {
+        this.groundExists = set
+        console.log(this.groundExists)
+    }
+
     render(){
         const enclosureA = makeEnclosure({ x: 8, y: 10, z: 3 }, {x: 0, y: -10, z: 0}, 'a')
-        const enclosureB = makeEnclosure({ x: 8, y: 10, z: 3 }, {x: 0, y: 10, z: 0}, 'b')
+        const enclosureB = makeEnclosure({ x: 8, y: 10, z: 3 }, {x: 0, y: 5, z: 0}, 'b')
 
         return(
             <InteractiveScene
                 debug
-                debugCamPos = {{x: 0, y: 2, z: 100}}
+                debugCamPos = {{x: 0, y: 0, z: 80}}
                 onSelect = {()=>{
-                    console.log('selected')
+                    this.toggleGround(false)
                 }}
                 onDeselect = {()=>{
-                    console.log('deselected')
+                    this.toggleGround(true)
                 }}
             >
-                {Array.from(Array(3)).map((body, i) => {
+                {Array.from(Array(10)).map((body, i) => {
                     return (
                         <Body
                             key = {'body'+i}
@@ -56,21 +64,12 @@ export default class AscendingCatcher extends React.Component{
                             width={b.w}
                             height={b.h}
                             depth={b.d}
-                            showCollider={b.name === 'a-frontwall' ? false : true}
+                            showCollider={b.name === 'afrontwall' ? false : true}
 
                         />
                     )
                 })}
-                 <Boundary
-                        name="a-ground"
-                        pos={{ x: 0, y: 5, z: 0 }}
-                        width={10}
-                        depth={10}
-                        height={0.5}
-                        showCollider = {true}
-                        dynamic = {false}
-                        // exists = {false}
-                />
+
                 {enclosureB.map((b,i) => {
                     return (
                         <Boundary
@@ -80,20 +79,26 @@ export default class AscendingCatcher extends React.Component{
                             width={b.w}
                             height={b.h}
                             depth={b.d}
-                            showCollider={b.name === 'b-frontwall' ? false : true}
+                            showCollider={b.name === 'bfrontwall' ? false : true}
                         />
                     )
                 })}
                 <Boundary
-                    name="b-ground"
+                    name="ground"
                     pos={{ x: 0, y: -15, z: 0 }}
                     width={10}
                     depth={10}
                     height={0.5}
-                    // exists = {walls}
+                    exists = {this.groundExists}
                     showCollider = {true}
                     dynamic = {false}
                 />
+
+
+
+
+
+
             </InteractiveScene>
         )
     }

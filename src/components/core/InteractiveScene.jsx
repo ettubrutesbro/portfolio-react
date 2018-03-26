@@ -108,10 +108,10 @@ export default class InteractiveScene extends React.Component{
                     //if it actually needs to be placed out of view then randomize it
                     //laterally and make sure it wont run into the others
                     const maxItemHeight = 3 //coefficient for avoiding y-collisions
-                    body.setPosition(v3(0,2+(this.lostBodies.length*maxItemHeight),0))
+                    body.resetPosition(0,2+(this.lostBodies.length*maxItemHeight),0)
+                    // setTimeout(()=>this.letGoOfBody(name),50)
                  } 
                 else body.sleep()
-                
             }
         }
     }
@@ -180,8 +180,8 @@ export default class InteractiveScene extends React.Component{
             body.awake()
             //TODO: randomize x position and some rotation stuff?
                 //also be using the enclosure's aperture as guiding constant here
-            body.setPosition({x: (Math.random() * 6) - 3, y: 15+i*3.5, z: 0})
-            setTimeout(()=>{this.letGoOfBody(name)}, 100)
+            body.resetPosition({x: (Math.random() * 6) - 3, y: 15+i*3.5, z: 0})
+            // setTimeout(()=>{this.letGoOfBody(name)}, 100)
         }
     }
     @action letGoOfBody = (name) =>{

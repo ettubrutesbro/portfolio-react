@@ -193,10 +193,10 @@ export function makeEnclosure(volume, position, key){
   else offset = position
 
   let bounds = [
-    {name: key+'-rightwall', x: (volume.x/2)+.5, y: 0, z:0, w: 1, h: volume.y, d: volume.z}, //r
-    {name: key+'-leftwall', x: -(volume.x/2)-.5, y: 0, z:0, w: 1, h: volume.y, d: volume.z}, //l
-    {name: key+'-backwall', x: 0, y: 0, z:-(volume.z/2)-.5, w: volume.x, h: volume.y, d: 1}, //b
-    {name: key+'-frontwall', x: 0, y: 0, z:(volume.z/2)+.5, w: volume.x, h: volume.y, d: 1}, //f
+    {name: key+'rightwall', x: (volume.x/2)+.5, y: 0, z:0, w: 1, h: volume.y, d: volume.z}, //r
+    {name: key+'leftwall', x: -(volume.x/2)-.5, y: 0, z:0, w: 1, h: volume.y, d: volume.z}, //l
+    {name: key+'backwall', x: 0, y: 0, z:-(volume.z/2)-.5, w: volume.x, h: volume.y, d: 1}, //b
+    {name: key+'frontwall', x: 0, y: 0, z:(volume.z/2)+.5, w: volume.x, h: volume.y, d: 1}, //f
    ]
 
   bounds.forEach((boundary)=>{
