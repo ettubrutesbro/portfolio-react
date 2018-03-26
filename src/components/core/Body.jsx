@@ -1,5 +1,6 @@
 import React from 'react'
 import * as THREE from 'three'
+import {isEqual} from 'lodash'
 // import {observer} from 'mobx-react'
 
 import {makeColliderMesh, v3} from '../../helpers/utilities'
@@ -24,7 +25,7 @@ export default class Body extends React.Component{
         this.props.onMount(
             this.props.name,
             this.physicsModel,
-            this.props.isSelectable
+            this.props.isSelectable && this.props.physicsModel.move
         )
     }
     componentDidMount(){ 
@@ -37,6 +38,23 @@ export default class Body extends React.Component{
             else if(this.props.selected===true && !newProps.selected) this.onDeselect()
             // else if(this.props.selected==='other' && !newProps.selected) this.respawn()
         }
+        if(!isEqual(newProps.physicsModel.pos, this.props.physicsModel.pos) && !this.physicsModel.move){
+            //non-dynamic objects can be position adjusted by physicsModel pos changes:\
+            // console.log(this.physicsModel) 
+            console.log('physicsModel pos in', this.props.name, 'changed')
+            this.relocate(newProps.physicsModel.pos)
+            // this.props.force(this.props.name, 'position', newProps.physicsModel.pos)
+            // console.log(this.ph)
+            // console.log(newProps.physicsModel.pos[1], this.props.physicsModel.pos[1])
+            // console.log(newProps.physicsModel.pos)
+            // console.log(this.props.physicsModel.pos)
+
+        }
+    }
+
+    relocate = (goal) => {
+        console.log('attempting to force', this.props.name, 'to', goal.join(','))
+        this.props.force(this.props.name, 'position', goal)
     }
 
     onSelect = () => {

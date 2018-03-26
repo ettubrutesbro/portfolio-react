@@ -14,15 +14,15 @@ export default class AscendingCatcher extends React.Component{
     
     viewHeight = 10 //constant (Y distance viewable by camera)
     @observable groundPosition = -10
-    @computed get spawnHeight(){return this.groundPosition + (this.viewHeight*2)}
+    @computed get spawnHeight(){return this.groundPosition + (this.viewHeight*2) + 2}
 
     render(){
         const walls = makeEnclosure({ x: 14, y: 100, z: 3 }, {x: 0, y: 40, z: 0})
 
          return (
             <InteractiveScene
-                debug
-                debugCamPos = {{x: 0, y: 0, z:40}}
+                // debug
+                // debugCamPos = {{x: 0, y: 0, z:40}}
                 onSelect = {()=>{
                     console.log('selected')
                 }}
@@ -73,6 +73,8 @@ export default class AscendingCatcher extends React.Component{
                     />
 
                     <Body
+                        name = "spawnpointdebug"
+                        key = 'spawnpointdebug'
                         physicsModel = {{
                             type: 'box', size: [1,1,1],
                             pos: [0, this.spawnHeight, 0],
@@ -80,6 +82,7 @@ export default class AscendingCatcher extends React.Component{
                         }}
                         debugMtl = 'lambert'
                         showCollider = {true}
+                        isSelectable = {false}
                     />
             </InteractiveScene>
         )

@@ -101,14 +101,16 @@ export default class InteractiveScene extends React.Component{
         store.bodies[name] = store.world.add(physicsModel)
         if(isSelectable) store.bodies[name].isSelectable = true
     }
-    modifyBody = (name, propOrFunctionCall, parameters, isFunction) => {
-        console.log('mutating: ' + name, ' prop/function ' + propOrFunctionCall + '(' + parameters + ')')
-        if(!isFunction) store.bodies[name][propOrFunctionCall] = parameters
-        else store.bodies[name][propOrFunctionCall](...parameters)
-    }
     @action forceAnimateBody = (name, property, goal, duration) => {
         //can force animate position or rotation
         const body = store.bodies[name]
+        if(!body.isStatic){
+            //body isn't dynamic - instead of tweening, use resetPosition
+            console.log('what')
+            console.log('attempting to move',name,'to',goal.join(','))
+            body.resetPosition(...goal)
+            return
+        }
         const object = property==='position'? 'position' : 'quaternion'
         if(!duration) duration = 500
         const current = body['get'+cap1st(object)]()
@@ -234,8 +236,7 @@ export default class InteractiveScene extends React.Component{
                                     key: 'sceneChild'+i,
                                     ...child.props, 
                                     ...posRot,
-                                    onMount: this.addBody, 
-                                    mutate: this.modifyBody,
+                                    onMount: this.addBody,
                                     force: this.forceAnimateBody,
                                     letGo: this.letGoOfSelectedBody,
                                     selected: store.selected===child.props.name?true:store.selected?'other':false,
