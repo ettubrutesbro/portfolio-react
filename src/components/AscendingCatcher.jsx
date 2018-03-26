@@ -65,7 +65,7 @@ export default class AscendingCatcher extends React.Component{
                 })}
                     <Boundary
                         name="ground"
-                        pos={{ x: 0, y: -10.25, z: 0 }}
+                        pos={{ x: 0, y: this.groundPosition - .25, z: 0 }}
                         width={16}
                         depth={5}
                         height={0.5}

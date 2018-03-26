@@ -49,7 +49,7 @@ class SceneStore{
     @observable rotations = new Map()
 
     @observable selected = null
-    @observable cameraPosition = v3(0,2,40)
+    @observable cameraPosition = v3(0,0,40)
 }
 let store = new SceneStore()
 window.store = store
@@ -104,13 +104,6 @@ export default class InteractiveScene extends React.Component{
     @action forceAnimateBody = (name, property, goal, duration) => {
         //can force animate position or rotation
         const body = store.bodies[name]
-        if(!body.isStatic){
-            //body isn't dynamic - instead of tweening, use resetPosition
-            console.log('what')
-            console.log('attempting to move',name,'to',goal.join(','))
-            body.resetPosition(...goal)
-            return
-        }
         const object = property==='position'? 'position' : 'quaternion'
         if(!duration) duration = 500
         const current = body['get'+cap1st(object)]()
@@ -204,6 +197,7 @@ export default class InteractiveScene extends React.Component{
             <div 
                 ref = "container"
                 onClick = {this.handleClick}
+                style = {{width: '100%', height: '100%'}}
             >
                 <React3
                     mainCamera = "camera"
