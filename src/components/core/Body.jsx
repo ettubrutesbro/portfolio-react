@@ -1,9 +1,11 @@
 import React from 'react'
 import * as THREE from 'three'
+// import {observer} from 'mobx-react'
 
 import {makeColliderMesh, v3} from '../../helpers/utilities'
 import {noCollisions, normalCollisions, collidesWithAll} from './constants'
 
+// @observer
 export default class Body extends React.Component{
 
     constructor(props, context){

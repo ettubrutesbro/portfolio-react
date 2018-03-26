@@ -19,7 +19,6 @@
         scene restart?
     */
 
-
 import React from 'react'
 import {observable, action} from 'mobx'
 import {observer} from 'mobx-react'
@@ -37,6 +36,14 @@ import {debounce, flatten} from 'lodash'
 import {twn, cap1st, rads, v3} from '../../helpers/utilities'
 import ThreePointLights from './ThreePointLights'
 
+// class SceneStore{
+//     @observable bodies = {}
+//     @observable positions = new Map()
+// }
+// let sceneStore = new SceneStore()
+// window.store = sceneStore
+
+
 @observer
 export default class InteractiveScene extends React.Component{
     @observable width = window.innerWidth
@@ -46,13 +53,12 @@ export default class InteractiveScene extends React.Component{
         timestep: 1/60,
         iterations: 15,
     }) 
-    // @observable bodies = observable.map()
     @observable bodies = {}
     cameraPosition = v3(0,2,40)
 
     @observable selected = null
-    @observable positions = []
-    @observable rotations = []
+    @observable positions = new Map()
+    @observable rotations = new Map()
 
     componentDidMount(){
         window.addEventListener('resize', this.handleResize)
@@ -61,7 +67,6 @@ export default class InteractiveScene extends React.Component{
         const {width, height } = this.props
         if(newProps.width !== width || newProps.height !== height){
             console.log('width / height props changed')
-            // if(physics.static) physics.static = false // so that canvas can adjust if sleeping
             this.handleResize()
         }
     }
@@ -80,13 +85,10 @@ export default class InteractiveScene extends React.Component{
         for(var i = 0; i<bodies.length; i++){
             const name = bodies[i]
             const body = this.bodies[name]
-            
+            this.positions.set(name, new THREE.Vector3().copy(body.getPosition()))
+            this.rotations.set(name, new THREE.Quaternion().copy(body.getQuaternion()))
 
-            //TODO watch out for these indices to get dicey with add / removals...
-            this.positions[i] = new THREE.Vector3().copy(body.getPosition())
-            this.rotations[i] = new THREE.Quaternion().copy(body.getQuaternion())
-
-            if(this.positions[i].y < this.props.abyssDepth){
+            if(this.positions.get(name).y < this.props.abyssDepth){
                 if(body.isSelectable){
                     const maxItemHeight = 3 //coefficient for avoiding y-collisions
                     body.resetPosition(0,2*maxItemHeight,0)
@@ -96,11 +98,9 @@ export default class InteractiveScene extends React.Component{
     }
 
     @action addBody = (name, physicsModel, isSelectable) => {
-
-            console.log('adding', name, 'at', physicsModel.pos)
-            this.bodies[name] = this.world.add(physicsModel)
-            //we can add kinematic by default and set isKinematic but it seems to be useless
-            if(isSelectable) this.bodies[name].isSelectable = true
+        console.log('adding', name, 'at', physicsModel.pos)
+        this.bodies[name] = this.world.add(physicsModel)
+        if(isSelectable) this.bodies[name].isSelectable = true
     }
     modifyBody = (name, propOrFunctionCall, parameters, isFunction) => {
         console.log('mutating: ' + name, ' prop/function ' + propOrFunctionCall + '(' + parameters + ')')
@@ -210,8 +210,8 @@ export default class InteractiveScene extends React.Component{
 
         const {debugCamPos} = this.props
 
-        const positions = this.positions.toJS()
-        const rotations = this.rotations.toJS()
+        const positions = this.positions
+        const rotations = this.rotations
 
         const debugCameraPos = v3(debugCamPos.x, debugCamPos.y, debugCamPos.z)
 
@@ -243,9 +243,11 @@ export default class InteractiveScene extends React.Component{
                         { /* physics-enabled children only */
                             React.Children.map(this.props.children, (child,i)=>{
                                 //TODO name
-                                const posRot = i+1 > positions.length? 
+                                console.log(positions.size)
+                                console.log(child)
+                                const posRot = i+1 > positions.size? 
                                     { position: v3(0,0,0), rotation: new THREE.Quaternion() }
-                                    : {position: this.positions[i], rotation: this.rotations[i]}
+                                    : {position: positions.get(child.props.name), rotation: rotations.get(child.props.name)}
 
                                 const foistedProps = {
 
