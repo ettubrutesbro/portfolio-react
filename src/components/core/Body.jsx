@@ -119,7 +119,7 @@ export const Boundary = (props) => {
                 type: 'box',
                 pos: [props.pos.x,props.pos.y,props.pos.z],
                 size: [props.width, props.height, props.depth],
-                move: props.dynamic
+                move: false
             }}
             isSelectable = {false}
         />
