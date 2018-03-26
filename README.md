@@ -21,7 +21,7 @@ using
 ### major branches
 * `working-old`: contains the most progress from master before i started setting things up for reorganization in storybook (the time cost of developing w/out storybook seemed to be getting very high)
 * `reorg`: contains the latest progress on storybook-involved things - bit broken rn (3/16/18)
-* 'scene-refactor`: culling old, incomprehensible stuff from before - making InteractiveScene leaner if possible
+* `scene-refactor`: culling old, incomprehensible stuff from before - making InteractiveScene leaner if possible
 
 ### important
 when installing on a new machine, make sure to cd into `node-modules/react-three-renderer` and `npm install` -- r3r needs to contain its own instance of react to work (?)
