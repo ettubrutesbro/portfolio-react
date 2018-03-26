@@ -96,14 +96,23 @@ export default class InteractiveScene extends React.Component{
         }
     }
 
-    @action addBody = (name, physicsModel, isSelectable) => {
+    @action addBody = (name, physicsModel, isSelectable, isKinematic) => {
         console.log('adding', name, 'at', physicsModel.pos)
         store.bodies[name] = store.world.add(physicsModel)
         if(isSelectable) store.bodies[name].isSelectable = true
+        if(isKinematic) store.bodies[name].isKinematic = true
     }
     @action forceAnimateBody = (name, property, goal, duration) => {
+        console.log('force animate body')
+
         //can force animate position or rotation
         const body = store.bodies[name]
+        console.log(name)
+        console.log(body)
+        if(body.isStatic){
+            console.log('static body - use resetPosition')
+            body.resetPosition(...goal)
+        }
         const object = property==='position'? 'position' : 'quaternion'
         if(!duration) duration = 500
         const current = body['get'+cap1st(object)]()

@@ -16,6 +16,10 @@ export default class AscendingCatcher extends React.Component{
     @observable groundPosition = -10
     @computed get spawnHeight(){return this.groundPosition + (this.viewHeight*2) + 2}
 
+    @action changeGroundPosition = (newPos) => {
+        this.groundPosition = newPos
+    }
+
     render(){
         const walls = makeEnclosure({ x: 14, y: 100, z: 3 }, {x: 0, y: 40, z: 0})
 

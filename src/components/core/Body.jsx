@@ -25,7 +25,8 @@ export default class Body extends React.Component{
         this.props.onMount(
             this.props.name,
             this.physicsModel,
-            this.props.isSelectable
+            this.props.isSelectable,
+            !this.props.isSelectable? true : false
         )
     }
     componentDidMount(){ 
@@ -54,6 +55,7 @@ export default class Body extends React.Component{
 
     relocate = (goal) => {
         console.log('attempting to force', this.props.name, 'to', goal.join(','))
+        console.log(this.props.force)
         this.props.force(this.props.name, 'position', goal)
     }
 
@@ -137,7 +139,7 @@ export const Boundary = (props) => {
                 type: 'box',
                 pos: [props.pos.x,props.pos.y,props.pos.z],
                 size: [props.width, props.height, props.depth],
-                move: props.dynamic
+                move: true
             }}
             isSelectable = {false}
         />
