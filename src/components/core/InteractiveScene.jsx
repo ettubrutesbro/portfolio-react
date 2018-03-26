@@ -36,29 +36,32 @@ import {debounce, flatten} from 'lodash'
 import {twn, cap1st, rads, v3} from '../../helpers/utilities'
 import ThreePointLights from './ThreePointLights'
 
-// class SceneStore{
-//     @observable bodies = {}
-//     @observable positions = new Map()
-// }
-// let sceneStore = new SceneStore()
-// window.store = sceneStore
+class SceneStore{
 
-
-@observer
-export default class InteractiveScene extends React.Component{
-    @observable width = window.innerWidth
-    @observable height = window.innerHeight
+    @observable screenWidth = window.innerWidth
+    @observable screenHeight = window.innerHeight
 
     world = new OIMO.World({
         timestep: 1/60,
         iterations: 15,
-    }) 
-    @observable bodies = {}
-    cameraPosition = v3(0,2,40)
+    })
 
-    @observable selected = null
+    @observable bodies = {}
     @observable positions = new Map()
     @observable rotations = new Map()
+
+    @observable selected = null
+}
+let store = new SceneStore()
+window.store = store
+
+
+@observer
+export default class InteractiveScene extends React.Component{
+
+    cameraPosition = v3(0,2,40)
+
+    
 
     componentDidMount(){
         window.addEventListener('resize', this.handleResize)
@@ -79,16 +82,16 @@ export default class InteractiveScene extends React.Component{
             mouseInput.setActive(false)
         }
 
-        this.world.step()
+        store.world.step()
         TWEEN.update()
-        const bodies = Object.keys(this.bodies)
+        const bodies = Object.keys(store.bodies)
         for(var i = 0; i<bodies.length; i++){
             const name = bodies[i]
-            const body = this.bodies[name]
-            this.positions.set(name, new THREE.Vector3().copy(body.getPosition()))
-            this.rotations.set(name, new THREE.Quaternion().copy(body.getQuaternion()))
+            const body = store.bodies[name]
+            store.positions.set(name, new THREE.Vector3().copy(body.getPosition()))
+            store.rotations.set(name, new THREE.Quaternion().copy(body.getQuaternion()))
 
-            if(this.positions.get(name).y < this.props.abyssDepth){
+            if(store.positions.get(name).y < this.props.abyssDepth){
                 if(body.isSelectable){
                     const maxItemHeight = 3 //coefficient for avoiding y-collisions
                     body.resetPosition(0,2*maxItemHeight,0)
@@ -99,17 +102,17 @@ export default class InteractiveScene extends React.Component{
 
     @action addBody = (name, physicsModel, isSelectable) => {
         console.log('adding', name, 'at', physicsModel.pos)
-        this.bodies[name] = this.world.add(physicsModel)
-        if(isSelectable) this.bodies[name].isSelectable = true
+        store.bodies[name] = store.world.add(physicsModel)
+        if(isSelectable) store.bodies[name].isSelectable = true
     }
     modifyBody = (name, propOrFunctionCall, parameters, isFunction) => {
         console.log('mutating: ' + name, ' prop/function ' + propOrFunctionCall + '(' + parameters + ')')
-        if(!isFunction) this.bodies[name][propOrFunctionCall] = parameters
-        else this.bodies[name][propOrFunctionCall](...parameters)
+        if(!isFunction) store.bodies[name][propOrFunctionCall] = parameters
+        else store.bodies[name][propOrFunctionCall](...parameters)
     }
     @action forceAnimateBody = (name, property, goal, duration) => {
         //can force animate position or rotation
-        const body = this.bodies[name]
+        const body = store.bodies[name]
         const object = property==='position'? 'position' : 'quaternion'
         if(!duration) duration = 500
         const current = body['get'+cap1st(object)]()
@@ -145,8 +148,8 @@ export default class InteractiveScene extends React.Component{
         .start()
     }
 
-    @action letGoOfBody = (name) =>{
-        const body = this.bodies[name]
+    @action letGoOfSelectedBody = (name) =>{
+        const body = store.bodies[name]
 
         if(body.positionTween) body.positionTween.stop()
         if(body.rotationTween) body.rotationTween.stop()
@@ -154,13 +157,15 @@ export default class InteractiveScene extends React.Component{
         body.controlRot = false
         body.isKinematic = false
         body.sleeping = false
+
+        store.selected = null
     }
 
     @action removeBody = (name) =>{
-        const oldNumBodies = this.world.numRigidBodies
-        this.bodies[name].remove()
-        console.log(this.bodies[name])
-        console.log(`# bodies before removing ${name}:`, oldNumBodies, 'now:', this.world.numRigidBodies)
+        const oldNumBodies = store.world.numRigidBodies
+        store.bodies[name].remove()
+        console.log(store.bodies[name])
+        console.log(`# bodies before removing ${name}:`, oldNumBodies, 'now:', store.world.numRigidBodies)
 
     }
 
@@ -168,38 +173,29 @@ export default class InteractiveScene extends React.Component{
         const intersect = this.mouseInput._getIntersections(
           tempVector2.set(evt.clientX, evt.clientY)
         )
-        //logic here is confusing TODO
         let selection = null
-        //CLICKED SOMETHING
-        console.log(intersect)
         if(intersect.length > 0){
             const target = intersect[0].object.name
-            //NON SELECTABLE TARGET
-            if(!this.bodies[target].isSelectable){ 
-                if(this.selected && this.props.onDeselect) this.props.onDeselect()    
-                if(this.selected) this.letGoOfBody(this.selected)
-                this.selected = null
+            if(store.bodies[target].isSelectable){ 
+                store.selected = intersect[0].object.name
+                if(this.props.onSelect) this.props.onSelect(store.selected)   
             }
-            //CLICKED SELECTABLE TARGET
-            else{
-                this.selected = intersect[0].object.name
-                if(this.props.onSelect) this.props.onSelect(this.selected)   
-            }
+            else this.clickedNothing()
         }
-        else{ //user clicked empty space
-            if(this.selected && this.props.onDeselect) this.props.onDeselect()
-            if(this.selected) this.letGoOfBody(this.selected)
-            this.selected = null
-            //interrupt animation
-        }
-        console.log('selected: ' + this.selected)
+        else this.clickedNothing()
+        
+        console.log('selected: ' + store.selected)
+    }
+
+    clickedNothing = () => {
+        if(store.selected && this.props.onDeselect) this.props.onDeselect()
+        if(store.selected) this.letGoOfSelectedBody(store.selected)
     }
 
 
-
     @action handleResize = debounce(() =>{
-        this.width = window.innerWidth
-        this.height = window.innerHeight
+        store.screenWidth = window.innerWidth
+        store.screenHeight = window.innerHeight
         this.mouseInput.containerResized()
     },50)
 
@@ -210,8 +206,8 @@ export default class InteractiveScene extends React.Component{
 
         const {debugCamPos} = this.props
 
-        const positions = this.positions
-        const rotations = this.rotations
+        const positions = store.positions
+        const rotations = store.rotations
 
         const debugCameraPos = v3(debugCamPos.x, debugCamPos.y, debugCamPos.z)
 
@@ -222,8 +218,8 @@ export default class InteractiveScene extends React.Component{
             >
                 <React3
                     mainCamera = "camera"
-                    width = {this.width}
-                    height = {this.height}
+                    width = {store.screenWidth}
+                    height = {store.screenHeight}
                     onAnimate = {this.onAnimate}
                     clearColor = {this.props.background}
                 >
@@ -233,7 +229,7 @@ export default class InteractiveScene extends React.Component{
                             name = "camera"
                             ref = {(perspectiveCamera)=>{this.camera = perspectiveCamera}}
                             fov = {30}
-                            aspect = {this.width / this.height}
+                            aspect = {store.screenWidth / store.screenHeight}
                             near = {1} far = {200}
                             position = {!this.props.debug? this.cameraPosition : debugCameraPos}
                         />
@@ -243,8 +239,6 @@ export default class InteractiveScene extends React.Component{
                         { /* physics-enabled children only */
                             React.Children.map(this.props.children, (child,i)=>{
                                 //TODO name
-                                console.log(positions.size)
-                                console.log(child)
                                 const posRot = i+1 > positions.size? 
                                     { position: v3(0,0,0), rotation: new THREE.Quaternion() }
                                     : {position: positions.get(child.props.name), rotation: rotations.get(child.props.name)}
@@ -257,8 +251,8 @@ export default class InteractiveScene extends React.Component{
                                     onMount: this.addBody, 
                                     mutate: this.modifyBody,
                                     force: this.forceAnimateBody,
-                                    letGo: this.letGoOfBody,
-                                    selected: this.selected===child.props.name?true:this.selected?'other':false,
+                                    letGo: this.letGoOfSelectedBody,
+                                    selected: store.selected===child.props.name?true:store.selected?'other':false,
                                 }
 
                                 return React.cloneElement(
@@ -282,12 +276,12 @@ export default class InteractiveScene extends React.Component{
                 >
                     <ul style = {{listStyleType: 'none'}}>
                         <li>Awake dynamic bodies: {
-                            Object.keys(this.bodies).filter((body)=>{
-                                return !this.bodies[body].sleeping && this.bodies[body].isDynamic
+                            Object.keys(store.bodies).filter((body)=>{
+                                return !store.bodies[body].sleeping && store.bodies[body].isDynamic
                             }).length
                         }</li>
 
-                        <li>Selected: {this.selected || 'n/a'}</li>
+                        <li>Selected: {store.selected || 'n/a'}</li>
                     </ul>
 
                     <div id = 'button' style = {{background: 'blue', padding: '10px'}}

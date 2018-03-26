@@ -301,7 +301,31 @@ worldStories.add('makeEnclosure', () => {
                     />
                 )
             })}
-
+            {enclosure.map((b,i) => {
+                return (
+                    <Boundary
+                        key = {'wall'+i}
+                        name={b.name}
+                        pos={{ x: b.x, y: b.y, z: b.z }}
+                        width={b.w}
+                        height={b.h}
+                        depth={b.d}
+                        showCollider={b.name === 'frontwall' ? false : true}
+                        exists = {walls}
+                        // dynamic = {true}
+                    />
+                )
+            })}
+                <Boundary
+                    name="ground"
+                    pos={{ x: 0, y: -0.25, z: 0 }}
+                    width={10}
+                    depth={10}
+                    height={0.5}
+                    exists = {walls}
+                    showCollider = {true}
+                    dynamic = {false}
+                />
         </InteractiveScene>
     )
 })
