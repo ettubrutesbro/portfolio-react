@@ -217,3 +217,12 @@ export const rads = degs => {
 export const degs = rads => {
   return rads * (180 / Math.PI)
 }
+export const hashCode = () => {
+  var text = "";
+  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+  for (var i = 0; i < 7; i++)
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+  return text;
+};

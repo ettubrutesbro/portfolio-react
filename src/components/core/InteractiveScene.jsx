@@ -83,6 +83,7 @@ export default class InteractiveScene extends React.Component{
         for(var i = 0; i<bodies.length; i++){
             const name = bodies[i]
             const body = store.bodies[name]
+            // if(!body.isSelectable) continue
             store.positions.set(name, new THREE.Vector3().copy(body.getPosition()))
             store.rotations.set(name, new THREE.Quaternion().copy(body.getQuaternion()))
 
@@ -101,19 +102,20 @@ export default class InteractiveScene extends React.Component{
         store.bodies[name] = store.world.add(physicsModel)
         if(isSelectable) store.bodies[name].isSelectable = true
         if(isKinematic) store.bodies[name].isKinematic = true
-    }
-    @action forceAnimateBody = (name, property, goal, duration) => {
-        console.log('force animate body')
+            // store.positions.set(name, new THREE.Vector3().copy(store.bodies[name].getPosition()))
+            // store.rotations.set(name, new THREE.Quaternion().copy(store.bodies[name].getQuaternion()))
 
+    }
+    @action moveStaticBody = (name, goal) => {
+        const body = store.bodies[name]
+        body.resetPosition(...goal)
+        // store.positions.set(name, new THREE.Vector3().copy(body.getPosition()))
+    }
+    @action animateDynamicBody = (name, property, goal, duration) => {
         //can force animate position or rotation
         const body = store.bodies[name]
-        console.log(name)
-        console.log(body)
-        if(body.isStatic){
-            console.log('static body - use resetPosition')
-            body.resetPosition(...goal)
-        }
         const object = property==='position'? 'position' : 'quaternion'
+
         if(!duration) duration = 500
         const current = body['get'+cap1st(object)]()
         
@@ -240,7 +242,8 @@ export default class InteractiveScene extends React.Component{
                                     ...child.props, 
                                     ...posRot,
                                     onMount: this.addBody,
-                                    force: this.forceAnimateBody,
+                                    force: this.animateDynamicBody,
+                                    move: this.moveStaticBody,
                                     letGo: this.letGoOfSelectedBody,
                                     selected: store.selected===child.props.name?true:store.selected?'other':false,
                                 }

@@ -8,7 +8,6 @@ import Body, {Boundary} from './core/Body'
 
 import {makeEnclosure} from '../helpers/utilities'
 
-
 @observer
 export default class AscendingCatcher extends React.Component{
     
@@ -29,6 +28,7 @@ export default class AscendingCatcher extends React.Component{
                 // debugCamPos = {{x: 0, y: 0, z:40}}
                 onSelect = {()=>{
                     console.log('selected')
+                    this.changeGroundPosition(this.groundPosition+this.viewHeight/2)
                 }}
                 onDeselect = {()=>{
                     console.log('deselected')
@@ -48,8 +48,12 @@ export default class AscendingCatcher extends React.Component{
                                     10 + 2 * i,
                                     0,
                                 ],
-                                size: [0.25 + Math.random() * 0.75],
-                                type: 'sphere',
+                                size: [
+                                    1 + Math.random() * 1.75,
+                                    1 + Math.random() * 1.75,
+                                    1 + Math.random() * 1.75,
+                                ],
+                                type: 'box',
                             }}
                         />
                     )
@@ -69,10 +73,10 @@ export default class AscendingCatcher extends React.Component{
                 })}
                     <Boundary
                         name="ground"
-                        pos={{ x: 0, y: this.groundPosition - .25, z: 0 }}
+                        pos={{ x: 0, y: this.groundPosition - .5, z: 0 }}
                         width={16}
                         depth={5}
-                        height={0.5}
+                        height={1}
                         showCollider = {true}
                     />
 

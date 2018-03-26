@@ -26,7 +26,7 @@ export default class Body extends React.Component{
             this.props.name,
             this.physicsModel,
             this.props.isSelectable,
-            !this.props.isSelectable? true : false
+            !this.props.isSelectable
         )
     }
     componentDidMount(){ 
@@ -39,24 +39,10 @@ export default class Body extends React.Component{
             else if(this.props.selected===true && !newProps.selected) this.onDeselect()
             // else if(this.props.selected==='other' && !newProps.selected) this.respawn()
         }
-        if(!isEqual(newProps.physicsModel.pos, this.props.physicsModel.pos) && !this.physicsModel.move){
-            //non-dynamic objects can be position adjusted by physicsModel pos changes:\
-            // console.log(this.physicsModel) 
-            console.log('physicsModel pos in', this.props.name, 'changed')
-            this.relocate(newProps.physicsModel.pos)
+        if(!isEqual(newProps.physicsModel.pos, this.props.physicsModel.pos) && !this.props.isSelectable){
             // this.props.force(this.props.name, 'position', newProps.physicsModel.pos)
-            // console.log(this.ph)
-            // console.log(newProps.physicsModel.pos[1], this.props.physicsModel.pos[1])
-            // console.log(newProps.physicsModel.pos)
-            // console.log(this.props.physicsModel.pos)
-
+            this.props.move(this.props.name, newProps.physicsModel.pos)
         }
-    }
-
-    relocate = (goal) => {
-        console.log('attempting to force', this.props.name, 'to', goal.join(','))
-        console.log(this.props.force)
-        this.props.force(this.props.name, 'position', goal)
     }
 
     onSelect = () => {
@@ -98,7 +84,7 @@ export default class Body extends React.Component{
                             return (
                                 <mesh name = {this.props.name} key = {'collider'+i}> 
                                     {geo} 
-                                    {debugMtl === 'wire' && <meshBasicMaterial wireframe = {true} color = {0x000000} /> }
+                                    {debugMtl === 'wire' && <meshBasicMaterial wireframe = {true} color = {0xffffff} /> }
                                     {debugMtl === 'normal' && <meshNormalMaterial />}
                                     {debugMtl === 'lambert' && <meshLambertMaterial color = {0xb1b1b1} />}
                                     {debugMtl === 'phong' && <meshPhongMaterial color = {0xd7d7d7} shininess = {0} emissive = {0xb1b1b1}/>}
@@ -135,11 +121,13 @@ export const Boundary = (props) => {
     return(
         <Body 
             {...props}
+            debugMtl = "wire"
             physicsModel = {{
                 type: 'box',
                 pos: [props.pos.x,props.pos.y,props.pos.z],
                 size: [props.width, props.height, props.depth],
-                move: true
+                move: true,
+                // friction: 1,
             }}
             isSelectable = {false}
         />
