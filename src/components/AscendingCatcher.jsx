@@ -1,6 +1,6 @@
 
 import React from 'react'
-import {observable, action} from 'mobx'
+import {observable, action, computed} from 'mobx'
 import {observer} from 'mobx-react'
 
 import InteractiveScene from './core/InteractiveScene'
@@ -8,34 +8,29 @@ import Body, {Boundary} from './core/Body'
 
 import {makeEnclosure} from '../helpers/utilities'
 
+
 @observer
 export default class AscendingCatcher extends React.Component{
-
-
-    @observable onBottom = 'b' 
-
-    @observable groundExists = true
-    @action toggleGround = (set) => {
-        this.groundExists = set
-        console.log(this.groundExists)
-    }
+    
+    viewHeight = 10 //constant (Y distance viewable by camera)
+    @observable groundPosition = -10
+    @computed get spawnHeight(){return this.groundPosition + (this.viewHeight*2)}
 
     render(){
-        const enclosureA = makeEnclosure({ x: 8, y: 10, z: 3 }, {x: 0, y: -10, z: 0}, 'a')
-        const enclosureB = makeEnclosure({ x: 8, y: 10, z: 3 }, {x: 0, y: 5, z: 0}, 'b')
+        const walls = makeEnclosure({ x: 14, y: 100, z: 3 }, {x: 0, y: 40, z: 0})
 
-        return(
+         return (
             <InteractiveScene
                 debug
-                debugCamPos = {{x: 0, y: 0, z: 80}}
+                debugCamPos = {{x: 0, y: 0, z:40}}
                 onSelect = {()=>{
-                    this.toggleGround(false)
+                    console.log('selected')
                 }}
                 onDeselect = {()=>{
-                    this.toggleGround(true)
+                    console.log('deselected')
                 }}
             >
-                {Array.from(Array(10)).map((body, i) => {
+                {Array.from(Array(3)).map((body, i) => {
                     return (
                         <Body
                             key = {'body'+i}
@@ -55,51 +50,39 @@ export default class AscendingCatcher extends React.Component{
                         />
                     )
                 })}
-                {enclosureA.map((b,i) => {
+                {walls.map((b,i) => {
                     return (
                         <Boundary
-                            key = {'a-wall'+i}
+                            key = {'wall'+i}
                             name={b.name}
                             pos={{ x: b.x, y: b.y, z: b.z }}
                             width={b.w}
                             height={b.h}
                             depth={b.d}
-                            showCollider={b.name === 'afrontwall' ? false : true}
-
+                            showCollider={b.name === 'frontwall' ? false : true}
                         />
                     )
                 })}
+                    <Boundary
+                        name="ground"
+                        pos={{ x: 0, y: -10.25, z: 0 }}
+                        width={16}
+                        depth={5}
+                        height={0.5}
+                        showCollider = {true}
+                    />
 
-                {enclosureB.map((b,i) => {
-                    return (
-                        <Boundary
-                            key = {'b-wall'+i}
-                            name={b.name}
-                            pos={{ x: b.x, y: b.y, z: b.z }}
-                            width={b.w}
-                            height={b.h}
-                            depth={b.d}
-                            showCollider={b.name === 'bfrontwall' ? false : true}
-                        />
-                    )
-                })}
-                <Boundary
-                    name="ground"
-                    pos={{ x: 0, y: -15, z: 0 }}
-                    width={10}
-                    depth={10}
-                    height={0.5}
-                    exists = {this.groundExists}
-                    showCollider = {true}
-                    dynamic = {false}
-                />
-
-
-
-
-
-
+                    <Body
+                        physicsModel = {{
+                            type: 'box', size: [1,1,1],
+                            pos: [0, this.spawnHeight, 0],
+                            move: false
+                        }}
+                        debugMtl = 'lambert'
+                        showCollider = {true}
+                    />
             </InteractiveScene>
         )
     }
+
 }

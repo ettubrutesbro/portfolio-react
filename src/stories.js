@@ -324,14 +324,12 @@ worldStories.add('makeEnclosure', () => {
                     height={0.5}
                     exists = {walls}
                     showCollider = {true}
-                    dynamic = {false}
+                    // dynamic = {true}
                 />
         </InteractiveScene>
     )
 })
 .add('AscendingCatcher', ()=> {
-    const groundA = boolean('ground A exists', true)
-    const groundB = boolean('ground B exists', true)
     return(
         <AscendingCatcher 
             // groundA = {groundA}

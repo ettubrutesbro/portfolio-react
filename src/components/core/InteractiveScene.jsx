@@ -37,7 +37,6 @@ import {twn, cap1st, rads, v3} from '../../helpers/utilities'
 import ThreePointLights from './ThreePointLights'
 
 class SceneStore{
-
     @observable screenWidth = window.innerWidth
     @observable screenHeight = window.innerHeight
 
@@ -45,12 +44,12 @@ class SceneStore{
         timestep: 1/60,
         iterations: 15,
     })
-
     @observable bodies = {}
     @observable positions = new Map()
     @observable rotations = new Map()
 
     @observable selected = null
+    @observable cameraPosition = v3(0,2,40)
 }
 let store = new SceneStore()
 window.store = store
@@ -58,10 +57,6 @@ window.store = store
 
 @observer
 export default class InteractiveScene extends React.Component{
-
-    cameraPosition = v3(0,2,40)
-
-    
 
     componentDidMount(){
         window.addEventListener('resize', this.handleResize)
@@ -93,6 +88,7 @@ export default class InteractiveScene extends React.Component{
 
             if(store.positions.get(name).y < this.props.abyssDepth){
                 if(body.isSelectable){
+                    //TODO - random within constraints and ensure these won't run into each other
                     const maxItemHeight = 3 //coefficient for avoiding y-collisions
                     body.resetPosition(0,2*maxItemHeight,0)
                  }
@@ -161,14 +157,6 @@ export default class InteractiveScene extends React.Component{
         store.selected = null
     }
 
-    @action removeBody = (name) =>{
-        const oldNumBodies = store.world.numRigidBodies
-        store.bodies[name].remove()
-        console.log(store.bodies[name])
-        console.log(`# bodies before removing ${name}:`, oldNumBodies, 'now:', store.world.numRigidBodies)
-
-    }
-
     @action handleClick = evt => {
         const intersect = this.mouseInput._getIntersections(
           tempVector2.set(evt.clientX, evt.clientY)
@@ -191,7 +179,6 @@ export default class InteractiveScene extends React.Component{
         if(store.selected && this.props.onDeselect) this.props.onDeselect()
         if(store.selected) this.letGoOfSelectedBody(store.selected)
     }
-
 
     @action handleResize = debounce(() =>{
         store.screenWidth = window.innerWidth
@@ -231,7 +218,7 @@ export default class InteractiveScene extends React.Component{
                             fov = {30}
                             aspect = {store.screenWidth / store.screenHeight}
                             near = {1} far = {200}
-                            position = {!this.props.debug? this.cameraPosition : debugCameraPos}
+                            position = {!this.props.debug? store.cameraPosition : debugCameraPos}
                         />
 
                         {this.props.lights}
@@ -244,7 +231,6 @@ export default class InteractiveScene extends React.Component{
                                     : {position: positions.get(child.props.name), rotation: rotations.get(child.props.name)}
 
                                 const foistedProps = {
-
                                     key: 'sceneChild'+i,
                                     ...child.props, 
                                     ...posRot,

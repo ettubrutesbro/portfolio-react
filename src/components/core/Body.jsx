@@ -27,19 +27,10 @@ export default class Body extends React.Component{
             this.props.isSelectable
         )
     }
-    removeBody = () => {
-        this.props.mutate(
-            this.props.name, 'setupMass', [0x1, true], true
-        )   
-    }
     componentDidMount(){ 
         if(this.props.exists) this.makeBody()
     }
     componentWillReceiveProps(newProps){
-        if(newProps.exists!==this.props.exists){
-            if(newProps.exists) this.makeBody()
-            if(!newProps.exists) this.removeBody()
-        }
         if(newProps.selected!==this.props.selected && this.props.isSelectable){
             if(newProps.selected===true) this.onSelect()
             else if(newProps.selected==='other' && this.props.selected===true){ this.onDeselect() } //another has been selected
