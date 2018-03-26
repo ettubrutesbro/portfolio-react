@@ -25,7 +25,7 @@ export default class Body extends React.Component{
         this.props.onMount(
             this.props.name,
             this.physicsModel,
-            this.props.isSelectable && this.props.physicsModel.move
+            this.props.isSelectable
         )
     }
     componentDidMount(){ 
