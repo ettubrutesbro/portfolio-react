@@ -26,7 +26,6 @@ export default class Body extends React.Component{
         )
     }
     removeBody = () => {
-        // this.props.unmount(this.props.name)
         this.props.mutate(
             this.props.name, 'setupMass', [0x1, true], true
         )   

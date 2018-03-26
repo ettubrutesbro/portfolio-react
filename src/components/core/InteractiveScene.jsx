@@ -54,8 +54,6 @@ export default class InteractiveScene extends React.Component{
     @observable positions = []
     @observable rotations = []
 
-    @observable lostBodies = []
-
     componentDidMount(){
         window.addEventListener('resize', this.handleResize)
     }
@@ -83,35 +81,16 @@ export default class InteractiveScene extends React.Component{
             const name = bodies[i]
             const body = this.bodies[name]
             
-            //this would be good but you need this function to set the position of
-            //non-dynamic bodies at least ONCE - was breaking showCollider for
-            // boundaries
-            // if(!body.isDynamic) continue
-
-            //crude sleep
-            // const velocities = Object.values(body.linearVelocity).concat(Object.values(body.angularVelocity))
-            // if(velocities.find((v)=>{return Math.abs(v) > 0.025})){ } // do nothing
-            // else body.sleep()
 
             //TODO watch out for these indices to get dicey with add / removals...
             this.positions[i] = new THREE.Vector3().copy(body.getPosition())
             this.rotations[i] = new THREE.Quaternion().copy(body.getQuaternion())
 
-            //threshold sleeping = no infinite abysses
-                //TODO: this threshold # should be a prop or something
-            if(this.positions[i].y < this.props.freezeThreshold && (!this.lostBodies.includes(name) || body.sleeping)){
-                
-                
+            if(this.positions[i].y < this.props.abyssDepth){
                 if(body.isSelectable){
-                    console.log(name, 'fell into the abyss')
-                    this.lostBodies.push(name)
-                    //if it actually needs to be placed out of view then randomize it
-                    //laterally and make sure it wont run into the others
                     const maxItemHeight = 3 //coefficient for avoiding y-collisions
-                    body.resetPosition(0,2+(this.lostBodies.length*maxItemHeight),0)
-                    // setTimeout(()=>this.letGoOfBody(name),50)
-                 } 
-                else body.sleep()
+                    body.resetPosition(0,2*maxItemHeight,0)
+                 }
             }
         }
     }
@@ -166,30 +145,17 @@ export default class InteractiveScene extends React.Component{
         .start()
     }
 
-    @action restoreBodies = (wasSelected) => {
-
-        //which bodies are lost? 
-
-        const bodies = Object.keys(this.bodies)
-        for(var i = 0; i<bodies.length; i++){
-            const name = bodies[i]
-            if(!this.lostBodies.includes(name)) continue
-            // if(wasSelected === name) continue
-            const body = this.bodies[name]
-            // if(!body.isDynamic) continue
-            body.awake()
-            //TODO: randomize x position and some rotation stuff?
-                //also be using the enclosure's aperture as guiding constant here
-            body.resetPosition({x: (Math.random() * 6) - 3, y: 15+i*3.5, z: 0})
-            // setTimeout(()=>{this.letGoOfBody(name)}, 100)
-        }
-    }
     @action letGoOfBody = (name) =>{
         const body = this.bodies[name]
+
+        if(body.positionTween) body.positionTween.stop()
+        if(body.rotationTween) body.rotationTween.stop()
+
         body.controlRot = false
         body.isKinematic = false
         body.sleeping = false
     }
+
     @action removeBody = (name) =>{
         const oldNumBodies = this.world.numRigidBodies
         this.bodies[name].remove()
@@ -197,6 +163,7 @@ export default class InteractiveScene extends React.Component{
         console.log(`# bodies before removing ${name}:`, oldNumBodies, 'now:', this.world.numRigidBodies)
 
     }
+
     @action handleClick = evt => {
         const intersect = this.mouseInput._getIntersections(
           tempVector2.set(evt.clientX, evt.clientY)
@@ -204,12 +171,13 @@ export default class InteractiveScene extends React.Component{
         //logic here is confusing TODO
         let selection = null
         //CLICKED SOMETHING
+        console.log(intersect)
         if(intersect.length > 0){
             const target = intersect[0].object.name
             //NON SELECTABLE TARGET
             if(!this.bodies[target].isSelectable){ 
                 if(this.selected && this.props.onDeselect) this.props.onDeselect()    
-                if(this.selected) this.restoreBodies()
+                if(this.selected) this.letGoOfBody(this.selected)
                 this.selected = null
             }
             //CLICKED SELECTABLE TARGET
@@ -220,22 +188,21 @@ export default class InteractiveScene extends React.Component{
         }
         else{ //user clicked empty space
             if(this.selected && this.props.onDeselect) this.props.onDeselect()
-            if(this.selected) this.restoreBodies(this.selected)
+            if(this.selected) this.letGoOfBody(this.selected)
             this.selected = null
+            //interrupt animation
         }
         console.log('selected: ' + this.selected)
     }
+
+
+
     @action handleResize = debounce(() =>{
         this.width = window.innerWidth
         this.height = window.innerHeight
         this.mouseInput.containerResized()
     },50)
 
-    @action debugCycleCamera = () => {
-
-        if(this.camera.position.z === 10) this.cameraPosition = v3(0,2,22)
-        else if(this.camera.position.z === 22) this.cameraPosition = v3(0,2,10)
-    }
 
     render(){
 
@@ -285,12 +252,7 @@ export default class InteractiveScene extends React.Component{
                                     key: 'sceneChild'+i,
                                     ...child.props, 
                                     ...posRot,
-                                    // position: this.positions[i] || new THREE.Vector3(),
-                                    // rotation: this.rotations[i] || new THREE.Quaternion(),
-                                    // position: v3(0,0,0),
-                                    // rotation: new THREE.Quaternion(),
                                     onMount: this.addBody, 
-                                    unmount: this.removeBody, 
                                     mutate: this.modifyBody,
                                     force: this.forceAnimateBody,
                                     letGo: this.letGoOfBody,
@@ -324,7 +286,6 @@ export default class InteractiveScene extends React.Component{
                         }</li>
 
                         <li>Selected: {this.selected || 'n/a'}</li>
-                        <li>Lost bodies: {this.lostBodies.length}</li>
                     </ul>
 
                     <div id = 'button' style = {{background: 'blue', padding: '10px'}}
@@ -347,5 +308,5 @@ export default class InteractiveScene extends React.Component{
         defaultLighting: false,
         lights: null,
         debugCamPos: {x: 0, y: 0, z: 0},
-        freezeThreshold: -20, //point on Y axis at which out-of-view objects will be frozen
+        abyssDepth: -20, //point on Y axis at which out-of-view objects will be frozen
     }
