@@ -20,12 +20,14 @@ export default class AscendingCatcher extends React.Component{
     }
 
     render(){
-        const walls = makeEnclosure({ x: 14, y: 100, z: 3 }, {x: 0, y: 40, z: 0})
+        const {container} = this.props
+        const walls = makeEnclosure({ x: container.width, y: container.height, z: container.depth }, {x: 0, y: container.height * .4, z: 0})
 
          return (
             <InteractiveScene
-                // debug
-                // debugCamPos = {{x: 0, y: 0, z:40}}
+                envelope = {{width: container.width, height: container.height, depth: container.depth}}
+                // abyssDepth = {} //a certain amount below camera's y position
+                spawnHeight = {this.spawnHeight}
                 onSelect = {()=>{
                     console.log('selected')
                     this.changeGroundPosition(this.groundPosition+this.viewHeight/2)
@@ -34,7 +36,7 @@ export default class AscendingCatcher extends React.Component{
                     console.log('deselected')
                 }}
             >
-                {Array.from(Array(3)).map((body, i) => {
+                {Array.from(Array(30)).map((body, i) => {
                     return (
                         <Body
                             key = {'body'+i}
@@ -47,6 +49,11 @@ export default class AscendingCatcher extends React.Component{
                                         4,
                                     10 + 2 * i,
                                     0,
+                                ],
+                                rot: [
+                                    (Math.random()*20)-10, 
+                                    (Math.random()*20)-10, 
+                                    (Math.random()*20)-10 
                                 ],
                                 size: [
                                     1 + Math.random() * 1.75,
@@ -79,21 +86,12 @@ export default class AscendingCatcher extends React.Component{
                         height={1}
                         showCollider = {true}
                     />
-
-                    <Body
-                        name = "spawnpointdebug"
-                        key = 'spawnpointdebug'
-                        physicsModel = {{
-                            type: 'box', size: [1,1,1],
-                            pos: [0, this.spawnHeight, 0],
-                            move: false
-                        }}
-                        debugMtl = 'lambert'
-                        showCollider = {true}
-                        isSelectable = {false}
-                    />
             </InteractiveScene>
         )
     }
 
+}
+
+AscendingCatcher.defaultProps = {
+    container: {width: 14, depth: 3, height: 100}
 }

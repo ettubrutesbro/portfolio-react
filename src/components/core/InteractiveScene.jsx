@@ -50,6 +50,7 @@ class SceneStore{
 
     @observable selected = null
     @observable cameraPosition = v3(0,0,40)
+    @observable respawnQuartileCounter = 0
 }
 let store = new SceneStore()
 window.store = store
@@ -90,9 +91,18 @@ export default class InteractiveScene extends React.Component{
             if(store.positions.get(name).y < this.props.abyssDepth){
                 if(body.isSelectable){
                     //TODO - random within constraints and ensure these won't run into each other
-                    const maxItemHeight = 3 //coefficient for avoiding y-collisions
-                    body.resetPosition(0,2*maxItemHeight,0)
-                 }
+                    
+                    //divide container width into quadrants or thirds
+                    console.log(this.props.envelope.width, store.respawnQuartileCounter)
+                    const xPlacement = (((this.props.envelope.width / 4) * (4-store.respawnQuartileCounter)) - (this.props.envelope.width / 8)) - this.props.envelope.width / 2
+                    
+                    body.resetPosition(
+                        xPlacement,
+                        this.props.spawnHeight + ((Math.random()-0.5)*2),
+                        (Math.random()-0.5))
+                }
+                if(store.respawnQuartileCounter < 3) store.respawnQuartileCounter++
+                else store.respawnQuartileCounter = 0 
             }
         }
     }
@@ -170,8 +180,8 @@ export default class InteractiveScene extends React.Component{
         let selection = null
         if(intersect.length > 0){
             const target = intersect[0].object.name
-            if(store.bodies[target].isSelectable){ 
-                store.selected = intersect[0].object.name
+            if(store.bodies[target].isSelectable && this.selected!==target){ 
+                store.selected = target
                 if(this.props.onSelect) this.props.onSelect(store.selected)   
             }
             else this.clickedNothing()
@@ -297,5 +307,7 @@ export default class InteractiveScene extends React.Component{
         defaultLighting: false,
         lights: null,
         debugCamPos: {x: 0, y: 0, z: 0},
+        envelope: {width: 10, height: 20, depth: 3},
+        spawnHeight: 10,
         abyssDepth: -20, //point on Y axis at which out-of-view objects will be frozen
     }

@@ -121,7 +121,7 @@ export const Boundary = (props) => {
     return(
         <Body 
             {...props}
-            debugMtl = "wire"
+            // debugMtl = "wire"
             physicsModel = {{
                 type: 'box',
                 pos: [props.pos.x,props.pos.y,props.pos.z],
