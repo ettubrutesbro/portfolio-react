@@ -16,7 +16,7 @@ using
 * `git checkout reorg`
 * `npm install`
 * `npm run storybook`
-
+* to deploy: `yarn build` `cd build` `surge` 
 
 ### major branches
 * `working-old`: contains the most progress from master before i started setting things up for reorganization in storybook (the time cost of developing w/out storybook seemed to be getting very high)
