@@ -30,7 +30,7 @@ export default class AscendingCatcher extends React.Component{
                 spawnHeight = {this.spawnHeight}
                 onSelect = {()=>{
                     console.log('selected')
-                    this.changeGroundPosition(this.groundPosition+this.viewHeight/2)
+                    this.changeGroundPosition(this.groundPosition+this.viewHeight)
                 }}
                 onDeselect = {()=>{
                     console.log('deselected')
