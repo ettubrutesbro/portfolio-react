@@ -3,6 +3,8 @@ import React from 'react'
 import {observable, action, computed} from 'mobx'
 import {observer} from 'mobx-react'
 
+import styles from './AscendingCatcher.css'
+
 import InteractiveScene from './core/InteractiveScene'
 import Body, {Boundary} from './core/Body'
 
@@ -24,6 +26,14 @@ export default class AscendingCatcher extends React.Component{
         const walls = makeEnclosure({ x: container.width, y: container.height, z: container.depth }, {x: 0, y: container.height * .4, z: 0})
 
          return (
+            <div>
+                <ul className = {styles.debugInfo}>
+                    <li>selected: -- </li>
+                    <li>mode: -- </li>
+                    <li>cameraPosition: -- </li>
+                    <li>spawnHeight: {this.spawnHeight} </li>
+                    <li>abyssDepth: -- </li>
+                </ul>
             <InteractiveScene
                 envelope = {{width: container.width, height: container.height, depth: container.depth}}
                 // abyssDepth = {} //a certain amount below camera's y position
@@ -35,6 +45,7 @@ export default class AscendingCatcher extends React.Component{
                 onDeselect = {()=>{
                     console.log('deselected')
                 }}
+                cameraPosition = {{x: 0, y: 0, z: 40}}
             >
                 {Array.from(Array(30)).map((body, i) => {
                     return (
@@ -87,6 +98,7 @@ export default class AscendingCatcher extends React.Component{
                         showCollider = {true}
                     />
             </InteractiveScene>
+            </div>
         )
     }
 
