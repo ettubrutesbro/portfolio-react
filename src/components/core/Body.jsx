@@ -39,6 +39,7 @@ export default class Body extends React.Component{
             else if(this.props.selected===true && !newProps.selected) this.onDeselect()
             // else if(this.props.selected==='other' && !newProps.selected) this.respawn()
         }
+        //if non selectable (e.g. boundaries) objects see a change to pos, reposition them
         if(!isEqual(newProps.physicsModel.pos, this.props.physicsModel.pos) && !this.props.isSelectable){
             // this.props.force(this.props.name, 'position', newProps.physicsModel.pos)
             this.props.move(this.props.name, newProps.physicsModel.pos)

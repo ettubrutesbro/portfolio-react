@@ -3,7 +3,7 @@ import React from 'react'
 import {observable, action, computed} from 'mobx'
 import {observer} from 'mobx-react'
 
-import styles from './AscendingCatcher.css'
+import './AscendingCatcher.css'
 
 import InteractiveScene from './core/InteractiveScene'
 import Body, {Boundary} from './core/Body'
@@ -13,8 +13,10 @@ import {makeEnclosure} from '../helpers/utilities'
 @observer
 export default class AscendingCatcher extends React.Component{
     
-    viewHeight = 10 //constant (Y distance viewable by camera)
-    @observable groundPosition = -10
+    @observable viewHeight = 10 //based on screenHeight? (Y distance viewable by camera)
+    @observable groundPosition = -9
+    @observable cameraPosition = {x: 0, y: 0, z: 40}
+
     @computed get spawnHeight(){return this.groundPosition + (this.viewHeight*2) + 2}
 
     @action changeGroundPosition = (newPos) => {
@@ -23,14 +25,19 @@ export default class AscendingCatcher extends React.Component{
 
     render(){
         const {container} = this.props
-        const walls = makeEnclosure({ x: container.width, y: container.height, z: container.depth }, {x: 0, y: container.height * .4, z: 0})
+        const walls = makeEnclosure({ 
+            x: container.width, 
+            y: container.height, 
+            z: container.depth }, 
+            {x: 0, y: container.height * .4, z: 0})
 
          return (
             <div>
-                <ul className = {styles.debugInfo}>
+                <ul className = 'debugInfo'>
                     <li>selected: -- </li>
                     <li>mode: -- </li>
-                    <li>cameraPosition: -- </li>
+                    <li>cameraPosition: {Object.values(this.cameraPosition).join(', ')} </li>
+                    <li>groundPosition: {this.groundPosition} </li>
                     <li>spawnHeight: {this.spawnHeight} </li>
                     <li>abyssDepth: -- </li>
                 </ul>
@@ -38,8 +45,8 @@ export default class AscendingCatcher extends React.Component{
                 envelope = {{width: container.width, height: container.height, depth: container.depth}}
                 // abyssDepth = {} //a certain amount below camera's y position
                 spawnHeight = {this.spawnHeight}
-                onSelect = {()=>{
-                    console.log('selected')
+                onSelect = {(v)=>{
+                    console.log('selected', v)
                     this.changeGroundPosition(this.groundPosition+this.viewHeight)
                 }}
                 onDeselect = {()=>{
@@ -47,7 +54,7 @@ export default class AscendingCatcher extends React.Component{
                 }}
                 cameraPosition = {{x: 0, y: 0, z: 40}}
             >
-                {Array.from(Array(30)).map((body, i) => {
+                {Array.from(Array(12)).map((body, i) => {
                     return (
                         <Body
                             key = {'body'+i}
@@ -92,8 +99,8 @@ export default class AscendingCatcher extends React.Component{
                     <Boundary
                         name="ground"
                         pos={{ x: 0, y: this.groundPosition - .5, z: 0 }}
-                        width={16}
-                        depth={5}
+                        width={13}
+                        depth={4.5}
                         height={1}
                         showCollider = {true}
                     />

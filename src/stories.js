@@ -11,6 +11,8 @@ import {
     object,
 } from '@storybook/addon-knobs'
 
+import './stories.css'
+
 import * as THREE from 'three'
 
 import SimpleScene from './components/core/SimpleScene'
@@ -339,4 +341,11 @@ worldStories.add('makeEnclosure', () => {
 })
 
 
-storiesOf('UI (DOM)', module).add('foo', () => <div />)
+storiesOf('UI (DOM)', module)
+    .add('foo', () => {
+        return(
+            <div>
+                ffff
+            </div>
+        )
+    })
