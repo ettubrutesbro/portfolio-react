@@ -121,6 +121,10 @@ export default class InteractiveScene extends React.Component{
         body.resetPosition(...goal)
         // store.positions.set(name, new THREE.Vector3().copy(body.getPosition()))
     }
+    @action animateCamera = (newPos, zoomLevel, duration, cut) => {
+        console.log(this.camera)
+        console.log(this.camera.position)
+    }
     @action animateDynamicBody = (name, property, goal, duration) => {
         //can force animate position or rotation
         const body = store.bodies[name]
@@ -207,12 +211,10 @@ export default class InteractiveScene extends React.Component{
 
         // const {positions, rotations, bodies} = this
 
-        const {debugCamPos} = this.props
+        const {cameraPosition} = this.props
 
         const positions = store.positions
         const rotations = store.rotations
-
-        const debugCameraPos = v3(debugCamPos.x, debugCamPos.y, debugCamPos.z)
 
         return(
             <div 
@@ -235,7 +237,8 @@ export default class InteractiveScene extends React.Component{
                             fov = {30}
                             aspect = {store.screenWidth / store.screenHeight}
                             near = {1} far = {200}
-                            position = {!this.props.debug? store.cameraPosition : debugCameraPos}
+                            position = {v3(cameraPosition.x, cameraPosition.y, cameraPosition.z)}
+                            // position = {!this.props.debug? store.cameraPosition : debugCameraPos}
                         />
 
                         {this.props.lights}
@@ -304,9 +307,9 @@ export default class InteractiveScene extends React.Component{
 
     InteractiveScene.defaultProps = {
         background: 0x000000,
+        cameraPosition: {x: 0, y: 0, z: 40},
         defaultLighting: false,
         lights: null,
-        debugCamPos: {x: 0, y: 0, z: 0},
         envelope: {width: 10, height: 20, depth: 3},
         spawnHeight: 10,
         abyssDepth: -20, //point on Y axis at which out-of-view objects will be frozen

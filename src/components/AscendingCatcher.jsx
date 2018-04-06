@@ -29,7 +29,12 @@ export default class AscendingCatcher extends React.Component{
             x: container.width, 
             y: container.height, 
             z: container.depth }, 
-            {x: 0, y: container.height * .4, z: 0})
+            {
+                x: 0, 
+                y: container.height * .4, 
+                z: 0
+            }
+        )
 
          return (
             <div>
@@ -52,7 +57,8 @@ export default class AscendingCatcher extends React.Component{
                 onDeselect = {()=>{
                     console.log('deselected')
                 }}
-                cameraPosition = {{x: 0, y: 0, z: 40}}
+                // cameraPosition = {{x: 0, y: 0, z: 40}}
+                cameraPosition = {this.cameraPosition}
             >
                 {Array.from(Array(12)).map((body, i) => {
                     return (
