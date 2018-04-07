@@ -64,6 +64,8 @@ export default class InteractiveScene extends React.Component{
     componentDidMount(){
         const camGoal = this.props.cameraGoal
         this.camera.position.set(camGoal.x,camGoal.y,camGoal.z)
+        // this.camera.lookAt({x: 0, y: 0, z:-1}) //seems to be default anyways..? 
+        this.camera.target = {x: 0, y: 0, z: -1} //this is better logic than the above, not sure if setting a property like this is prudent
         window.addEventListener('resize', this.handleResize)
 
     }
@@ -75,8 +77,8 @@ export default class InteractiveScene extends React.Component{
             this.handleResize()
         }
         if(newProps.cameraGoal !== cameraGoal){
-            console.log('got new cam goal, begin interpolation of actual pos/zoom')
-            this.animateCamera(newProps.cameraGoal, 400)
+            // console.log('got new cam goal, begin interpolation of actual pos/zoom')
+            this.moveCamera(newProps.cameraGoal, 400)
         }
     }
 
@@ -131,11 +133,8 @@ export default class InteractiveScene extends React.Component{
         body.resetPosition(...goal)
         // store.positions.set(name, new THREE.Vector3().copy(body.getPosition()))
     }
-    @action animateCamera = (newData, duration, cut) => {
-
-        console.log('animating cam')
+    moveCamera = (newData, duration, cut) => {
         const animateZoom = newData.zoom !== this.camera.zoom
-
         const sceneCamera = this.camera
 
         let animCam = new TWEEN.Tween(Object.assign(this.camera.position, {zoom: this.camera.zoom}))
@@ -148,6 +147,28 @@ export default class InteractiveScene extends React.Component{
             .start()
 
     }
+    cameraLookAt = (targetBody, duration) => {
+        // this.camera.target
+        // store.bodies[targetBody].position
+
+        const sceneCamera = this.camera
+
+        new TWEEN.Tween(this.camera.target)
+            .to(store.bodies[targetBody].position, duration)
+            .onUpdate(function(){
+                sceneCamera.target = this
+                sceneCamera.lookAt(this)
+            })
+            .start()
+
+        // var vec = v3(0,0,-1)
+        // vec.applyQuaternion(this.camera.quaternion)
+        // console.log(this.camera.getWorldDirection(vec))
+        // console.log(this.camera.up)
+        // // this.camera.lookAt(store.bodies.body0.position)
+        // this.camera.lookAt(this.camera.getWorldDirection(vec))
+    }
+
     @action animateDynamicBody = (name, property, goal, duration) => {
         //can force animate position or rotation
         const body = store.bodies[name]
