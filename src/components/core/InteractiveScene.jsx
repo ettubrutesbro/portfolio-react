@@ -137,7 +137,8 @@ export default class InteractiveScene extends React.Component{
         const animateZoom = newData.zoom !== this.camera.zoom
         const sceneCamera = this.camera
 
-        let animCam = new TWEEN.Tween(Object.assign(this.camera.position, {zoom: this.camera.zoom}))
+        if(this.camera.posTween) this.camera.posTween.stop()
+        this.camera.posTween = new TWEEN.Tween(Object.assign(this.camera.position, {zoom: this.camera.zoom}))
             .to(newData, duration)
             .onUpdate(function(){
                 sceneCamera.position.set(this.x,this.y,this.z)
@@ -147,26 +148,18 @@ export default class InteractiveScene extends React.Component{
             .start()
 
     }
-    cameraLookAt = (targetBody, duration) => {
-        // this.camera.target
-        // store.bodies[targetBody].position
+    cameraLookAt = (lookTarget, duration) => {
 
         const sceneCamera = this.camera
 
-        new TWEEN.Tween(this.camera.target)
-            .to(store.bodies[targetBody].position, duration)
+        if(this.camera.lookTween) this.camera.lookTween.stop()
+        this.camera.lookTween = new TWEEN.Tween(this.camera.target)
+            .to(lookTarget, duration)
             .onUpdate(function(){
                 sceneCamera.target = this
                 sceneCamera.lookAt(this)
             })
             .start()
-
-        // var vec = v3(0,0,-1)
-        // vec.applyQuaternion(this.camera.quaternion)
-        // console.log(this.camera.getWorldDirection(vec))
-        // console.log(this.camera.up)
-        // // this.camera.lookAt(store.bodies.body0.position)
-        // this.camera.lookAt(this.camera.getWorldDirection(vec))
     }
 
     @action animateDynamicBody = (name, property, goal, duration) => {
@@ -230,7 +223,9 @@ export default class InteractiveScene extends React.Component{
             const target = intersect[0].object.name
             if(store.bodies[target].isSelectable && this.selected!==target){ 
                 store.selected = target
+                this.cameraLookAt(store.bodies[target].position)
                 if(this.props.onSelect) this.props.onSelect(store.selected)   
+
             }
             else this.clickedNothing()
         }
@@ -240,8 +235,11 @@ export default class InteractiveScene extends React.Component{
     }
 
     clickedNothing = () => {
-        if(store.selected && this.props.onDeselect) this.props.onDeselect()
-        if(store.selected) this.letGoOfSelectedBody(store.selected)
+        if(store.selected){
+            if(this.props.onDeselect) this.props.onDeselect()
+            this.letGoOfSelectedBody(store.selected)
+            this.cameraLookAt({x: 0, y: this.props.cameraGoal.y, z: -1})
+        }
     }
 
     @action handleResize = debounce(() =>{
@@ -351,7 +349,7 @@ export default class InteractiveScene extends React.Component{
         cameraPosition: {x: 0, y: 0, z: 40},
         defaultLighting: false,
         lights: null,
-        envelope: {width: 10, height: 20, depth: 3},
+        envelope: {width: 10, height: 20, depth: 3.25},
         spawnHeight: 10,
         abyssDepth: -20, //point on Y axis at which out-of-view objects will be frozen
     }

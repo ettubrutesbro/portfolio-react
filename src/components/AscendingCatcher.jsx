@@ -12,12 +12,15 @@ import {makeEnclosure} from '../helpers/utilities'
 
 @observer
 export default class AscendingCatcher extends React.Component{
+
+    itemSelected = false
     
     @observable viewHeight = 10 //based on screenHeight? (Y distance viewable by camera)
-    @observable groundPosition = -9
+    @observable groundPosition = 0
     // @observable cameraGoal = {x: 0, y: 0, z: 50, zoom: 1}
 
     @computed get spawnHeight(){return this.groundPosition + (this.viewHeight*2) + 2}
+    @computed get abyssDepth(){return this.groundPosition - (this.viewHeight*1.5)}
 
     @action changeGroundPosition = (newPos) => {
         this.groundPosition = newPos
@@ -42,20 +45,31 @@ export default class AscendingCatcher extends React.Component{
                 {...this.props}
                 groundPosition = {this.groundPosition}
                 spawnHeight = {this.spawnHeight}
+                cameraGoal = {{
+                    x: 0,
+                    y: this.itemSelected? this.groundPosition + this.viewHeight : this.groundPosition,
+                    z: 40
+                }}
             />
             <InteractiveScene
                 envelope = {{width: container.width, height: container.height, depth: container.depth}}
-                // abyssDepth = {} //a certain amount below camera's y position
+                abyssDepth = {this.abyssDepth} //a certain amount below camera's y position
                 spawnHeight = {this.spawnHeight}
                 onSelect = {(v)=>{
                     console.log('selected', v)
-                    this.changeGroundPosition(this.groundPosition+this.viewHeight)
+                    this.changeGroundPosition(this.groundPosition-this.viewHeight)
+                    this.itemSelected = true
                 }}
                 onDeselect = {()=>{
                     console.log('deselected')
+                    this.itemSelected = false
                 }}
                 // cameraPosition = {{x: 0, y: 0, z: 40}}
-                cameraGoal = {this.props.cameraGoal}
+                cameraGoal = {{
+                    x: 0,
+                    y: this.itemSelected? this.groundPosition + this.viewHeight : this.groundPosition,
+                    z: 40
+                }}
             >
                 {Array.from(Array(12)).map((body, i) => {
                     return (
@@ -91,7 +105,7 @@ export default class AscendingCatcher extends React.Component{
                         <Boundary
                             key = {'wall'+i}
                             name={b.name}
-                            pos={{ x: b.x, y: b.y, z: b.z }}
+                            pos={{ x: b.x, y: this.groundPosition + (b.h/2), z: b.z }}
                             width={b.w}
                             height={b.h}
                             depth={b.d}
@@ -115,7 +129,7 @@ export default class AscendingCatcher extends React.Component{
 }
 
 AscendingCatcher.defaultProps = {
-    container: {width: 14, depth: 3, height: 100}
+    container: {width: 14, depth: 5, height: 10}
 }
 
 const DebugInfo = (props) => {
@@ -126,7 +140,7 @@ const DebugInfo = (props) => {
             <li>cameraGoal: {Object.values(props.cameraGoal).join(', ')} </li>
             <li>groundPosition: {props.groundPosition} </li>
             <li>spawnHeight: {props.spawnHeight} </li>
-            <li>abyssDepth: -- </li>
+            <li>abyssDepth: {props.abyssDepth} </li>
         </ul>
     )
 }
