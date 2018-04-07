@@ -79,7 +79,7 @@ export default class InteractiveScene extends React.Component{
         }
         if(newProps.cameraGoal !== cameraGoal){
             // console.log('got new cam goal, begin interpolation of actual pos/zoom')
-            this.moveCamera(newProps.cameraGoal, 200)
+            this.moveCamera(newProps.cameraGoal, 800)
         }
     }
 
@@ -220,6 +220,15 @@ export default class InteractiveScene extends React.Component{
         const intersect = this.mouseInput._getIntersections(
           tempVector2.set(evt.clientX, evt.clientY)
         )
+        for(var i = 0; i<Object.keys(store.bodies).length; i++){
+            console.log('waking', Object.keys(store.bodies)[i])
+            store.bodies[Object.keys(store.bodies)[i]].awake()
+            store.bodies[Object.keys(store.bodies)[i]].allowSleep = false
+            store.bodies[Object.keys(store.bodies)[i]].applyImpulse(
+                {x:0,y:0,z:0},
+                {x:(Math.random()*.2)-.1 ,y: (Math.random()*.2)-.1,z: (Math.random()*.2)-.1}
+            )
+        }
         let selection = null
         if(intersect.length > 0){
             const target = intersect[0].object.name
@@ -300,6 +309,7 @@ export default class InteractiveScene extends React.Component{
                                     move: this.moveStaticBody,
                                     letGo: this.letGoOfSelectedBody,
                                     selected: store.selected===child.props.name?true:store.selected?'other':false,
+                                    baseline: this.props.baseline,
                                 }
 
                                 return React.cloneElement(

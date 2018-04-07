@@ -48,13 +48,13 @@ export default class Body extends React.Component{
 
     onSelect = () => {
         if(this.props.notSelectable) return
-        const {name, force, onSelect} = this.props
+        const {name, force, onSelect, baseline} = this.props
         //cobweb for now: the idea that there's an external defined 'selected position'
-        // force(name, 'rotation', onSelect.rotation || {x:0,y:0,z:0})
-        // force(name, 'position', onSelect.position || {x:0,y:1.5,z:0})
-        
+        force(name, 'rotation', onSelect.rotation || {x:0,y:0,z:0})
+        force(name, 'position', {x: onSelect.position.x, y: baseline + onSelect.position.y, z: onSelect.position.z} || {x:0,y:1.5,z:0})
+         
         //current design: preserve position, curate rotation, camera looks at object
-        force(name, 'position', this.props.position)
+        // force(name, 'position', this.props.position)
     }
     onDeselect = () => { this.props.letGo(this.props.name) }
 
