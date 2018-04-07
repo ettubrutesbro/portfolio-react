@@ -65,7 +65,8 @@ export default class InteractiveScene extends React.Component{
         const camGoal = this.props.cameraGoal
         this.camera.position.set(camGoal.x,camGoal.y,camGoal.z)
         // this.camera.lookAt({x: 0, y: 0, z:-1}) //seems to be default anyways..? 
-        this.camera.target = {x: 0, y: 0, z: -1} //this is better logic than the above, not sure if setting a property like this is prudent
+        this.camera.target = {x: 0, y: camGoal.y, z: -1} //this is better logic than the above, not sure if setting a property like this is prudent
+        this.camera.lookAt(this.camera.target)
         window.addEventListener('resize', this.handleResize)
 
     }
@@ -78,7 +79,7 @@ export default class InteractiveScene extends React.Component{
         }
         if(newProps.cameraGoal !== cameraGoal){
             // console.log('got new cam goal, begin interpolation of actual pos/zoom')
-            this.moveCamera(newProps.cameraGoal, 400)
+            this.moveCamera(newProps.cameraGoal, 200)
         }
     }
 
@@ -158,6 +159,7 @@ export default class InteractiveScene extends React.Component{
             .onUpdate(function(){
                 sceneCamera.target = this
                 sceneCamera.lookAt(this)
+                sceneCamera.updateProjectionMatrix()
             })
             .start()
     }
@@ -223,7 +225,7 @@ export default class InteractiveScene extends React.Component{
             const target = intersect[0].object.name
             if(store.bodies[target].isSelectable && this.selected!==target){ 
                 store.selected = target
-                this.cameraLookAt(store.bodies[target].position)
+                // this.cameraLookAt(store.bodies[target].position, 200)
                 if(this.props.onSelect) this.props.onSelect(store.selected)   
 
             }
@@ -238,7 +240,7 @@ export default class InteractiveScene extends React.Component{
         if(store.selected){
             if(this.props.onDeselect) this.props.onDeselect()
             this.letGoOfSelectedBody(store.selected)
-            this.cameraLookAt({x: 0, y: this.props.cameraGoal.y, z: -1})
+            // this.cameraLookAt({x: 0, y: this.props.cameraGoal.y, z: -1})
         }
     }
 

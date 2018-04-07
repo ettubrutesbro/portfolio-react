@@ -13,7 +13,7 @@ import {makeEnclosure} from '../helpers/utilities'
 @observer
 export default class AscendingCatcher extends React.Component{
 
-    itemSelected = false
+    @observable itemSelected = false
     
     @observable viewHeight = 10 //based on screenHeight? (Y distance viewable by camera)
     @observable groundPosition = 0
@@ -42,7 +42,6 @@ export default class AscendingCatcher extends React.Component{
          return (
             <div>
             <DebugInfo
-                {...this.props}
                 groundPosition = {this.groundPosition}
                 spawnHeight = {this.spawnHeight}
                 cameraGoal = {{
@@ -109,7 +108,8 @@ export default class AscendingCatcher extends React.Component{
                             width={b.w}
                             height={b.h}
                             depth={b.d}
-                            showCollider={b.name === 'frontwall' ? false : true}
+                            // showCollider={b.name === 'frontwall' ? false : true}
+                            showCollider = {false}
                         />
                     )
                 })}

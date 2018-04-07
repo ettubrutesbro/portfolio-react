@@ -332,13 +332,13 @@ worldStories.add('makeEnclosure', () => {
     )
 })
 .add('AscendingCatcher', ()=> {
-    const camZoom = number('zoom level', 1)
-    const camX = number('cam X', 0)
-    const camY = number('cam Y', 0)
-    const camZ = number('cam Z', 40)
+    // const camZoom = number('zoom level', 1)
+    // const camX = number('cam X', 0)
+    // const camY = number('cam Y', 0)
+    // const camZ = number('cam Z', 40)
     return(
         <AscendingCatcher 
-            cameraGoal = {{x: camX, y: camY, z: camZ, zoom: camZoom}}
+            // cameraGoal = {{x: camX, y: camY, z: camZ, zoom: camZoom}}
             // groundA = {groundA}
             // groundB = {groundB}
         />
