@@ -49,24 +49,34 @@ class SceneStore{
     @observable rotations = new Map()
 
     @observable selected = null
-    @observable cameraPosition = v3(0,0,40)
     @observable respawnQuartileCounter = 0
+
+    
+
 }
 let store = new SceneStore()
-window.store = store
+window.scene = store
 
 
 @observer
 export default class InteractiveScene extends React.Component{
 
     componentDidMount(){
+        const camGoal = this.props.cameraGoal
+        this.camera.position.set(camGoal.x,camGoal.y,camGoal.z)
         window.addEventListener('resize', this.handleResize)
+
     }
-    componentWillReceiveNewProps(newProps){
-        const {width, height } = this.props
+    componentWillReceiveProps(newProps){
+        const {width, height, cameraGoal} = this.props
+        console.log(newProps.cameraGoal, this.props.cameraGoal)
         if(newProps.width !== width || newProps.height !== height){
             console.log('width / height props changed')
             this.handleResize()
+        }
+        if(newProps.cameraGoal !== cameraGoal){
+            console.log('got new cam goal, begin interpolation of actual pos/zoom')
+            this.animateCamera(newProps.cameraGoal, 400)
         }
     }
 
@@ -121,9 +131,22 @@ export default class InteractiveScene extends React.Component{
         body.resetPosition(...goal)
         // store.positions.set(name, new THREE.Vector3().copy(body.getPosition()))
     }
-    @action animateCamera = (newPos, zoomLevel, duration, cut) => {
-        console.log(this.camera)
-        console.log(this.camera.position)
+    @action animateCamera = (newData, duration, cut) => {
+
+        console.log('animating cam')
+        const animateZoom = newData.zoom !== this.camera.zoom
+
+        const sceneCamera = this.camera
+
+        let animCam = new TWEEN.Tween(Object.assign(this.camera.position, {zoom: this.camera.zoom}))
+            .to(newData, duration)
+            .onUpdate(function(){
+                sceneCamera.position.set(this.x,this.y,this.z)
+                if(animateZoom) sceneCamera.zoom = this.zoom
+                sceneCamera.updateProjectionMatrix()
+            })
+            .start()
+
     }
     @action animateDynamicBody = (name, property, goal, duration) => {
         //can force animate position or rotation
@@ -211,8 +234,6 @@ export default class InteractiveScene extends React.Component{
 
         // const {positions, rotations, bodies} = this
 
-        const {cameraPosition} = this.props
-
         const positions = store.positions
         const rotations = store.rotations
 
@@ -237,8 +258,7 @@ export default class InteractiveScene extends React.Component{
                             fov = {30}
                             aspect = {store.screenWidth / store.screenHeight}
                             near = {1} far = {200}
-                            position = {v3(cameraPosition.x, cameraPosition.y, cameraPosition.z)}
-                            // position = {!this.props.debug? store.cameraPosition : debugCameraPos}
+                           
                         />
 
                         {this.props.lights}

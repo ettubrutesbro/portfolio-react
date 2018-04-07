@@ -15,7 +15,7 @@ export default class AscendingCatcher extends React.Component{
     
     @observable viewHeight = 10 //based on screenHeight? (Y distance viewable by camera)
     @observable groundPosition = -9
-    @observable cameraPosition = {x: 0, y: 0, z: 40}
+    // @observable cameraGoal = {x: 0, y: 0, z: 50, zoom: 1}
 
     @computed get spawnHeight(){return this.groundPosition + (this.viewHeight*2) + 2}
 
@@ -39,9 +39,9 @@ export default class AscendingCatcher extends React.Component{
          return (
             <div>
                 <ul className = 'debugInfo'>
-                    <li>selected: -- </li>
+                    <li>selected: {this.props.selected}</li>
                     <li>mode: -- </li>
-                    <li>cameraPosition: {Object.values(this.cameraPosition).join(', ')} </li>
+                    <li>cameraGoal: {Object.values(this.props.cameraGoal).join(', ')} </li>
                     <li>groundPosition: {this.groundPosition} </li>
                     <li>spawnHeight: {this.spawnHeight} </li>
                     <li>abyssDepth: -- </li>
@@ -58,7 +58,7 @@ export default class AscendingCatcher extends React.Component{
                     console.log('deselected')
                 }}
                 // cameraPosition = {{x: 0, y: 0, z: 40}}
-                cameraPosition = {this.cameraPosition}
+                cameraGoal = {this.props.cameraGoal}
             >
                 {Array.from(Array(12)).map((body, i) => {
                     return (
