@@ -38,14 +38,11 @@ export default class AscendingCatcher extends React.Component{
 
          return (
             <div>
-                <ul className = 'debugInfo'>
-                    <li>selected: {this.props.selected}</li>
-                    <li>mode: -- </li>
-                    <li>cameraGoal: {Object.values(this.props.cameraGoal).join(', ')} </li>
-                    <li>groundPosition: {this.groundPosition} </li>
-                    <li>spawnHeight: {this.spawnHeight} </li>
-                    <li>abyssDepth: -- </li>
-                </ul>
+            <DebugInfo
+                {...this.props}
+                groundPosition = {this.groundPosition}
+                spawnHeight = {this.spawnHeight}
+            />
             <InteractiveScene
                 envelope = {{width: container.width, height: container.height, depth: container.depth}}
                 // abyssDepth = {} //a certain amount below camera's y position
@@ -119,4 +116,17 @@ export default class AscendingCatcher extends React.Component{
 
 AscendingCatcher.defaultProps = {
     container: {width: 14, depth: 3, height: 100}
+}
+
+const DebugInfo = (props) => {
+    return(
+        <ul className = 'debugInfo'>
+            <li>selected: {props.selected}</li>
+            <li>mode: -- </li>
+            <li>cameraGoal: {Object.values(props.cameraGoal).join(', ')} </li>
+            <li>groundPosition: {props.groundPosition} </li>
+            <li>spawnHeight: {props.spawnHeight} </li>
+            <li>abyssDepth: -- </li>
+        </ul>
+    )
 }
