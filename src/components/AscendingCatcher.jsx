@@ -3,7 +3,7 @@ import React from 'react'
 import {observable, action, computed} from 'mobx'
 import {observer} from 'mobx-react'
 
-import './AscendingCatcher.css'
+import styles from './AscendingCatcher.css'
 
 import InteractiveScene from './core/InteractiveScene'
 import Body, {Boundary} from './core/Body'
@@ -46,7 +46,10 @@ export default class AscendingCatcher extends React.Component{
         }
 
          return (
-            <div>
+            <div className = {styles.wrapper}>
+            <div className = {styles.domTarget} >
+                dom
+            </div>
             <DebugInfo
                 baseline = {this.baseline}
                 spawnHeight = {this.spawnHeight}
@@ -137,7 +140,7 @@ AscendingCatcher.defaultProps = {
 
 const DebugInfo = (props) => {
     return(
-        <ul className = 'debugInfo'>
+        <ul className = {styles.debugInfo}>
             <li>selected: {props.selected}</li>
             <li>mode: -- </li>
             <li>cameraGoal: {Object.values(props.cameraGoal).join(', ')} </li>
