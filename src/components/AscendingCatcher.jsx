@@ -51,6 +51,7 @@ export default class AscendingCatcher extends React.Component{
                 dom
             </div>
             <DebugInfo
+                selected = {this.itemSelected}
                 baseline = {this.baseline}
                 spawnHeight = {this.spawnHeight}
                 cameraGoal = {cameraGoal}
@@ -66,7 +67,7 @@ export default class AscendingCatcher extends React.Component{
                 onSelect = {(v)=>{
                     console.log('selected', v)
                     this.changebaseline(this.baseline-(this.viewHeight * 2))
-                    this.itemSelected = true
+                    this.itemSelected = v
                 }}
                 onDeselect = {()=>{
                     console.log('deselected')

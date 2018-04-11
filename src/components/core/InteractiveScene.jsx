@@ -263,6 +263,24 @@ export default class InteractiveScene extends React.Component{
         else this.clickedNothing()
         
         console.log('selected: ' + store.selected)
+
+    }
+
+    getScreenPosition = (obj) => {
+        var vector = new THREE.Vector3()
+
+        const pos = store.positions.get(obj)
+        // obj.updateMatrixWorld()
+        // vector.setFromMatrixPosition(obj.matrixWorld)
+        vector.set(pos.x, pos.y, pos.z)
+        vector.project(this.camera)
+
+        //CAREFUL: in situations where the renderer is not 100% of the screen
+        //this will burn you - solutions typically use renderer.context.canvas.width etc.
+        vector.x = ( vector.x * (store.screenWidth / 2))
+        vector.y = ( vector.y * (store.screenHeight / 2))
+
+        console.log(vector)
     }
 
     clickedNothing = () => {

@@ -13,4 +13,8 @@
 
 .domTarget{
     position: absolute;
+    /*color: white;*/
+    padding: 15px;
+    background: white;
+    border: 1px solid red;
 }
