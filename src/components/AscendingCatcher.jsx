@@ -19,7 +19,7 @@ export default class AscendingCatcher extends React.Component{
     @observable baseline = 0
     // @observable cameraGoal = {x: 0, y: 0, z: 50, zoom: 1}
 
-    @computed get spawnHeight(){return this.baseline + this.viewHeight}
+    @computed get spawnHeight(){return this.baseline + (this.viewHeight * 1.5)}
     @computed get abyssDepth(){return this.baseline - this.viewHeight}
 
     @action changebaseline = (newPos) => {
@@ -40,7 +40,7 @@ export default class AscendingCatcher extends React.Component{
         )
         const cameraGoal = {
             x: 0,
-            y: this.itemSelected? this.baseline + (this.viewHeight * 2) : this.baseline,
+            y: this.itemSelected? this.baseline + (this.viewHeight * 2) : this.baseline + (this.viewHeight * .5),
             z: 40,
             zoom: this.itemSelected? 1.5 : 1
         }
@@ -110,15 +110,16 @@ export default class AscendingCatcher extends React.Component{
                             width={b.w}
                             height={b.h}
                             depth={b.d}
-                            // showCollider={b.name === 'frontwall' ? false : true}
-                            showCollider = {false}
+                            showCollider={b.name === 'frontwall' ? false : true}
+                            // showCollider = {false}
+                            debugMtl = 'wire'
                         />
                     )
                 })}
                     <Boundary
                         name="ground"
                         pos={{ x: 0, y: this.baseline - .5, z: 0 }}
-                        width={13}
+                        width={13.5}
                         depth={4.5}
                         height={1}
                         showCollider = {true}
@@ -131,7 +132,7 @@ export default class AscendingCatcher extends React.Component{
 }
 
 AscendingCatcher.defaultProps = {
-    container: {width: 14, depth: 5, height: 10}
+    container: {width: 14, depth: 5, height: 20}
 }
 
 const DebugInfo = (props) => {

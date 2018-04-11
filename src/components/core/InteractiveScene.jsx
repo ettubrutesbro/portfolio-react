@@ -79,7 +79,22 @@ export default class InteractiveScene extends React.Component{
         }
         if(newProps.cameraGoal !== cameraGoal){
             // console.log('got new cam goal, begin interpolation of actual pos/zoom')
-            this.moveCamera(newProps.cameraGoal, 800)
+            if(!store.selected){
+                this.moveCamera(
+                    newProps.cameraGoal, 
+                    1000,
+                    400,
+                    {curve: 'Cubic', side: 'InOut'}
+                )
+            }
+            else if(store.selected){
+                this.moveCamera(
+                    newProps.cameraGoal, 
+                    300,
+                    0,
+                    {curve: 'Cubic', side: 'Out'}
+                )
+            }
         }
     }
 
@@ -134,9 +149,10 @@ export default class InteractiveScene extends React.Component{
         body.resetPosition(...goal)
         // store.positions.set(name, new THREE.Vector3().copy(body.getPosition()))
     }
-    moveCamera = (newData, duration, cut) => {
+    moveCamera = (newData, duration, delay, easing, cut) => {
         const animateZoom = newData.zoom !== this.camera.zoom
         const sceneCamera = this.camera
+        const easeOption = easing || {curve: 'Quadratic', side: 'Out'}
 
         if(this.camera.posTween) this.camera.posTween.stop()
         this.camera.posTween = new TWEEN.Tween(Object.assign(this.camera.position, {zoom: this.camera.zoom}))
@@ -146,7 +162,11 @@ export default class InteractiveScene extends React.Component{
                 if(animateZoom) sceneCamera.zoom = this.zoom
                 sceneCamera.updateProjectionMatrix()
             })
-            .start()
+            .easing(TWEEN.Easing[easeOption.curve][easeOption.side])
+
+        if(delay) this.camera.posTween.delay(delay)
+
+        this.camera.posTween.start()
 
     }
     cameraLookAt = (lookTarget, duration) => {
