@@ -17,6 +17,8 @@ export default class AscendingCatcher extends React.Component{
     
     @observable viewHeight = 20 //based on screenHeight? (Y distance viewable by camera)
     @observable baseline = 0
+
+    @observable tooltip = {x: 0, y: 0}
     // @observable cameraGoal = {x: 0, y: 0, z: 50, zoom: 1}
 
     @computed get spawnHeight(){return this.baseline + (this.viewHeight * 1.5)}
@@ -24,6 +26,11 @@ export default class AscendingCatcher extends React.Component{
 
     @action changebaseline = (newPos) => {
         this.baseline = newPos
+    }
+    @action updateTooltip = (coords) => {
+        console.log('updating tooltip', coords)
+        this.tooltip.x = coords.x
+        this.tooltip.y = coords.y
     }
 
     render(){
@@ -47,7 +54,11 @@ export default class AscendingCatcher extends React.Component{
 
          return (
             <div className = {styles.wrapper}>
-            <div className = {styles.domTarget} >
+            <div className = {styles.domTarget} 
+                style = {{
+                    transform: `translate(${this.tooltip.x}px, ${this.tooltip.y}px)`
+                }}
+            >
                 dom
             </div>
             <DebugInfo
@@ -57,17 +68,21 @@ export default class AscendingCatcher extends React.Component{
                 cameraGoal = {cameraGoal}
             />
             <InteractiveScene
-                envelope = {{width: container.width, height: container.height, depth: container.depth}}
-                
+                envelope = {{
+                    width: container.width, 
+                    height: container.height, 
+                    depth: container.depth
+                }}
                 viewHeight = {this.viewHeight}
                 baseline = {this.baseline}
-                abyssDepth = {this.abyssDepth} //a certain amount below camera's y position
+                abyssDepth = {this.abyssDepth} 
                 spawnHeight = {this.spawnHeight}
                 
-                onSelect = {(v)=>{
+                onSelect = {(v, c)=>{
                     console.log('selected', v)
                     this.changebaseline(this.baseline-(this.viewHeight * 2))
                     this.itemSelected = v
+                    // this.updateTooltip(c)
                 }}
                 onDeselect = {()=>{
                     console.log('deselected')
@@ -101,6 +116,11 @@ export default class AscendingCatcher extends React.Component{
                                     1 + Math.random() * 1.75,
                                 ],
                                 type: 'box',
+                            }}
+                            onSelect = {{
+                                position: {x:0, y:0, z:0},
+                                rotation: {x:0, y:0, z:0},
+                                onComplete: this.updateTooltip
                             }}
                         />
                     )

@@ -51,7 +51,7 @@ export default class Body extends React.Component{
         const {name, force, onSelect, baseline} = this.props
         //cobweb for now: the idea that there's an external defined 'selected position'
         force(name, 'rotation', onSelect.rotation || {x:0,y:0,z:0})
-        force(name, 'position', {x: onSelect.position.x, y: baseline + onSelect.position.y, z: onSelect.position.z} || {x:0,y:1.5,z:0})
+        force(name, 'position', {x: onSelect.position.x, y: baseline + onSelect.position.y, z: onSelect.position.z} || {x:0,y:1.5,z:0}, 500, onSelect.onComplete)
          
         //current design: preserve position, curate rotation, camera looks at object
         // force(name, 'position', this.props.position)
@@ -114,8 +114,9 @@ Body.defaultProps = {
         type: 'box', size: [1,1,1], pos: [0,10,0], move: true
     },
     onSelect: {
-        position: {x: 0,y:3,z:0}, 
-        rotation: {x:15,y:45,z:30}
+        position: {x: 0,y:0,z:0}, 
+        rotation: {x:0,y:0,z:0},
+        onComplete: (pos) => {console.log('donezo at pos', pos)}
     },
     exists: true,
     showCollider: false,

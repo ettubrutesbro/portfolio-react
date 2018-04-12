@@ -184,10 +184,12 @@ export default class InteractiveScene extends React.Component{
             .start()
     }
 
-    @action animateDynamicBody = (name, property, goal, duration) => {
+    @action animateDynamicBody = (name, property, goal, duration, callback) => {
         //can force animate position or rotation
         const body = store.bodies[name]
         const object = property==='position'? 'position' : 'quaternion'
+
+        const getScreenPosition = this.getScreenPosition
 
         if(!duration) duration = 500
         const current = body['get'+cap1st(object)]()
@@ -219,6 +221,7 @@ export default class InteractiveScene extends React.Component{
         }).onComplete(function(){
             body.allowSleep = true
             body.sleeping = true
+            if(callback) callback(getScreenPosition(body.position))
         })
         .start()
     }
@@ -255,7 +258,12 @@ export default class InteractiveScene extends React.Component{
             if(store.bodies[target].isSelectable && this.selected!==target){ 
                 store.selected = target
                 // this.cameraLookAt(store.bodies[target].position, 200)
-                if(this.props.onSelect) this.props.onSelect(store.selected)   
+                if(this.props.onSelect){ 
+                    this.props.onSelect(
+                        store.selected,
+                        // this.getScreenPosition(target)
+                    )   
+                }
 
             }
             else this.clickedNothing()
@@ -266,21 +274,21 @@ export default class InteractiveScene extends React.Component{
 
     }
 
-    getScreenPosition = (obj) => {
+    getScreenPosition = (pos) => {
+        console.log('getting 2d coords from pos', pos)
         var vector = new THREE.Vector3()
-
-        const pos = store.positions.get(obj)
-        // obj.updateMatrixWorld()
-        // vector.setFromMatrixPosition(obj.matrixWorld)
+        // old: use object name, get position
+            // const pos = store.positions.get(obj)
         vector.set(pos.x, pos.y, pos.z)
         vector.project(this.camera)
 
-        //CAREFUL: in situations where the renderer is not 100% of the screen
-        //this will burn you - solutions typically use renderer.context.canvas.width etc.
-        vector.x = ( vector.x * (store.screenWidth / 2))
-        vector.y = ( vector.y * (store.screenHeight / 2))
+        //CAREFUL: in situations where the renderer is not 100% of the screen, this wont work
+        //-solutions typically use renderer.context.canvas.width etc.
+        vector.x = ( vector.x * (store.screenWidth / 2)) + (store.screenWidth / 2)
+        vector.y = ( vector.y * (store.screenHeight / 2)) + (store.screenHeight / 2)
 
         console.log(vector)
+        return {x: vector.x, y: vector.y}
     }
 
     clickedNothing = () => {
