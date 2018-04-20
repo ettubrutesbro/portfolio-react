@@ -426,22 +426,22 @@ class MouseInput extends Module {
 
   // noinspection JSUnusedGlobalSymbols
   dispose() {
-    document.removeEventListener('mousemove', this._onMouseMove, false)
+    // document.removeEventListener('mousemove', this._onMouseMove, false)
 
-    this._caughtListenersCleanupFunctions.forEach(cleanupFunction =>
-      cleanupFunction()
-    )
-    delete this._caughtListenersCleanupFunctions
+    // this._caughtListenersCleanupFunctions.forEach(cleanupFunction =>
+    //   cleanupFunction()
+    // )
+    // delete this._caughtListenersCleanupFunctions
 
-    delete this._onMouseMove
+    // delete this._onMouseMove
 
-    this._patchedDescriptors.forEach(elementDescriptor => {
-      const allProps = Object.keys(boolProps).concat(mouseEvents)
+    // this._patchedDescriptors.forEach(elementDescriptor => {
+    //   const allProps = Object.keys(boolProps).concat(mouseEvents)
 
-      allProps.forEach(propName => {
-        elementDescriptor.removeProp(propName)
-      })
-    })
+    //   allProps.forEach(propName => {
+    //     elementDescriptor.removeProp(propName)
+    //   })
+    // })
   }
 }
 

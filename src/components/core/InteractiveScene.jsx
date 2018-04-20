@@ -62,7 +62,7 @@ window.scene = store
 export default class InteractiveScene extends React.Component{
 
     componentDidMount(){
-        const camGoal = this.props.cameraGoal
+        const camGoal = this.props.cameraGoal || {x: 0, y: 0, z: 20}
         this.camera.position.set(camGoal.x,camGoal.y,camGoal.z)
         // this.camera.lookAt({x: 0, y: 0, z:-1}) //seems to be default anyways..? 
         this.camera.target = {x: 0, y: camGoal.y, z: -1} //this is better logic than the above, not sure if setting a property like this is prudent

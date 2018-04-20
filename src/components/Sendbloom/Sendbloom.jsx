@@ -77,6 +77,7 @@ export class SendbloomModel extends React.Component {
   }
   @action
   onSelect = unselect => {
+    console.log('sendbloom selected')
     // navitem, prospects, and logo animate
     const logo = this.refs.logo.children[0]
     const prospects = this.refs.prospects
@@ -121,7 +122,7 @@ export class SendbloomModel extends React.Component {
 
     if (!unselect) {
       this.activeelement = 1
-      this.animationLoop = setInterval(this.cycle, 3000)
+      // this.animationLoop = setInterval(this.cycle, 3000)
       this.refs.modal.mount()
     }
     if (unselect) {

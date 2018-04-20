@@ -29,6 +29,8 @@ import Seseme from './components/Seseme/Seseme'
 
 const models = storiesOf('Models', module)
 
+const interactiveModels = storiesOf('Animating models', module)
+
 const loader = new THREE.JSONLoader()
 const dragon = loader.parse(require('./components/Eclipse/dragon.json'))
 const wakebed = loader.parse(require('./components/Wake/bed.json'))
@@ -113,10 +115,13 @@ models.add('Dragon (lit)', () => {
 })
 models.add('Sendbloom', () => {
     const yRot = number('rotate Y', 0)
+
+    const mode = select('mode', ['expanded', 'selected', 'normal'], 'normal')
+
     return (
         <SimpleScene>
             <group rotation={new THREE.Euler(0, rads(yRot), 0)}>
-                <SendbloomModel />
+                <SendbloomModel mode = {mode}/>
             </group>
         </SimpleScene>
     )
@@ -220,6 +225,38 @@ models.add('Wake', () => {
                 </mesh>
             </group>
         </SimpleScene>
+    )
+})
+
+interactiveModels.addDecorator(withKnobs)
+interactiveModels.add('sendbloom test', ()=> {
+    return(
+        <div>
+            <InteractiveScene>
+                <Body
+                    name="sbtest"
+                    showCollider={true}
+                    physicsModel={{
+                        pos: [0, 10, 0],
+                        type: 'box',
+                        size: [1, 1, 1],
+                    }}
+                >
+                    <SendbloomModel />
+                </Body>
+
+                <Boundary
+                    name="sbtestground"
+                    pos={{ x: 0, y: 1, z: 0 }}
+                    width={10}
+                    depth={10}
+                    height={1}
+                    // showCollider={showground}
+                    showCollider = {true}
+                />
+
+            </InteractiveScene>
+        </div>
     )
 })
 
