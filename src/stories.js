@@ -24,12 +24,10 @@ import AscendingCatcher from './components/AscendingCatcher'
 
 import { v3, makeEnclosure, rads } from './helpers/utilities'
 
-import { SendbloomModel } from './components/Sendbloom/Sendbloom'
+import { SendbloomModel } from './components/Sendbloom'
 import Seseme from './components/Seseme/Seseme'
 
 const models = storiesOf('Models', module)
-
-const interactiveModels = storiesOf('Animating models', module)
 
 const loader = new THREE.JSONLoader()
 const dragon = loader.parse(require('./components/Eclipse/dragon.json'))
@@ -228,13 +226,40 @@ models.add('Wake', () => {
     )
 })
 
-interactiveModels.addDecorator(withKnobs)
+
+const interactiveModels = storiesOf('Animating models', module)
+
+// interactiveModels.addDecorator(withKnobs)
+interactiveModels.add('wtf', ()=>{
+    return(
+        <InteractiveScene>
+            <Body
+                name = "wtfbox"
+                showCollider={true}
+                physicsModel={{
+                    pos: [0, 10, 0],
+                    type: 'box',
+                    size: [1, 1, 1],
+                }}
+            />
+            <Boundary
+                name = "wtfground"
+                pos={{ x: 0, y: 1, z: 0 }}
+                width={10}
+                depth={10}
+                height={1}
+                // showCollider={showground}
+            />
+        </InteractiveScene>
+
+    )
+})
 interactiveModels.add('sendbloom test', ()=> {
     return(
-        <div>
-            <InteractiveScene>
+            <InteractiveScene
+            >
                 <Body
-                    name="sbtest"
+                    name="sendbloom"
                     showCollider={true}
                     physicsModel={{
                         pos: [0, 10, 0],
@@ -247,7 +272,7 @@ interactiveModels.add('sendbloom test', ()=> {
 
                 <Boundary
                     name="sbtestground"
-                    pos={{ x: 0, y: 1, z: 0 }}
+                    pos={{ x: 0, y: -5, z: 0 }}
                     width={10}
                     depth={10}
                     height={1}
@@ -256,7 +281,6 @@ interactiveModels.add('sendbloom test', ()=> {
                 />
 
             </InteractiveScene>
-        </div>
     )
 })
 
@@ -278,7 +302,9 @@ worldStories.add('InteractiveScene + Body + Constraint', () => {
                         type: 'box',
                         size: [1, 1, 1],
                     }}
-                />
+                >
+                    <SendbloomModel />
+                </Body>
 
                 <Body
                     name="testsphere"
@@ -378,16 +404,51 @@ worldStories.add('makeEnclosure', () => {
             // cameraGoal = {{x: camX, y: camY, z: camZ, zoom: camZoom}}
             // groundA = {groundA}
             // groundB = {groundB}
-        />
+        >
+            {Array.from(Array(12)).map((body, i) => {
+                    return (
+                        <Body
+                            key = {'body'+i}
+                            name={'body' + i}
+                            showCollider
+                            physicsModel={{
+                                pos: [
+                                    (Math.round(Math.random()) * 2 - 1) *
+                                        Math.random() *
+                                        4,
+                                    10 + 2 * i,
+                                    0,
+                                ],
+                                rot: [
+                                    (Math.random()*20)-10, 
+                                    (Math.random()*20)-10, 
+                                    (Math.random()*20)-10 
+                                ],
+                                size: [
+                                    1 + Math.random() * 1.75,
+                                    1 + Math.random() * 1.75,
+                                    1 + Math.random() * 1.75,
+                                ],
+                                type: 'box',
+                            }}
+                            onSelect = {{
+                                position: {x:0, y:0, z:0},
+                                rotation: {x:0, y:0, z:0},
+                                // onComplete: this.updateTooltip
+                            }}
+                        />
+                    )
+                })}
+        </AscendingCatcher>
     )
 })
 
 
-storiesOf('UI (DOM)', module)
-    .add('foo', () => {
-        return(
-            <div>
-                ffff
-            </div>
-        )
-    })
+// storiesOf('UI (DOM)', module)
+//     .add('foo', () => {
+//         return(
+//             <div>
+//                 ffff
+//             </div>
+//         )
+//     })

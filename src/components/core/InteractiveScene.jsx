@@ -209,7 +209,10 @@ export default class InteractiveScene extends React.Component{
             )
         }
         
-        if(body[property+'Tween']) body[property+'Tween'].stop()
+        if(body[property+'Tween']){
+            console.log('stopping', property, 'tween')
+             body[property+'Tween'].stop()
+         }
 
         body[property+'Tween'] = new TWEEN.Tween(start).to(end, duration)
         .onUpdate(function(){
@@ -255,6 +258,7 @@ export default class InteractiveScene extends React.Component{
         let selection = null
         if(intersect.length > 0){
             const target = intersect[0].object.name
+            console.log(target)
             if(store.bodies[target].isSelectable && this.selected!==target){ 
                 store.selected = target
                 // this.cameraLookAt(store.bodies[target].position, 200)

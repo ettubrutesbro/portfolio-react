@@ -100,7 +100,7 @@ export class SendbloomModel extends React.Component {
       !unselect ? { x: 0.115, y: 0, z: 0 } : { x: 0, y: 0, z: 0 },
     ]
     this.selectTweens = [
-      twn('position', navPos[0], navPos[1], 300, this.refs.navitems.position),
+      twn('position', navPos[0], navPos[1], 300, this.refs.navitems.position, {delay: 250}),
       twn(
         'opacity',
         { opacity: prospects.material.opacity },
@@ -108,51 +108,50 @@ export class SendbloomModel extends React.Component {
         400,
         prospects.material,
         {
+          delay: 250,
           onStart: () => {
             prospects.visible = true
           },
         }
       ),
-      twn('position', logoPositions[0], logoPositions[1], 250, logo.position),
-      twn('scale', logoScales[0], logoScales[1], 250, logo.scale),
+      twn('position', logoPositions[0], logoPositions[1], 250, logo.position, {delay: 250}),
+      twn('scale', logoScales[0], logoScales[1], 250, logo.scale, {delay: 250}),
     ]
 
     // begin animation loop for subcomponents
     // this.refs.modal.onSelect(unselect)
 
-    if (!unselect) {
-      this.activeelement = 1
-      // this.animationLoop = setInterval(this.cycle, 3000)
-      this.refs.modal.mount()
-    }
-    if (unselect) {
-      const elements = ['modal', 'bottombar', 'sidebar', 'popover']
-      this.refs[elements[this.activeelement - 1]].cycleOut()
-      this.activeelement = null
-      clearInterval(this.animationLoop)
-    }
+    // if (!unselect) {
+    //   this.activeelement = 1
+    //   // this.animationLoop = setInterval(this.cycle, 3000)
+    //   this.refs.modal.mount()
+    // }
+    // if (unselect) {
+    //   const elements = ['modal', 'bottombar', 'sidebar', 'popover']
+    //   this.refs[elements[this.activeelement - 1]].cycleOut()
+    //   this.activeelement = null
+    //   clearInterval(this.animationLoop)
+    // }
   }
 
   @action
-  cycle = () => {
-    const elements = ['modal', 'bottombar', 'sidebar', 'popover']
-    this.refs[elements[this.activeelement - 1]].cycleOut()
-    if (this.activeelement < 4) this.activeelement++
-    else this.activeelement = 1
-    console.log(
-      'new active element is ' +
-        elements[this.activeelement - 1] +
-        '(' +
-        this.activeelement +
-        ')'
-    )
-    this.refs[elements[this.activeelement - 1]].cycleIn()
-    //pointer animation
-  }
+  // cycle = () => {
+  //   const elements = ['modal', 'bottombar', 'sidebar', 'popover']
+  //   this.refs[elements[this.activeelement - 1]].cycleOut()
+  //   if (this.activeelement < 4) this.activeelement++
+  //   else this.activeelement = 1
+  //   console.log(
+  //     'new active element is ' +
+  //       elements[this.activeelement - 1] +
+  //       '(' +
+  //       this.activeelement +
+  //       ')'
+  //   )
+  //   this.refs[elements[this.activeelement - 1]].cycleIn()
+  //   //pointer animation
+  // }
 
   restoreNormal = () => this.onSelect(true)
-
-  onExpand = () => {}
 
   render() {
     const store = this.props.store
@@ -198,11 +197,12 @@ export class SendbloomModel extends React.Component {
             </group>
           </group>
         </group>
-
-        <Modal ref="modal" store={store} />
-        <BottomBar ref="bottombar" store={store} />
-        <Sidebar ref="sidebar" store={store} />
-        <Popover ref="popover" store={store} />
+        {/*
+          <Modal ref="modal" store={store} />
+          <BottomBar ref="bottombar" store={store} />
+          <Sidebar ref="sidebar" store={store} />
+          <Popover ref="popover" store={store} />
+        */}
       </group>
     )
   }

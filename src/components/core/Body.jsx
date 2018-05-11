@@ -100,7 +100,12 @@ export default class Body extends React.Component{
                     </group>
                 }
 
-                {this.props.children}
+                {React.Children.map(this.props.children, (child)=> {
+                    const foistedProps = {
+                        mode: this.props.isSelected? 'selected' : 'normal'
+                    }
+                    return React.cloneElement(child, foistedProps)
+                })}
 
             </group>
         )

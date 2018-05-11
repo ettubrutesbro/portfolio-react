@@ -91,40 +91,12 @@ export default class AscendingCatcher extends React.Component{
                 // cameraPosition = {{x: 0, y: 0, z: 40}}
                 cameraGoal = {cameraGoal}
             >
-                {Array.from(Array(12)).map((body, i) => {
-                    return (
-                        <Body
-                            key = {'body'+i}
-                            name={'body' + i}
-                            showCollider
-                            physicsModel={{
-                                pos: [
-                                    (Math.round(Math.random()) * 2 - 1) *
-                                        Math.random() *
-                                        4,
-                                    10 + 2 * i,
-                                    0,
-                                ],
-                                rot: [
-                                    (Math.random()*20)-10, 
-                                    (Math.random()*20)-10, 
-                                    (Math.random()*20)-10 
-                                ],
-                                size: [
-                                    1 + Math.random() * 1.75,
-                                    1 + Math.random() * 1.75,
-                                    1 + Math.random() * 1.75,
-                                ],
-                                type: 'box',
-                            }}
-                            onSelect = {{
-                                position: {x:0, y:0, z:0},
-                                rotation: {x:0, y:0, z:0},
-                                onComplete: this.updateTooltip
-                            }}
-                        />
-                    )
-                })}
+                {
+                    // this.props.children
+                    React.Children.map(this.props.children, (child)=>{
+                        return React.cloneElement(child, {isSelected: this.itemSelected === child.props.name})
+                    })
+                }
                 {walls.map((b,i) => {
                     return (
                         <Boundary
