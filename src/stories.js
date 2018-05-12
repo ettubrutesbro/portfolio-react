@@ -26,6 +26,7 @@ import { v3, makeEnclosure, rads } from './helpers/utilities'
 
 import { SendbloomModel } from './components/Sendbloom'
 import Seseme from './components/Seseme/Seseme'
+import Wake from './components/Wake'
 
 const models = storiesOf('Models', module)
 
@@ -192,39 +193,46 @@ models.add('Seseme', () => {
         </SimpleScene>
     )
 })
-models.add('Wake', () => {
-    const wakexRot = number('rotate X', 15)
-    const wakeyRot = number('rotate Y', 150)
-    return (
+models.add('Wake (component)', () => {
+    return(
         <SimpleScene>
-            <group
-                rotation={new THREE.Euler(rads(wakexRot), rads(wakeyRot), 0)}
-            >
-                <mesh>
-                    <geometry
-                        vertices={wakebed.geometry.vertices}
-                        faces={wakebed.geometry.faces}
-                    />
-                    <meshNormalMaterial />
-                </mesh>
-                <mesh>
-                    <geometry
-                        vertices={wakesleeper.geometry.vertices}
-                        faces={wakesleeper.geometry.faces}
-                    />
-                    <meshNormalMaterial />
-                </mesh>
-                <mesh>
-                    <geometry
-                        vertices={wakesleeperl.geometry.vertices}
-                        faces={wakesleeperl.geometry.faces}
-                    />
-                    <meshNormalMaterial />
-                </mesh>
-            </group>
-        </SimpleScene>
+            <Wake />
+        </SimpleScene> 
     )
 })
+// models.add('Wake', () => {
+//     const wakexRot = number('rotate X', 15)
+//     const wakeyRot = number('rotate Y', 150)
+//     return (
+//         <SimpleScene>
+//             <group
+//                 rotation={new THREE.Euler(rads(wakexRot), rads(wakeyRot), 0)}
+//             >
+//                 <mesh>
+//                     <geometry
+//                         vertices={wakebed.geometry.vertices}
+//                         faces={wakebed.geometry.faces}
+//                     />
+//                     <meshNormalMaterial />
+//                 </mesh>
+//                 <mesh>
+//                     <geometry
+//                         vertices={wakesleeper.geometry.vertices}
+//                         faces={wakesleeper.geometry.faces}
+//                     />
+//                     <meshNormalMaterial />
+//                 </mesh>
+//                 <mesh>
+//                     <geometry
+//                         vertices={wakesleeperl.geometry.vertices}
+//                         faces={wakesleeperl.geometry.faces}
+//                     />
+//                     <meshNormalMaterial />
+//                 </mesh>
+//             </group>
+//         </SimpleScene>
+//     )
+// })
 
 
 const interactiveModels = storiesOf('Animating models', module)

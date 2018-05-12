@@ -23,6 +23,9 @@ export default class SimpleScene extends React.Component{
 
     cameraPosition = v3(0,0,10)
 
+    onAnimate = () => {
+        TWEEN.update()
+    }
 
     componentDidMount(){
         window.addEventListener('resize', this.handleResize)

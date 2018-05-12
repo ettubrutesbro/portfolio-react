@@ -265,7 +265,7 @@ export default class InteractiveScene extends React.Component{
                 if(this.props.onSelect){ 
                     this.props.onSelect(
                         store.selected,
-                        // this.getScreenPosition(target)
+                        this.getScreenPosition(target)
                     )   
                 }
 

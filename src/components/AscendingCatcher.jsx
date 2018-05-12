@@ -82,7 +82,7 @@ export default class AscendingCatcher extends React.Component{
                     console.log('selected', v)
                     this.changebaseline(this.baseline-(this.viewHeight * 2))
                     this.itemSelected = v
-                    // this.updateTooltip(c)
+                    this.updateTooltip(c)
                 }}
                 onDeselect = {()=>{
                     console.log('deselected')
@@ -92,11 +92,11 @@ export default class AscendingCatcher extends React.Component{
                 cameraGoal = {cameraGoal}
             >
                 {
-                    // this.props.children
                     React.Children.map(this.props.children, (child)=>{
                         return React.cloneElement(child, {isSelected: this.itemSelected === child.props.name})
                     })
                 }
+                
                 {walls.map((b,i) => {
                     return (
                         <Boundary
