@@ -2,7 +2,7 @@ import React from 'react'
 import * as THREE from 'three'
 import * as TWEEN from '@tweenjs/tween.js'
 
-import { v3 } from '../../helpers/utilities.js'
+import { v3, rads } from '../../helpers/utilities.js'
 
 
 export default class Wake extends React.Component{
@@ -24,7 +24,7 @@ export default class Wake extends React.Component{
 
     render(){
         return(
-            <group ref = "group" scale = {{x: 0.2, y: 0.2, z: 0.2}}>
+            <group ref = "group" scale = {{x: 0.4, y: 0.4, z: 0.4}}>
                 <resources>
                     {this.sleeper &&
                         <geometry resourceId = "sleeper"
@@ -36,25 +36,26 @@ export default class Wake extends React.Component{
 
                 <mesh name = "wake" ref = "pillows">
                     <geometry vertices = {this.pillows.geometry.vertices} faces = {this.pillows.geometry.faces} />
-                    <meshBasicMaterial color = {0xe8e8e8} />
+                    <meshBasicMaterial color = {0xff0000} />
                 </mesh>
                 <mesh name = "wake" ref = "sleeperL">
                     <geometry vertices = {this.sleeper.geometry.vertices} faces = {this.sleeper.geometry.faces} />
                     <meshBasicMaterial color = {0x001133} />
                 </mesh>
-                    <mesh name = "wake" ref = "blanketL">
-                        <geometry vertices = {this.blanketL.geometry.vertices} faces = {this.blanketL.geometry.faces} />
-                        <meshBasicMaterial color = {0xe8e8e8} />
-                    </mesh>
-
-                    {/*
-                <mesh name = "wake" ref = "sleeperR" position = {v3(3,0,0)}>
+                <mesh name = "wake" ref = "sleeperR" position = {v3(0,0,1.775)}>
                     <geometry vertices = {this.sleeper.geometry.vertices} faces = {this.sleeper.geometry.faces} />
                     <meshBasicMaterial color = {0x001133} />
                 </mesh>
-
-                */}
-
+                    
+                    <mesh name = "wake" ref = "blanketL">
+                        <geometry vertices = {this.blanketL.geometry.vertices} faces = {this.blanketL.geometry.faces} />
+                        <meshBasicMaterial color = {0xff0000} />
+                    </mesh>
+                    <mesh name = "wake" ref="blanketR">
+                        <geometry vertices = {this.blanketR.geometry.vertices} faces = {this.blanketR.geometry.faces} />
+                        <meshBasicMaterial color = {0xab99ff} />
+                    </mesh>
+                    
             </group>
         )
     }

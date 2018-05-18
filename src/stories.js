@@ -196,7 +196,9 @@ models.add('Seseme', () => {
 models.add('Wake (component)', () => {
     return(
         <SimpleScene>
+            <group  rotation = {new THREE.Euler(rads(25),rads(90),0)}>
             <Wake />
+            </group>
         </SimpleScene> 
     )
 })
